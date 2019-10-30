@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ag-grid": "^18.1.2",
+    "ag-grid-community": "^21.2.2",
+    "ag-grid-react": "^21.2.2",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
+    "react-dom-factories": "^1.0.2",
     "react-scripts": "3.2.0"
   },
   "scripts": {

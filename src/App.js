@@ -1,26 +1,46 @@
-import React from 'react';
+import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      columnDefs: [{
+        headerName: "Coin Pair", field: "symbol", sortable: true, filter: true
+      }, {
+        headerName: "Base Asset", field: "baseAsset", sortable: true, filter: true
+      }, {
+        headerName: "Quote Asset", field: "quoteAsset", sortable: true, filter: true
+      }]
+    }
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8080/binance/info')
+        .then(result => result.json())
+        .then(rowData => this.setState({rowData}))
+  }
+
+  render() {
+    return (
+        <div
+            className="ag-theme-balham"
+            style={{height: '200px', width: '600px'}}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <AgGridReact
+              enableSorting={true}
+              enableFilter={true}
+              pagination={true}
+              columnDefs={this.state.columnDefs}
+              rowData={this.state.rowData}>
+          </AgGridReact>
+        </div>
+    );
+  }
 }
 
 export default App;
