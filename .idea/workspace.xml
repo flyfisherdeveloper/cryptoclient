@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="01603fb4-a8e7-4759-b215-1de02d794b98" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -66,6 +65,7 @@
       <workItem from="1572456511428" duration="762000" />
       <workItem from="1572464723577" duration="2838000" />
       <workItem from="1572467587038" duration="12036000" />
+      <workItem from="1572553797879" duration="3689000" />
     </task>
     <task id="LOCAL-00001" summary="React client project.">
       <created>1572456866787</created>
