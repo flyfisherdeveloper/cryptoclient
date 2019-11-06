@@ -5,10 +5,13 @@
   "dependencies": {
     "ag-grid": "^18.1.2",
     "ag-grid-community": "^21.2.2",
+    "ag-grid-enterprise": "^21.2.2",
     "ag-grid-react": "^21.2.2",
+    "chart.js": "^2.9.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-dom-factories": "^1.0.2",
+    "react-modal": "^3.11.1",
     "react-scripts": "3.2.0"
   },
   "scripts": {

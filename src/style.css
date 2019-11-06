@@ -1,0 +1,31 @@
+.td-no{
+    border:0px;
+}
+table,tr{
+    border:0px;
+}
+.btn-orange{
+    background-color:#D25D12;
+    color:white;
+}
+.btn-orange:hover{
+    background-color:#D6A800;
+    color:white;
+}
+.btn-purple{
+    background-color:#4F3674;
+    color:white;
+}
+.btn{
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
