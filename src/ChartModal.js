@@ -1,43 +1,56 @@
-import React from 'react';
-import Modal from 'react-modal';
-import ModalButton from "./ModalButton";
-import style from './style.css';
+import React from "react";
+import PropTypes from "prop-types";
+import LineGraph from "./LineGraph";
 
 class ChartModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { modalOpened: false };
-        this.toggleModal = this.toggleModal.bind(this);
-    }
-
-    toggleModal() {
-        this.setState(prevState => ({ modalOpened: !prevState.modalOpened }));
-    }
-
     render() {
-        const { data } = this.props;
+        if (!this.props.isOpen) {
+            return null;
+        }
+        const BackgroundStyle = {
+            backgroundColor: "rgba(220,220,220,0.5)",
+            position: "fixed",
+            width: 1100,
+            height: 600,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 200
+        };
+        const ModalStyle = {
+            backgroundColor: "#fff",
+            margin: "auto",
+            padding: 5
+        };
+        const HeaderStyle = {
+            height: 20,
+            width: "100%"
+        };
+        const CloseBtnStyle = {
+            float: "right",
+            cursor: "pointer",
+            display: "block"
+        };
         return (
-            <div className={style.modalWrapper}>
-                <ModalButton handleClick={this.toggleModal}>
-                    click to open modal
-                </ModalButton>
-                <Modal
-                    className={{ base: [style.base]}}
-                    overlayClassName={{ base: [style.overlayBase] }}
-                    isOpen={this.state.modalOpened}
-                    onRequestClose={this.toggleModal}
-                    contentLabel="Modal with image"
-                >
-                    <img
-                        onClick={this.toggleModal}
-                        src={data.src}
-                        alt='image displayed in modal'
-                    />
-                    <span className={style.text}>{data.description}</span>
-                </Modal>
+            <div style={BackgroundStyle}>
+                <div style={ModalStyle}>
+                    <div style={HeaderStyle}>
+                        <span style={CloseBtnStyle} onClick={this.props.onClose}>
+                            X
+                        </span>
+                    </div>
+                    {this.props.children}
+                </div>
+                <LineGraph symbol={this.symbol}/>
             </div>
         );
     }
 }
 
+ChartModal.propTypes = {
+    onClose: PropTypes.func,
+    isOpen: PropTypes.bool,
+    symbol: PropTypes.string,
+    children: PropTypes.node
+};
 export default ChartModal;

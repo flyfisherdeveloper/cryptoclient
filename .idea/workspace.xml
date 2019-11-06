@@ -2,21 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01603fb4-a8e7-4759-b215-1de02d794b98" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ChartModal.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LineGraph.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ModalButton.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/grid/CoinGrid.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/grid/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/serviceWorker.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scannerclient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/scannerclient.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ChartModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChartModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LineGraph.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/LineGraph.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ModalButton.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/grid/CoinGrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/grid/CoinGrid.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -97,7 +90,7 @@
       <workItem from="1572553797879" duration="22411000" />
       <workItem from="1572643684301" duration="1546000" />
       <workItem from="1572884447681" duration="606000" />
-      <workItem from="1572898091106" duration="18920000" />
+      <workItem from="1572898091106" duration="36382000" />
     </task>
     <task id="LOCAL-00001" summary="React client project.">
       <created>1572456866787</created>

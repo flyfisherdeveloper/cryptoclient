@@ -1,16 +1,19 @@
 import React, {Component} from "react";
-import {render} from "react-dom";
 import {AgGridReact} from "ag-grid-react";
+import ChartModal from "../ChartModal";
 
 class CoinGrid extends Component {
     mounted = false;
+    symbol = "";
 
     constructor(props) {
         super(props);
+        this.toggleModal = this.toggleModal.bind(this);
         this.state = {
             columnDefs: [{
                 headerName: "Coin Pair", field: "symbol", sortable: true, filter: true,
                 cellRenderer: function (params) {
+                    //todo: do this server-side, and include the link in the data passed from the server
                     //get the url of the trading pair - this function only works for USD, USDT, BTC, ETH pairs
                     //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
                     //then that link won't work here
@@ -39,7 +42,8 @@ class CoinGrid extends Component {
                 headerName: "Quote Volume", field: "quoteVolume", sortable: true, filter: true
             },
             ],
-            rowData: []
+            rowData: [],
+            isOpen: false
         }
     }
 
@@ -63,11 +67,17 @@ class CoinGrid extends Component {
 
     onRowSelected(params) {
         let rows = params.api.getSelectedRows();
-        let volume = "";
         rows.forEach((selectedRow) => {
-            volume = selectedRow.volume;
+            this.symbol = selectedRow.symbol;
         });
-        console.log("selected row volume: " + volume);
+        console.log("selected row symbol: " + this.symbol);
+        this.toggleModal();
+    }
+
+    toggleModal() {
+        const { isOpen } = this.state;
+        this.setState({ isOpen: !isOpen });
+        console.log("isOpen: " + this.state.isOpen);
     }
 
     componentWillUnmount() {
@@ -78,8 +88,7 @@ class CoinGrid extends Component {
         return (
             <div
                 className="ag-theme-balham"
-                style={{height: '800px', width: '1500px'}}
-            >
+                style={{width: 1380, height: 800}} >
                 <AgGridReact
                     reactNext={true}
                     rowSelection={"single"}
@@ -91,6 +100,10 @@ class CoinGrid extends Component {
                     onSelectionChanged={this.onRowSelected.bind(this)}
                 >
                 </AgGridReact>
+                <ChartModal isOpen={this.state.isOpen}
+                            symbol={this.symbol}
+                            onClose={this.toggleModal}>
+                </ChartModal>
             </div>
         );
     }
