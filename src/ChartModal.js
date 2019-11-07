@@ -41,7 +41,7 @@ class ChartModal extends React.Component {
                     </div>
                     {this.props.children}
                 </div>
-                <LineGraph symbol={this.symbol}/>
+                <LineGraph symbol={this.props.symbol}/>
             </div>
         );
     }

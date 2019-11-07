@@ -4,7 +4,6 @@ import ChartModal from "../ChartModal";
 
 class CoinGrid extends Component {
     mounted = false;
-    symbol = "";
 
     constructor(props) {
         super(props);
@@ -43,13 +42,14 @@ class CoinGrid extends Component {
             },
             ],
             rowData: [],
-            isOpen: false
+            isOpen: false,
+            symbol: ""
         }
     }
 
     componentDidMount() {
         this.mounted = true;
-        fetch('http://localhost:8080/api/v1/binance/Mock24HourTicker')
+        fetch('http://localhost:8080/api/v1/binance/24HourTicker')
             .then(result => {
                 return result.json();
             }).then(data => {
@@ -67,17 +67,18 @@ class CoinGrid extends Component {
 
     onRowSelected(params) {
         let rows = params.api.getSelectedRows();
+        let selectedSymbol = "";
         rows.forEach((selectedRow) => {
-            this.symbol = selectedRow.symbol;
+            selectedSymbol = selectedRow.symbol;
         });
         console.log("selected row symbol: " + this.symbol);
+        this.setState({symbol: selectedSymbol});
         this.toggleModal();
     }
 
     toggleModal() {
-        const { isOpen } = this.state;
-        this.setState({ isOpen: !isOpen });
-        console.log("isOpen: " + this.state.isOpen);
+        this.setState({isOpen: !this.state.isOpen});
+        console.log("isOpen: " + this.state.isOpen + " symbol: " + this.state.symbol);
     }
 
     componentWillUnmount() {
@@ -88,7 +89,7 @@ class CoinGrid extends Component {
         return (
             <div
                 className="ag-theme-balham"
-                style={{width: 1380, height: 800}} >
+                style={{width: 1380, height: 800}}>
                 <AgGridReact
                     reactNext={true}
                     rowSelection={"single"}
@@ -101,7 +102,7 @@ class CoinGrid extends Component {
                 >
                 </AgGridReact>
                 <ChartModal isOpen={this.state.isOpen}
-                            symbol={this.symbol}
+                            symbol={this.state.symbol}
                             onClose={this.toggleModal}>
                 </ChartModal>
             </div>

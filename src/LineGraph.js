@@ -46,13 +46,13 @@ class LineGraph extends React.Component {
                 },
                 yaxis: [
                     {
-                        axisTicks: { show: true },
-                        axisBorder: { show: true },
+                        axisTicks: {show: true},
+                        axisBorder: {show: true},
                         labels: {
                             show: true,
                             minWidth: 60
                         },
-                        tooltip: { enabled: false },
+                        tooltip: {enabled: false},
                         min: min => {
                             return min;
                         },
@@ -60,21 +60,6 @@ class LineGraph extends React.Component {
                             return max;
                         }
                     },
-                    {
-                        axisTicks: { show: true },
-                        axisBorder: { show: true },
-                        labels: {
-                            show: true,
-                            minWidth: 60
-                        },
-                        tooltip: { enabled: false },
-                        min: min => {
-                            return min;
-                        },
-                        max: max => {
-                            return max;
-                        }
-                    }
                 ],
                 stroke: {
                     width: 1.5
@@ -85,35 +70,49 @@ class LineGraph extends React.Component {
                 tooltip: {
                     shared: true,
                     x: {
-                        format: "dd MMM - HH : mm "
+                        format: "MM/dd/yyyy"
                     },
                 }
             },
 
             series: [
                 {
-                    data: [
-                        [1, 10000],
-                        [2, 15000],
-                        [3, 11234],
-                        [4, 31023],
-                        [5, 40123],
-                        [6, 11249]
-                    ],
-                    type: "line"
-                },
-                {
-                    data: [[1, 3], [2, 5], [3, 2], [4, 1], [5, 3], [6, 2]],
+                    data: [],
                     type: "line"
                 }
             ]
         };
     }
 
+    componentDidMount() {
+        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol)
+            .then(result => result.json())
+            .then((json) => {
+                let info = json.map((d, i) => {
+                    let date = new Date(d.closeTime).toLocaleDateString();
+                    let vol = d.quoteAssetVolume;
+                    return [date, vol];
+                });
+                let seriesData = [{
+                    data: info,
+                    type: "line"
+                }];
+                this.setState({series: seriesData});
+                console.log(seriesData);
+            }).catch(err => {
+            if (err.name === 'AbortError') {
+                console.log("error catch: " + err);
+                return;
+            }
+            throw err;
+        });
+    }
+
     render() {
+        console.log("symbol in line: " + this.props.symbol);
         return (
             <div style={{width: "100%", height: "100%"}}>
-                <div style={{ width: "100%", height: "100%" }}>
+                <div style={{width: "100%", height: "100%"}}>
                     <Chart
                         options={this.state.options}
                         series={this.state.series}
