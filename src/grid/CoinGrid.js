@@ -11,26 +11,11 @@ class CoinGrid extends Component {
         this.state = {
             columnDefs: [{
                 headerName: "Coin Pair", field: "symbol", sortable: true, filter: true,
-                cellRenderer: function (params) {
-                    //todo: do this server-side, and include the link in the data passed from the server
-                    //get the url of the trading pair - this function only works for USD, USDT, BTC, ETH pairs
-                    //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
-                    //then that link won't work here
-                    let offset = 3;
-                    if (params.value.endsWith("USDT")) {
-                        offset = 4;
-                    }
-                    let end = params.value.length;
-                    let start = end - offset;
-                    let newStr = params.value;
-                    newStr = newStr.slice(0, start) + "_" + newStr.slice(start, end);
-                    let url = "https://www.binance.us/en/trade/" + newStr;
-                    return "<a href='" + url + "'> " + params.value + "</a>";
-                }
+                cellRenderer: (params) => this.getLink(params),
             }, {
-                headerName: "Price Change", field: "priceChange", sortable: true, filter: true
+                headerName: "24Hr Price Change", field: "priceChange", sortable: true, filter: true
             }, {
-                headerName: "Price Change Percent", field: "priceChangePercent", sortable: true, filter: true
+                headerName: "24Hr Price Change Percent", field: "priceChangePercent", sortable: true, filter: true
             }, {
                 headerName: "High Price", field: "highPrice", sortable: true, filter: true
             }, {
@@ -43,8 +28,41 @@ class CoinGrid extends Component {
             ],
             rowData: [],
             isOpen: false,
-            symbol: ""
+            symbol: "",
+            quote: ""
         }
+    }
+
+    getLink (params) {
+        //todo: do this server-side, and include the link in the data passed from the server
+        //get the url of the trading pair - this function only works for USD, USDT, BTC, ETH pairs
+        //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
+        //then that link won't work here
+        this.quote = this.getQuote(params.value);
+        console.log("newstr: " + this.quote);
+        let start = this.getStart(params.value);
+        let newStr = params.value.slice(0, start) + "_" + this.quote;
+        let url = "https://www.binance.us/en/trade/" + newStr;
+        return "<a href='" + url + "'> " + params.value + "</a>";
+    }
+
+    getQuoteOffset(params) {
+        let offset = 3;
+        if (params.endsWith("USDT")) {
+            offset = 4;
+        }
+        return offset;
+    }
+
+    getStart(str) {
+        let end = str.length;
+        let offset = this.getQuoteOffset(str);
+        return end - offset;
+    }
+
+    getQuote(str) {
+        let start = this.getStart(str);
+        return str.slice(start, str.length);
     }
 
     componentDidMount() {
@@ -71,8 +89,9 @@ class CoinGrid extends Component {
         rows.forEach((selectedRow) => {
             selectedSymbol = selectedRow.symbol;
         });
-        console.log("selected row symbol: " + this.symbol);
         this.setState({symbol: selectedSymbol});
+        console.log("selected row symbol: " + selectedSymbol);
+        this.setState({quote: this.getQuote(selectedSymbol)});
         this.toggleModal();
     }
 
@@ -103,6 +122,7 @@ class CoinGrid extends Component {
                 </AgGridReact>
                 <ChartModal isOpen={this.state.isOpen}
                             symbol={this.state.symbol}
+                            quote={this.state.quote}
                             onClose={this.toggleModal}>
                 </ChartModal>
             </div>

@@ -31,6 +31,7 @@ class LineGraph extends React.Component {
                     type: "solid",
                     opacity: [0.35, 1]
                 },
+                colors: ['#0706ea'],
                 dataLabels: {
                     enabled: false
                 },
@@ -38,19 +39,61 @@ class LineGraph extends React.Component {
                     size: 0
                 },
                 title: {
-                    text: this.props.symbol,
-                    align: "left"
+                    text: this.props.title,
+                    style: {
+                        fontSize: "32px"
+                    },
+                    align: "middle"
                 },
                 xaxis: {
-                    type: "datetime"
+                    axisTicks: {show: true},
+                    axisBorder: {
+                        show: true,
+                        color: '#9c0c07',
+                        height: 1,
+                        width: '100%',
+                        offsetX: 0,
+                        offsetY: 0
+                    },
+                    type: "datetime",
+                    labels: {
+                        style: {
+                            colors: [],
+                            fontSize: '16px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            cssClass: 'apexcharts-xaxis-label',
+                        }
+                    },
                 },
                 yaxis: [
                     {
                         axisTicks: {show: true},
-                        axisBorder: {show: true},
+                        axisBorder: {
+                            show: true,
+                            color: '#9c0c07',
+                            height: 1,
+                            width: '100%',
+                            offsetX: 0,
+                            offsetY: 0
+                        },
                         labels: {
                             show: true,
-                            minWidth: 60
+                            minWidth: 60,
+                            style: {
+                                fontSize: '16px'
+                            }
+                        },
+                        title: {
+                            text: "Volume in " + this.props.quoteSymbol,
+                            rotate: 90,
+                            offsetX: 0,
+                            offsetY: 0,
+                            style: {
+                                color: undefined,
+                                fontSize: '24px',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                cssClass: 'apexcharts-yaxis-title',
+                            },
                         },
                         tooltip: {enabled: false},
                         min: min => {
@@ -62,7 +105,7 @@ class LineGraph extends React.Component {
                     },
                 ],
                 stroke: {
-                    width: 1.5
+                    width: 2.5
                 },
                 legend: {
                     show: true
@@ -128,5 +171,7 @@ class LineGraph extends React.Component {
 
 LineGraph.propTypes = {
     symbol: PropTypes.string,
+    quoteSymbol: PropTypes.string,
+    title: PropTypes.string,
 };
 export default LineGraph;

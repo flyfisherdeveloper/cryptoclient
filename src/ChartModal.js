@@ -41,7 +41,9 @@ class ChartModal extends React.Component {
                     </div>
                     {this.props.children}
                 </div>
-                <LineGraph symbol={this.props.symbol}/>
+                <LineGraph symbol={this.props.symbol}
+                           quoteSymbol={this.props.quote}
+                           title={"7-Day Volume chart for " + this.props.symbol}/>
             </div>
         );
     }
@@ -51,6 +53,7 @@ ChartModal.propTypes = {
     onClose: PropTypes.func,
     isOpen: PropTypes.bool,
     symbol: PropTypes.string,
+    quote: PropTypes.string,
     children: PropTypes.node
 };
 export default ChartModal;
