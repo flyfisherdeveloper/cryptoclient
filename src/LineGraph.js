@@ -86,7 +86,7 @@ class LineGraph extends React.Component {
                         title: {
                             text: "Volume in " + this.props.quoteSymbol,
                             rotate: 90,
-                            offsetX: 0,
+                            offsetX: -7,
                             offsetY: 0,
                             style: {
                                 color: undefined,
@@ -95,13 +95,7 @@ class LineGraph extends React.Component {
                                 cssClass: 'apexcharts-yaxis-title',
                             },
                         },
-                        tooltip: {enabled: false},
-                        min: min => {
-                            return min;
-                        },
-                        max: max => {
-                            return max;
-                        }
+                        tooltip: {enabled: false}
                     },
                 ],
                 stroke: {
@@ -112,9 +106,10 @@ class LineGraph extends React.Component {
                 },
                 tooltip: {
                     shared: true,
+                    theme: "dark",
                     x: {
                         format: "MM/dd/yyyy"
-                    },
+                    }
                 }
             },
 
@@ -133,8 +128,8 @@ class LineGraph extends React.Component {
             .then((json) => {
                 let info = json.map((d, i) => {
                     let date = new Date(d.closeTime).toLocaleDateString();
-                    let vol = d.quoteAssetVolume;
-                    return [date, vol];
+                    let vol = Number(d.quoteAssetVolume);
+                    return [date, vol.toPrecision(2)];
                 });
                 let seriesData = [{
                     data: info,

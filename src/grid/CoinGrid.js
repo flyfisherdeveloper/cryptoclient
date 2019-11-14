@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
+import "./styles.css"
 import ChartModal from "../ChartModal";
 
 class CoinGrid extends Component {
@@ -107,8 +108,8 @@ class CoinGrid extends Component {
     render() {
         return (
             <div
-                className="ag-theme-balham"
-                style={{width: 1380, height: 800}}>
+                className="ag-theme-balham-dark"
+                style={{width: 1500, height: 800}}>
                 <AgGridReact
                     reactNext={true}
                     rowSelection={"single"}
@@ -116,6 +117,7 @@ class CoinGrid extends Component {
                     enableFilter={true}
                     pagination={true}
                     columnDefs={this.state.columnDefs}
+                    defaultColDef={this.state.defaultColDef}
                     rowData={this.state.rowData}
                     onSelectionChanged={this.onRowSelected.bind(this)}
                 >

@@ -23,21 +23,15 @@ class ChartModal extends React.Component {
             padding: 5
         };
         const HeaderStyle = {
-            height: 20,
+            height: 29,
             width: "100%"
         };
-        const CloseBtnStyle = {
-            float: "right",
-            cursor: "pointer",
-            display: "block"
-        };
+
         return (
             <div style={BackgroundStyle}>
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
-                        <span style={CloseBtnStyle} onClick={this.props.onClose}>
-                            X
-                        </span>
+                        <div><a id="close" href="#" onClick={this.props.onClose}/></div>
                     </div>
                     {this.props.children}
                 </div>

@@ -9,3 +9,29 @@
     font-size: 13px;
     margin-bottom: 5px;
 }
+
+a {
+    background: #000000;
+    color: #ff9e18;
+    font-size:15px;
+    padding:0 12px;
+    border-radius:3px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    text-decoration:none;
+    display: block;
+}
+
+#panel{
+    width:100px;
+    height:100px;
+    background:white;
+    border:2px solid black;
+}
+#close{
+    display:block;
+    float:right;
+    width:30px;
+    height:29px;
+    background:url(http://www.htmlgoodies.com/img/registrationwelcome/close_icon.png) no-repeat center center;
+}
