@@ -18,9 +18,24 @@ class LineGraph extends React.Component {
                         type: "x",
                         enabled: true
                     },
+                    events: {
+                        updated: function (chart) {
+                            let title = document.querySelector('div');
+                            console.log(title);
+                        }
+                    },
                     toolbar: {
-                        autoSelected: "zoom",
-                        show: true
+                        show: true,
+                        tools: {
+                            download: false,
+                            selection: true,
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: false,
+                            reset: false,
+                        },
+                        autoSelected: 'zoom'
                     },
                     background: "#fff"
                 },
@@ -110,7 +125,7 @@ class LineGraph extends React.Component {
                     shared: true,
                     theme: "dark",
                     x: {
-                        format: "MM/dd/yyyy"
+                        format: "MM/dd/yyyy HH:mm"
                     },
                     y: {
                         title: {
@@ -130,13 +145,14 @@ class LineGraph extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol)
+        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol + "/12h")
             .then(result => result.json())
             .then((json) => {
                 let info = json.map((d, i) => {
-                    let date = new Date(d.closeTime).toLocaleDateString();
+                    let date = new Date(d.closeTime);
+                    date.setMinutes(date.getMinutes() + 1);
                     let vol = Number(d.quoteAssetVolume);
-                    return [date, vol.toPrecision(2)];
+                    return [date.toLocaleString(), vol.toPrecision(2)];
                 });
                 let seriesData = [{
                     data: info,
@@ -150,6 +166,15 @@ class LineGraph extends React.Component {
             }
             throw err;
         });
+    }
+
+    getIconHtml() {
+        return "4Hr";
+        //return (
+        //<select id="intervalList">
+        //<option value="4">4 Hour</option>
+        //<option value="12">12 Hour</option>
+        //</select>);
     }
 
     render() {

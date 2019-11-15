@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="01603fb4-a8e7-4759-b215-1de02d794b98" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/public/4Hr-32x32.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/4Hr-512x512.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ChartModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChartModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LineGraph.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/LineGraph.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/grid/CoinGrid.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/grid/CoinGrid.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/grid/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/grid/styles.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,6 +39,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev\scannerclient\public" />
       <recent name="C:\dev\scannerclient\src\grid" />
     </key>
   </component>
@@ -90,7 +90,8 @@
       <workItem from="1572898091106" duration="49769000" />
       <workItem from="1573598577865" duration="6168000" />
       <workItem from="1573672648253" duration="7931000" />
-      <workItem from="1573758927953" duration="10997000" />
+      <workItem from="1573758927953" duration="11112000" />
+      <workItem from="1573837575890" duration="9304000" />
     </task>
     <task id="LOCAL-00001" summary="React client project.">
       <created>1572456866787</created>
