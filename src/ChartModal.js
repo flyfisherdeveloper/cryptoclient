@@ -8,7 +8,7 @@ class ChartModal extends React.Component {
             return null;
         }
         const BackgroundStyle = {
-            backgroundColor: "rgba(220,220,220,0.5)",
+            backgroundColor: "rgb(0,0,0)",
             position: "fixed",
             width: 1100,
             height: 600,

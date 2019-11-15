@@ -14,19 +14,30 @@ class CoinGrid extends Component {
                 headerName: "Coin Pair", field: "symbol", sortable: true, filter: true,
                 cellRenderer: (params) => this.getLink(params),
             }, {
-                headerName: "24Hr Price Change", field: "priceChange", sortable: true, filter: true
+                headerName: "24Hr Price Change", field: "priceChange", sortable: true, filter: true,
+                cellStyle: (params) => this.getCellFontColor(params),
             }, {
-                headerName: "24Hr Price Change Percent", field: "priceChangePercent", sortable: true, filter: true
+                headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true, filter: true,
+                cellStyle: (params) => this.getCellFontColor(params),
             }, {
-                headerName: "High Price", field: "highPrice", sortable: true, filter: true
+                headerName: "High Price", field: "highPrice", sortable: true, filter: true,
             }, {
-                headerName: "Low Price", field: "lowPrice", sortable: true, filter: true
+                headerName: "Low Price", field: "lowPrice", sortable: true, filter: true,
             }, {
                 headerName: "Volume", field: "volume", sortable: true, filter: true,
             }, {
-                headerName: "Quote Volume", field: "quoteVolume", sortable: true, filter: true
+                headerName: "Quote Volume", field: "quoteVolume", sortable: true, filter: true,
             },
             ],
+            gridOptions: {
+                rowHeight: 45,
+                rowStyle: {
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    'border-bottom': 'black 10px solid',
+                    'border-top': 'black 10px solid',
+                },
+            },
             rowData: [],
             isOpen: false,
             symbol: "",
@@ -34,13 +45,22 @@ class CoinGrid extends Component {
         }
     }
 
-    getLink (params) {
+    getCellFontColor(params) {
+        if (params.value === 0.0) {
+            return {color: 'white'}
+        }
+        if (params.value < 0.0) {
+            return {color: 'red'};
+        }
+        return {color: 'green'};
+    }
+
+    getLink(params) {
         //todo: do this server-side, and include the link in the data passed from the server
         //get the url of the trading pair - this function only works for USD, USDT, BTC, ETH pairs
         //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
         //then that link won't work here
         this.quote = this.getQuote(params.value);
-        console.log("newstr: " + this.quote);
         let start = this.getStart(params.value);
         let newStr = params.value.slice(0, start) + "_" + this.quote;
         let url = "https://www.binance.us/en/trade/" + newStr;
@@ -91,14 +111,12 @@ class CoinGrid extends Component {
             selectedSymbol = selectedRow.symbol;
         });
         this.setState({symbol: selectedSymbol});
-        console.log("selected row symbol: " + selectedSymbol);
         this.setState({quote: this.getQuote(selectedSymbol)});
         this.toggleModal();
     }
 
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
-        console.log("isOpen: " + this.state.isOpen + " symbol: " + this.state.symbol);
     }
 
     componentWillUnmount() {
@@ -115,9 +133,9 @@ class CoinGrid extends Component {
                     rowSelection={"single"}
                     enableSorting={true}
                     enableFilter={true}
+                    gridOptions={this.state.gridOptions}
                     pagination={true}
                     columnDefs={this.state.columnDefs}
-                    defaultColDef={this.state.defaultColDef}
                     rowData={this.state.rowData}
                     onSelectionChanged={this.onRowSelected.bind(this)}
                 >

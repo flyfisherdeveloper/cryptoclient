@@ -8,7 +8,7 @@ class LineGraph extends React.Component {
         this.state = {
             options: {
                 chart: {
-                    group: "BacktestCharts",
+                    group: "VolumeCharts",
                     id: "1",
                     animations: {
                         enabled: false
@@ -49,7 +49,7 @@ class LineGraph extends React.Component {
                     axisTicks: {show: true},
                     axisBorder: {
                         show: true,
-                        color: '#9c0c07',
+                        color: '#000000',
                         height: 1,
                         width: '100%',
                         offsetX: 0,
@@ -62,7 +62,9 @@ class LineGraph extends React.Component {
                             fontSize: '16px',
                             fontFamily: 'Helvetica, Arial, sans-serif',
                             cssClass: 'apexcharts-xaxis-label',
-                        }
+                        },
+                        offsetX: -20,
+                        offsetY: 0,
                     },
                 },
                 yaxis: [
@@ -70,7 +72,7 @@ class LineGraph extends React.Component {
                         axisTicks: {show: true},
                         axisBorder: {
                             show: true,
-                            color: '#9c0c07',
+                            color: '#000000',
                             height: 1,
                             width: '100%',
                             offsetX: 0,
@@ -109,6 +111,11 @@ class LineGraph extends React.Component {
                     theme: "dark",
                     x: {
                         format: "MM/dd/yyyy"
+                    },
+                    y: {
+                        title: {
+                            formatter: () => "Volume in " + this.props.quoteSymbol,
+                        }
                     }
                 }
             },
@@ -136,7 +143,6 @@ class LineGraph extends React.Component {
                     type: "line"
                 }];
                 this.setState({series: seriesData});
-                console.log(seriesData);
             }).catch(err => {
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
@@ -147,18 +153,15 @@ class LineGraph extends React.Component {
     }
 
     render() {
-        console.log("symbol in line: " + this.props.symbol);
         return (
             <div style={{width: "100%", height: "100%"}}>
-                <div style={{width: "100%", height: "100%"}}>
-                    <Chart
-                        options={this.state.options}
-                        series={this.state.series}
-                        type="line"
-                        height="100%"
-                        width="100%"
-                    />
-                </div>
+                <Chart
+                    options={this.state.options}
+                    series={this.state.series}
+                    type="line"
+                    height="100%"
+                    width="100%"
+                />
             </div>
         );
     }
