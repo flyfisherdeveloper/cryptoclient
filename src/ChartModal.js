@@ -3,6 +3,19 @@ import PropTypes from "prop-types";
 import LineGraph from "./LineGraph";
 
 class ChartModal extends React.Component {
+
+    onClick4Hr() {
+        this.lineGraph.updateHourChart(4);
+    };
+
+    onClick12Hr() {
+        this.lineGraph.updateHourChart(12);
+    };
+
+    onClick24Hr() {
+        this.lineGraph.updateHourChart(24);
+    };
+
     render() {
         if (!this.props.isOpen) {
             return null;
@@ -27,17 +40,38 @@ class ChartModal extends React.Component {
             width: "100%"
         };
 
+        const ButtonStyle = {
+            color: "#fff",
+            background: "#008FFB",
+            border: "1px solid blue",
+            borderBottom: "2px solid blue"
+        };
+
         return (
             <div style={BackgroundStyle}>
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
-                        <div><a id="close" href="#" onClick={this.props.onClose}/></div>
+                        <button
+                            id="button4Hr"
+                            style={ButtonStyle}
+                            onClick={this.onClick4Hr.bind(this)}>4Hr
+                        </button>
+                        <button
+                            id="button12Hr"
+                            style={ButtonStyle}
+                            onClick={this.onClick12Hr.bind(this)}>12Hr
+                        </button>
+                        <button
+                            id="button24Hr"
+                            style={ButtonStyle}
+                            onClick={this.onClick24Hr.bind(this)}>24Hr
+                        </button>
+                        <a id="close" href="#" onClick={this.props.onClose}/>
                     </div>
                     {this.props.children}
                 </div>
-                <LineGraph symbol={this.props.symbol}
-                           quoteSymbol={this.props.quote}
-                           title={"7-Day Volume chart for " + this.props.symbol}/>
+                <LineGraph ref={lineGraph => this.lineGraph = lineGraph} symbol={this.props.symbol}
+                           quoteSymbol={this.props.quote}/>
             </div>
         );
     }

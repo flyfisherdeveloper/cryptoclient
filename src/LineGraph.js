@@ -6,23 +6,17 @@ class LineGraph extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            hr: 4,
             options: {
                 chart: {
                     group: "VolumeCharts",
-                    id: "1",
+                    type: 'area',
                     animations: {
-                        enabled: false
+                        enabled: true
                     },
-                    stacked: false,
                     zoom: {
                         type: "x",
                         enabled: true
-                    },
-                    events: {
-                        updated: function (chart) {
-                            let title = document.querySelector('div');
-                            console.log(title);
-                        }
                     },
                     toolbar: {
                         show: true,
@@ -39,22 +33,15 @@ class LineGraph extends React.Component {
                     },
                     background: "#fff"
                 },
-                annotations: {
-                    points: []
-                },
-                fill: {
-                    type: "solid",
-                    opacity: [0.35, 1]
-                },
-                colors: ['#0706ea'],
                 dataLabels: {
                     enabled: false
                 },
                 markers: {
-                    size: 0
+                    size: 0,
+                    style: 'full'
                 },
                 title: {
-                    text: this.props.title,
+                    text: "7-Day Chart for " + this.props.symbol,
                     style: {
                         fontSize: "32px"
                     },
@@ -116,7 +103,8 @@ class LineGraph extends React.Component {
                     },
                 ],
                 stroke: {
-                    width: 2.5
+                    width: 2.5,
+                    curve: 'straight'
                 },
                 legend: {
                     show: true
@@ -138,14 +126,19 @@ class LineGraph extends React.Component {
             series: [
                 {
                     data: [],
-                    type: "line"
                 }
             ]
         };
     }
 
-    componentDidMount() {
-        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol + "/12h")
+    updateHourChart(params) {
+        this.setState({hr: params}, () => {
+            this.retrieveData();
+        });
+    }
+
+    retrieveData() {
+        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol + "/" + this.state.hr + "h")
             .then(result => result.json())
             .then((json) => {
                 let info = json.map((d, i) => {
@@ -156,7 +149,7 @@ class LineGraph extends React.Component {
                 });
                 let seriesData = [{
                     data: info,
-                    type: "line"
+                    type: "area",
                 }];
                 this.setState({series: seriesData});
             }).catch(err => {
@@ -168,13 +161,8 @@ class LineGraph extends React.Component {
         });
     }
 
-    getIconHtml() {
-        return "4Hr";
-        //return (
-        //<select id="intervalList">
-        //<option value="4">4 Hour</option>
-        //<option value="12">12 Hour</option>
-        //</select>);
+    componentDidMount() {
+        this.retrieveData();
     }
 
     render() {
@@ -183,7 +171,6 @@ class LineGraph extends React.Component {
                 <Chart
                     options={this.state.options}
                     series={this.state.series}
-                    type="line"
                     height="100%"
                     width="100%"
                 />
@@ -195,6 +182,6 @@ class LineGraph extends React.Component {
 LineGraph.propTypes = {
     symbol: PropTypes.string,
     quoteSymbol: PropTypes.string,
-    title: PropTypes.string,
+    hr: PropTypes.number,
 };
 export default LineGraph;
