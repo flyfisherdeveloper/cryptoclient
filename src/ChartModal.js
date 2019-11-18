@@ -70,8 +70,11 @@ class ChartModal extends React.Component {
                     </div>
                     {this.props.children}
                 </div>
-                <LineGraph ref={lineGraph => this.lineGraph = lineGraph} symbol={this.props.symbol}
-                           quoteSymbol={this.props.quote}/>
+                <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
+                           symbol={this.props.symbol}
+                           quoteSymbol={this.props.quote}
+                           isQuoteVolume={this.props.isQuoteVolume}
+                />
             </div>
         );
     }
@@ -82,6 +85,6 @@ ChartModal.propTypes = {
     isOpen: PropTypes.bool,
     symbol: PropTypes.string,
     quote: PropTypes.string,
-    children: PropTypes.node
+    isQuoteVolume: PropTypes.bool
 };
 export default ChartModal;

@@ -41,7 +41,8 @@ class CoinGrid extends Component {
             rowData: [],
             isOpen: false,
             symbol: "",
-            quote: ""
+            quote: "",
+            isQuoteVolume: false
         }
     }
 
@@ -61,7 +62,7 @@ class CoinGrid extends Component {
         //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
         //then that link won't work here
         this.quote = this.getQuote(params.value);
-        let start = this.getStart(params.value);
+        let start = this.getStartOfQuote(params.value);
         let newStr = params.value.slice(0, start) + "_" + this.quote;
         let url = "https://www.binance.us/en/trade/" + newStr;
         return "<a href='" + url + "'> " + params.value + "</a>";
@@ -75,15 +76,20 @@ class CoinGrid extends Component {
         return offset;
     }
 
-    getStart(str) {
+    getStartOfQuote(str) {
         let end = str.length;
         let offset = this.getQuoteOffset(str);
         return end - offset;
     }
 
     getQuote(str) {
-        let start = this.getStart(str);
+        let start = this.getStartOfQuote(str);
         return str.slice(start, str.length);
+    }
+
+    getCoin(str) {
+        let offset = this.getStartOfQuote(str);
+        return str.slice(0, offset);
     }
 
     componentDidMount() {
@@ -104,15 +110,20 @@ class CoinGrid extends Component {
         });
     }
 
-    onRowSelected(params) {
-        let rows = params.api.getSelectedRows();
-        let selectedSymbol = "";
-        rows.forEach((selectedRow) => {
-            selectedSymbol = selectedRow.symbol;
-        });
-        this.setState({symbol: selectedSymbol});
-        this.setState({quote: this.getQuote(selectedSymbol)});
-        this.toggleModal();
+    onCellClicked(event) {
+        let isVolume = event.column.getColId() === "volume";
+        let isQuoteVolume = event.column.getColId() === "quoteVolume";
+        if (isVolume === true || isQuoteVolume === true) {
+            let selectedSymbol = event.api.getSelectedRows()[0].symbol;
+            this.setState({symbol: selectedSymbol});
+            if (isVolume) {
+                this.setState({quote: this.getCoin(selectedSymbol)});
+            } else {
+                this.setState({quote: this.getQuote(selectedSymbol)});
+                this.setState({isQuoteVolume: true})
+            }
+            this.toggleModal();
+        }
     }
 
     toggleModal() {
@@ -137,12 +148,13 @@ class CoinGrid extends Component {
                     pagination={true}
                     columnDefs={this.state.columnDefs}
                     rowData={this.state.rowData}
-                    onSelectionChanged={this.onRowSelected.bind(this)}
+                    onCellClicked={this.onCellClicked.bind(this)}
                 >
                 </AgGridReact>
                 <ChartModal isOpen={this.state.isOpen}
                             symbol={this.state.symbol}
                             quote={this.state.quote}
+                            isQuoteVolume={this.state.isQuoteVolume}
                             onClose={this.toggleModal}>
                 </ChartModal>
             </div>

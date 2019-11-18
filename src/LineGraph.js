@@ -1,6 +1,7 @@
 import React from "react";
 import Chart from "react-apexcharts";
 import PropTypes from "prop-types";
+import alignment from "ag-grid-enterprise/dist/lib/exporter/files/xml/styles/alignment";
 
 class LineGraph extends React.Component {
     constructor(props) {
@@ -41,7 +42,7 @@ class LineGraph extends React.Component {
                     style: 'full'
                 },
                 title: {
-                    text: "7-Day Chart for " + this.props.symbol,
+                    text: "7-Day Volume Chart for " + this.props.isQuoteVolume ? this.props.symbol : this.props.symbol,
                     style: {
                         fontSize: "32px"
                     },
@@ -88,7 +89,7 @@ class LineGraph extends React.Component {
                             }
                         },
                         title: {
-                            text: "Volume in " + this.props.quoteSymbol,
+                            text: "Volume in " + (this.props.isQuoteVolume ? this.props.quoteSymbol : this.props.symbol),
                             rotate: 90,
                             offsetX: -7,
                             offsetY: 0,
@@ -117,7 +118,7 @@ class LineGraph extends React.Component {
                     },
                     y: {
                         title: {
-                            formatter: () => "Volume in " + this.props.quoteSymbol,
+                            formatter: () => this.props.quoteSymbol ? this.props.quoteSymbol : this.props.symbol,
                         }
                     }
                 }
@@ -141,10 +142,18 @@ class LineGraph extends React.Component {
         fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol + "/" + this.state.hr + "h")
             .then(result => result.json())
             .then((json) => {
-                let info = json.map((d, i) => {
-                    let date = new Date(d.closeTime);
+                let info = json.map((data) => {
+                    let date = new Date(data.closeTime);
                     date.setMinutes(date.getMinutes() + 1);
-                    let vol = Number(d.quoteAssetVolume);
+                    let vol = 0;
+                    console.log("line graph isQuoteVolume: " + this.props.isQuoteVolume);
+                    console.log("QuoteVolume: " + data.quoteAssetVolume);
+                    console.log("Volume: " + data.volume);
+                    if (this.props.isQuoteVolume) {
+                        vol = Number(data.quoteAssetVolume);
+                    } else {
+                        vol = Number(data.volume);
+                    }
                     return [date.toLocaleString(), vol.toPrecision(2)];
                 });
                 let seriesData = [{
@@ -182,6 +191,7 @@ class LineGraph extends React.Component {
 LineGraph.propTypes = {
     symbol: PropTypes.string,
     quoteSymbol: PropTypes.string,
+    isQuoteVolume: PropTypes.bool,
     hr: PropTypes.number,
 };
 export default LineGraph;
