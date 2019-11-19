@@ -40,8 +40,9 @@ class CoinGrid extends Component {
             },
             rowData: [],
             isOpen: false,
-            symbol: "",
-            quote: "",
+            symbol: "", //i.e. LTCUSDT
+            quote: "",  //i.e. USDT
+            coin: "",   //i.e. LTC
             isQuoteVolume: false
         }
     }
@@ -65,7 +66,7 @@ class CoinGrid extends Component {
         let start = this.getStartOfQuote(params.value);
         let newStr = params.value.slice(0, start) + "_" + this.quote;
         let url = "https://www.binance.us/en/trade/" + newStr;
-        return "<a href='" + url + "'> " + params.value + "</a>";
+        return "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
     }
 
     getQuoteOffset(params) {
@@ -113,15 +114,16 @@ class CoinGrid extends Component {
     onCellClicked(event) {
         let isVolume = event.column.getColId() === "volume";
         let isQuoteVolume = event.column.getColId() === "quoteVolume";
-        if (isVolume === true || isQuoteVolume === true) {
+        if (isVolume || isQuoteVolume) {
+            if (isVolume) {
+                this.setState({isQuoteVolume: false});
+            } else {
+                this.setState({isQuoteVolume: true});
+            }
             let selectedSymbol = event.api.getSelectedRows()[0].symbol;
             this.setState({symbol: selectedSymbol});
-            if (isVolume) {
-                this.setState({quote: this.getCoin(selectedSymbol)});
-            } else {
-                this.setState({quote: this.getQuote(selectedSymbol)});
-                this.setState({isQuoteVolume: true})
-            }
+            this.setState({quote: this.getQuote(selectedSymbol)});
+            this.setState({coin: this.getCoin(selectedSymbol)});
             this.toggleModal();
         }
     }
@@ -154,6 +156,7 @@ class CoinGrid extends Component {
                 <ChartModal isOpen={this.state.isOpen}
                             symbol={this.state.symbol}
                             quote={this.state.quote}
+                            coin={this.state.coin}
                             isQuoteVolume={this.state.isQuoteVolume}
                             onClose={this.toggleModal}>
                 </ChartModal>

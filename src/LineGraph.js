@@ -1,7 +1,6 @@
 import React from "react";
 import Chart from "react-apexcharts";
 import PropTypes from "prop-types";
-import alignment from "ag-grid-enterprise/dist/lib/exporter/files/xml/styles/alignment";
 
 class LineGraph extends React.Component {
     constructor(props) {
@@ -42,10 +41,18 @@ class LineGraph extends React.Component {
                     style: 'full'
                 },
                 title: {
-                    text: "7-Day Volume Chart for " + this.props.isQuoteVolume ? this.props.symbol : this.props.symbol,
+                    text: "7-Day Volume Chart for " + this.props.coin,
                     style: {
                         fontSize: "32px"
                     },
+                    align: "middle"
+                },
+                subtitle: {
+                    text: "(Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin) + ")",
+                    style: {
+                        fontSize: "16px"
+                    },
+                    offsetY: 40,
                     align: "middle"
                 },
                 xaxis: {
@@ -89,7 +96,7 @@ class LineGraph extends React.Component {
                             }
                         },
                         title: {
-                            text: "Volume in " + (this.props.isQuoteVolume ? this.props.quoteSymbol : this.props.symbol),
+                            text: "Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin),
                             rotate: 90,
                             offsetX: -7,
                             offsetY: 0,
@@ -118,7 +125,7 @@ class LineGraph extends React.Component {
                     },
                     y: {
                         title: {
-                            formatter: () => this.props.quoteSymbol ? this.props.quoteSymbol : this.props.symbol,
+                            formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
                         }
                     }
                 }
@@ -146,9 +153,6 @@ class LineGraph extends React.Component {
                     let date = new Date(data.closeTime);
                     date.setMinutes(date.getMinutes() + 1);
                     let vol = 0;
-                    console.log("line graph isQuoteVolume: " + this.props.isQuoteVolume);
-                    console.log("QuoteVolume: " + data.quoteAssetVolume);
-                    console.log("Volume: " + data.volume);
                     if (this.props.isQuoteVolume) {
                         vol = Number(data.quoteAssetVolume);
                     } else {
@@ -190,7 +194,8 @@ class LineGraph extends React.Component {
 
 LineGraph.propTypes = {
     symbol: PropTypes.string,
-    quoteSymbol: PropTypes.string,
+    quote: PropTypes.string,
+    coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
     hr: PropTypes.number,
 };

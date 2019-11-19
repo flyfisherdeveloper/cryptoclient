@@ -4,16 +4,8 @@ import LineGraph from "./LineGraph";
 
 class ChartModal extends React.Component {
 
-    onClick4Hr() {
-        this.lineGraph.updateHourChart(4);
-    };
-
-    onClick12Hr() {
-        this.lineGraph.updateHourChart(12);
-    };
-
-    onClick24Hr() {
-        this.lineGraph.updateHourChart(24);
+    onButtonClick(params) {
+        this.lineGraph.updateHourChart(params);
     };
 
     render() {
@@ -52,19 +44,24 @@ class ChartModal extends React.Component {
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
                         <button
+                            id="button1Hr"
+                            style={ButtonStyle}
+                            onClick={this.onButtonClick.bind(this, 1)}>1Hr
+                        </button>
+                        <button
                             id="button4Hr"
                             style={ButtonStyle}
-                            onClick={this.onClick4Hr.bind(this)}>4Hr
+                            onClick={this.onButtonClick.bind(this, 4)}>4Hr
                         </button>
                         <button
                             id="button12Hr"
                             style={ButtonStyle}
-                            onClick={this.onClick12Hr.bind(this)}>12Hr
+                            onClick={this.onButtonClick.bind(this, 12)}>12Hr
                         </button>
                         <button
                             id="button24Hr"
                             style={ButtonStyle}
-                            onClick={this.onClick24Hr.bind(this)}>24Hr
+                            onClick={this.onButtonClick.bind(this, 24)}>24Hr
                         </button>
                         <a id="close" href="#" onClick={this.props.onClose}/>
                     </div>
@@ -72,7 +69,8 @@ class ChartModal extends React.Component {
                 </div>
                 <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
                            symbol={this.props.symbol}
-                           quoteSymbol={this.props.quote}
+                           quote={this.props.quote}
+                           coin={this.props.coin}
                            isQuoteVolume={this.props.isQuoteVolume}
                 />
             </div>
@@ -85,6 +83,7 @@ ChartModal.propTypes = {
     isOpen: PropTypes.bool,
     symbol: PropTypes.string,
     quote: PropTypes.string,
+    coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool
 };
 export default ChartModal;
