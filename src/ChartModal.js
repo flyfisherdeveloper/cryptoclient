@@ -45,7 +45,7 @@ class ChartModal extends React.Component {
             position: "fixed",
             width: 1100,
             height: 600,
-            top: 0,
+            top: 100,
             right: 0,
             bottom: 0,
             left: 200
@@ -57,16 +57,15 @@ class ChartModal extends React.Component {
         };
         const HeaderStyle = {
             height: 29,
-            width: "100%"
+            width: "100%",
+            textAlign: "left"
         };
-
         const ButtonStyle = {
             color: "#fff",
             background: "#008FFB",
             border: "1px solid blue",
             borderBottom: "2px solid blue"
         };
-
         const HighLightButtonStyle = {
             color: "#fff",
             background: "#008FFB",

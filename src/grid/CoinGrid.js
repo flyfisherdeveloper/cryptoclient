@@ -20,6 +20,8 @@ class CoinGrid extends Component {
                 headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true, filter: true,
                 cellStyle: (params) => this.getCellFontColor(params),
             }, {
+                headerName: "Price", field: "lastPrice", sortable: true, filter: true,
+            }, {
                 headerName: "High Price", field: "highPrice", sortable: true, filter: true,
             }, {
                 headerName: "Low Price", field: "lowPrice", sortable: true, filter: true,
@@ -138,28 +140,31 @@ class CoinGrid extends Component {
 
     render() {
         return (
-            <div
-                className="ag-theme-balham-dark"
-                style={{width: 1500, height: 800}}>
-                <AgGridReact
-                    reactNext={true}
-                    rowSelection={"single"}
-                    enableSorting={true}
-                    enableFilter={true}
-                    gridOptions={this.state.gridOptions}
-                    pagination={true}
-                    columnDefs={this.state.columnDefs}
-                    rowData={this.state.rowData}
-                    onCellClicked={this.onCellClicked.bind(this)}
-                >
-                </AgGridReact>
-                <ChartModal isOpen={this.state.isOpen}
-                            symbol={this.state.symbol}
-                            quote={this.state.quote}
-                            coin={this.state.coin}
-                            isQuoteVolume={this.state.isQuoteVolume}
-                            onClose={this.toggleModal}>
-                </ChartModal>
+            <div className="header">
+                <h1>Crypto Scanner</h1>
+                <div
+                    className="ag-theme-balham-dark"
+                    style={{width: 1800, height: 800}}>
+                    <AgGridReact
+                        reactNext={true}
+                        rowSelection={"single"}
+                        enableSorting={true}
+                        enableFilter={true}
+                        gridOptions={this.state.gridOptions}
+                        pagination={false}
+                        columnDefs={this.state.columnDefs}
+                        rowData={this.state.rowData}
+                        onCellClicked={this.onCellClicked.bind(this)}
+                    >
+                    </AgGridReact>
+                    <ChartModal isOpen={this.state.isOpen}
+                                symbol={this.state.symbol}
+                                quote={this.state.quote}
+                                coin={this.state.coin}
+                                isQuoteVolume={this.state.isQuoteVolume}
+                                onClose={this.toggleModal}>
+                    </ChartModal>
+                </div>
             </div>
         );
     }

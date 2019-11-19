@@ -1,3 +1,16 @@
+/* Header/logo Title */
+.header {
+    padding: 40px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.57);
+    color: white;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+
 a {
     color: #ff9e18;
     font-size: 15px;
@@ -6,13 +19,6 @@ a {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     text-decoration: none;
-}
-
-#panel {
-    width: 100px;
-    height: 100px;
-    background: white;
-    border: 2px solid black;
 }
 
 #close {
@@ -26,6 +32,8 @@ a {
 .ag-header-cell-label {
     font-weight: bold;
     font-size: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 button {
