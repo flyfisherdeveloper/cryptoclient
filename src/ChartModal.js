@@ -4,9 +4,37 @@ import LineGraph from "./LineGraph";
 
 class ChartModal extends React.Component {
 
-    onButtonClick(params) {
-        this.lineGraph.updateHourChart(params);
+    onButtonClick(buttonNumber) {
+        this.resetButtonBorder(buttonNumber)
+        this.lineGraph.updateHourChart(buttonNumber);
     };
+
+    resetButtonBorder(buttonNumber) {
+        let outLine = "3px solid blue";
+        let normal = "1px solid blue";
+
+        if (buttonNumber === 1) {
+            this.button1Hr.style.border = outLine;
+            this.button4Hr.style.border = normal;
+            this.button12Hr.style.border = normal;
+            this.button24Hr.style.border = normal;
+        } else if (buttonNumber === 4) {
+            this.button4Hr.style.border = outLine;
+            this.button1Hr.style.border = normal;
+            this.button12Hr.style.border = normal;
+            this.button24Hr.style.border = normal;
+        } else if (buttonNumber === 12) {
+            this.button12Hr.style.border = outLine;
+            this.button1Hr.style.border = normal;
+            this.button4Hr.style.border = normal;
+            this.button24Hr.style.border = normal;
+        } else if (buttonNumber === 24) {
+            this.button24Hr.style.border = outLine;
+            this.button1Hr.style.border = normal;
+            this.button4Hr.style.border = normal;
+            this.button12Hr.style.border = normal;
+        }
+    }
 
     render() {
         if (!this.props.isOpen) {
@@ -39,29 +67,35 @@ class ChartModal extends React.Component {
             borderBottom: "2px solid blue"
         };
 
+        const HighLightButtonStyle = {
+            color: "#fff",
+            background: "#008FFB",
+            border: "3px solid blue",
+        };
+
         return (
             <div style={BackgroundStyle}>
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
-                        <button
-                            id="button1Hr"
-                            style={ButtonStyle}
-                            onClick={this.onButtonClick.bind(this, 1)}>1Hr
+                        <button ref={button1Hr => this.button1Hr = button1Hr}
+                                id="button1Hr"
+                                style={ButtonStyle}
+                                onClick={this.onButtonClick.bind(this, 1)}>1Hr
                         </button>
-                        <button
-                            id="button4Hr"
-                            style={ButtonStyle}
-                            onClick={this.onButtonClick.bind(this, 4)}>4Hr
+                        <button ref={button4Hr => this.button4Hr = button4Hr}
+                                id="button4Hr"
+                                style={HighLightButtonStyle}
+                                onClick={this.onButtonClick.bind(this, 4)}>4Hr
                         </button>
-                        <button
-                            id="button12Hr"
-                            style={ButtonStyle}
-                            onClick={this.onButtonClick.bind(this, 12)}>12Hr
+                        <button ref={button12Hr => this.button12Hr = button12Hr}
+                                id="button12Hr"
+                                style={ButtonStyle}
+                                onClick={this.onButtonClick.bind(this, 12)}>12Hr
                         </button>
-                        <button
-                            id="button24Hr"
-                            style={ButtonStyle}
-                            onClick={this.onButtonClick.bind(this, 24)}>24Hr
+                        <button ref={button24Hr => this.button24Hr = button24Hr}
+                                id="button24Hr"
+                                style={ButtonStyle}
+                                onClick={this.onButtonClick.bind(this, 24)}>24Hr
                         </button>
                         <a id="close" href="#" onClick={this.props.onClose}/>
                     </div>

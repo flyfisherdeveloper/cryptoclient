@@ -48,7 +48,7 @@ class LineGraph extends React.Component {
                     align: "middle"
                 },
                 subtitle: {
-                    text: "(Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin) + ")",
+                    text: "(Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin)  + ")",
                     style: {
                         fontSize: "16px"
                     },
@@ -197,6 +197,5 @@ LineGraph.propTypes = {
     quote: PropTypes.string,
     coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
-    hr: PropTypes.number,
 };
 export default LineGraph;
