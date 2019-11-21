@@ -10,29 +10,30 @@ class CoinGrid extends Component {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = {
-            columnDefs: [{
-                headerName: "Coin Pair", field: "symbol", sortable: true,
-                cellRenderer: (params) => this.getLink(params),
-            }, {
-                headerName: "24Hr Price Change", field: "priceChange", sortable: true,
-                cellStyle: (params) => this.getCellFontColor(params),
-            }, {
-                headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
-                cellStyle: (params) => this.getCellFontColor(params),
-            }, {
-                headerName: "Price", field: "lastPrice", sortable: true,
-            }, {
-                headerName: "High Price", field: "highPrice", sortable: true,
-            }, {
-                headerName: "Low Price", field: "lowPrice", sortable: true,
-            }, {
-                headerName: "Volume", field: "volume", sortable: true,
-            }, {
-                headerName: "Quote Volume", field: "quoteVolume", sortable: true,
-            },
+            columnDefs: [
+                {
+                    headerName: "Coin Pair", field: "symbol", sortable: true,
+                    cellRenderer: (params) => this.getLink(params),
+                }, {
+                    headerName: "24Hr Price Change", field: "priceChange", sortable: true,
+                    cellStyle: (params) => this.getCellFontColor(params),
+                }, {
+                    headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
+                    cellStyle: (params) => this.getCellFontColor(params),
+                }, {
+                    headerName: "Price", field: "lastPrice", sortable: true,
+                }, {
+                    headerName: "High Price", field: "highPrice", sortable: true,
+                }, {
+                    headerName: "Low Price", field: "lowPrice", sortable: true,
+                }, {
+                    headerName: "Volume", field: "volume", sortable: true,
+                }, {
+                    headerName: "Quote Volume", field: "quoteVolume", sortable: true,
+                },
             ],
             gridOptions: {
-                rowHeight: 45,
+                rowHeight: 60,
                 rowStyle: {
                     fontWeight: "bold",
                     fontSize: "14px",
@@ -66,10 +67,12 @@ class CoinGrid extends Component {
         //then that link won't work here
         this.quote = this.getQuote(params.value);
         let start = this.getStartOfQuote(params.value);
-        let newStr = params.value.slice(0, start) + "_" + this.quote;
+        let coin = params.value.slice(0, start);
+        let newStr = coin + "_" + this.quote;
         let url = "https://www.binance.us/en/trade/" + newStr;
-        let link = "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
-        console.log(link);
+        let iconLink = "http://localhost:8080/api/v1/binance/icon/" + coin.toLowerCase();
+        let icon = "<img src = " + iconLink + " style='vertical-align: middle' alt=''/> ";
+        let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
         return link;
     }
 

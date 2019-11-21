@@ -65,6 +65,12 @@ a {
     justify-content: center;
 }
 
+.ag-row .ag-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 button {
     background: #fff;
     color: #222;
@@ -73,12 +79,14 @@ button {
     border-radius: 2px;
     padding: 4px 17px;
 }
+
 button.active {
     color: #fff;
     background: #008FFB;
     border: 1px solid blue;
     border-bottom: 2px solid blue;
 }
+
 button:focus {
     outline: 0;
 }
