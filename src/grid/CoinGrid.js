@@ -11,24 +11,24 @@ class CoinGrid extends Component {
         this.toggleModal = this.toggleModal.bind(this);
         this.state = {
             columnDefs: [{
-                headerName: "Coin Pair", field: "symbol", sortable: true, filter: true,
+                headerName: "Coin Pair", field: "symbol", sortable: true,
                 cellRenderer: (params) => this.getLink(params),
             }, {
-                headerName: "24Hr Price Change", field: "priceChange", sortable: true, filter: true,
+                headerName: "24Hr Price Change", field: "priceChange", sortable: true,
                 cellStyle: (params) => this.getCellFontColor(params),
             }, {
-                headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true, filter: true,
+                headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
                 cellStyle: (params) => this.getCellFontColor(params),
             }, {
-                headerName: "Price", field: "lastPrice", sortable: true, filter: true,
+                headerName: "Price", field: "lastPrice", sortable: true,
             }, {
-                headerName: "High Price", field: "highPrice", sortable: true, filter: true,
+                headerName: "High Price", field: "highPrice", sortable: true,
             }, {
-                headerName: "Low Price", field: "lowPrice", sortable: true, filter: true,
+                headerName: "Low Price", field: "lowPrice", sortable: true,
             }, {
-                headerName: "Volume", field: "volume", sortable: true, filter: true,
+                headerName: "Volume", field: "volume", sortable: true,
             }, {
-                headerName: "Quote Volume", field: "quoteVolume", sortable: true, filter: true,
+                headerName: "Quote Volume", field: "quoteVolume", sortable: true,
             },
             ],
             gridOptions: {
@@ -68,7 +68,9 @@ class CoinGrid extends Component {
         let start = this.getStartOfQuote(params.value);
         let newStr = params.value.slice(0, start) + "_" + this.quote;
         let url = "https://www.binance.us/en/trade/" + newStr;
-        return "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
+        let link = "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
+        console.log(link);
+        return link;
     }
 
     getQuoteOffset(params) {
@@ -141,7 +143,6 @@ class CoinGrid extends Component {
     render() {
         return (
             <div className="header">
-                <h1>Crypto Scanner</h1>
                 <div
                     className="ag-theme-balham-dark"
                     style={{width: 1800, height: 800}}>

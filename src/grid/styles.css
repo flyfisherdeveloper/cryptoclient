@@ -1,14 +1,43 @@
-/* Header/logo Title */
+/* Header/logo Title
 .header {
     padding: 40px;
     text-align: center;
     background: rgba(0, 0, 0, 0.57);
     color: white;
 }
+ */
+
+.header {
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.57);
+    padding: 40px;
+}
+
+/*
+.header a {
+    float: left;
+    color: black;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
+}
+
+ */
+
+.icon {
+    height: 20px;
+    width: 20px;
+    display: block;
+    /* Other styles here */
+}
 
 .header h1 {
+    text-align: left;
     font-size: 24px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+    font-family: sans-serif
 }
 
 a {

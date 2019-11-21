@@ -3,12 +3,19 @@ import './App.css';
 import CoinGrid from "./grid/CoinGrid";
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import logo from './increasing.png';
 
 class App extends Component {
 
     render() {
         return (
-            <CoinGrid/>
+            <div className="App">
+                <img src={logo} className="App-logo" alt="Crypto USA"/>
+                <div className="App-header">
+                    <a href="#home" className="App-link">Crypto USA</a>
+                </div>
+                <CoinGrid/>
+            </div>
         );
     }
 }
