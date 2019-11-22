@@ -46,7 +46,9 @@ class CoinGrid extends Component {
             symbol: "", //i.e. LTCUSDT
             quote: "",  //i.e. USDT
             coin: "",   //i.e. LTC
-            isQuoteVolume: false
+            price: 0.0,
+            isQuoteVolume: false,
+            isPrice: false
         }
     }
 
@@ -121,18 +123,39 @@ class CoinGrid extends Component {
     onCellClicked(event) {
         let isVolume = event.column.getColId() === "volume";
         let isQuoteVolume = event.column.getColId() === "quoteVolume";
+        let isPrice = event.column.getColId() === "lastPrice";
         if (isVolume || isQuoteVolume) {
-            if (isVolume) {
-                this.setState({isQuoteVolume: false});
-            } else {
-                this.setState({isQuoteVolume: true});
-            }
-            let selectedSymbol = event.api.getSelectedRows()[0].symbol;
-            this.setState({symbol: selectedSymbol});
-            this.setState({quote: this.getQuote(selectedSymbol)});
-            this.setState({coin: this.getCoin(selectedSymbol)});
-            this.toggleModal();
+            this.doVolume(event, isVolume);
+        } else if (isPrice) {
+            this.doPrice(event);
         }
+    }
+
+    doVolume(event, isVolume) {
+        this.setState({isPrice: false});
+        if (isVolume) {
+            this.setState({isQuoteVolume: false});
+        } else {
+            this.setState({isQuoteVolume: true});
+        }
+        let selectedSymbol = event.api.getSelectedRows()[0].symbol;
+        this.setState({symbol: selectedSymbol});
+        this.setState({quote: this.getQuote(selectedSymbol)});
+        this.setState({coin: this.getCoin(selectedSymbol)});
+        this.toggleModal();
+    }
+
+    doPrice(event) {
+        this.setState({isPrice: true});
+        this.setState({isQuoteVolume: false});
+        let selectedSymbol = event.api.getSelectedRows()[0].symbol;
+        let selectedPrice = event.api.getSelectedRows()[0].lastPrice;
+        let thePrice = Number(selectedPrice);
+        this.setState({symbol: selectedSymbol});
+        this.setState({quote: this.getQuote(selectedSymbol)});
+        this.setState({coin: this.getCoin(selectedSymbol)});
+        this.setState({price: thePrice});
+        this.toggleModal();
     }
 
     toggleModal() {
@@ -166,6 +189,7 @@ class CoinGrid extends Component {
                                 quote={this.state.quote}
                                 coin={this.state.coin}
                                 isQuoteVolume={this.state.isQuoteVolume}
+                                isPrice={this.state.isPrice}
                                 onClose={this.toggleModal}>
                     </ChartModal>
                 </div>

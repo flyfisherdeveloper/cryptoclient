@@ -105,6 +105,7 @@ class ChartModal extends React.Component {
                            quote={this.props.quote}
                            coin={this.props.coin}
                            isQuoteVolume={this.props.isQuoteVolume}
+                           isPrice={this.props.isPrice}
                 />
             </div>
         );
@@ -117,6 +118,7 @@ ChartModal.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool
+    isQuoteVolume: PropTypes.bool,
+    isPrice: PropTypes.bool
 };
 export default ChartModal;

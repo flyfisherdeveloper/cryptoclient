@@ -9,7 +9,7 @@ class LineGraph extends React.Component {
             hr: 4,
             options: {
                 chart: {
-                    group: "VolumeCharts",
+                    group: "DataCharts",
                     type: 'area',
                     animations: {
                         enabled: true
@@ -31,7 +31,7 @@ class LineGraph extends React.Component {
                         },
                         autoSelected: 'zoom'
                     },
-                    background: "#fff"
+                    background: "#fff",
                 },
                 dataLabels: {
                     enabled: false
@@ -41,14 +41,14 @@ class LineGraph extends React.Component {
                     style: 'full'
                 },
                 title: {
-                    text: "7-Day Volume Chart for " + this.props.coin,
+                    text: "7-Day " + this.getPriceOrVolumeString() + " Chart for " + this.props.coin,
                     style: {
                         fontSize: "32px"
                     },
                     align: "middle"
                 },
                 subtitle: {
-                    text: "(Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin)  + ")",
+                    text: this.getSubtitleText(),
                     style: {
                         fontSize: "16px"
                     },
@@ -96,7 +96,7 @@ class LineGraph extends React.Component {
                             }
                         },
                         title: {
-                            text: "Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin),
+                            text: this.getYAxisText(),
                             rotate: 90,
                             offsetX: -7,
                             offsetY: 0,
@@ -139,26 +139,47 @@ class LineGraph extends React.Component {
         };
     }
 
+    getPriceOrVolumeString() {
+        return (this.props.isPrice ? "Price" : "Volume");
+    }
+
+    getYAxisText() {
+        if (this.props.isPrice) {
+            return "Price in " + this.props.quote;
+        }
+        return "Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin);
+    }
+
+    getSubtitleText() {
+        if (this.props.isPrice) {
+            return "(Price in " + this.props.quote + ")";
+        }
+        return "(" + this.getYAxisText() + ")";
+    }
+
     updateHourChart(params) {
         this.setState({hr: params}, () => {
-            this.retrieveData();
+            this.retrieveChartData();
         });
     }
 
-    retrieveData() {
-        fetch('http://localhost:8080/api/v1/binance/7DayTicker/' + this.props.symbol + "/" + this.state.hr + "h")
+    retrieveChartData() {
+        const url = "http://localhost:8080/api/v1/binance/7DayTicker/";
+        fetch(url + this.props.symbol + "/" + this.state.hr + "h")
             .then(result => result.json())
             .then((json) => {
                 let info = json.map((data) => {
                     let date = new Date(data.closeTime);
                     date.setMinutes(date.getMinutes() + 1);
-                    let vol = 0;
+                    let value = 0.0;
                     if (this.props.isQuoteVolume) {
-                        vol = Number(data.quoteAssetVolume);
+                        value = data.quoteAssetVolume.toPrecision(2);
+                    } else if (this.props.isPrice) {
+                        value = data.close;
                     } else {
-                        vol = Number(data.volume);
+                        value = data.volume.toPrecision(2);
                     }
-                    return [date.toLocaleString(), vol.toPrecision(2)];
+                    return [date.toLocaleString(), value];
                 });
                 let seriesData = [{
                     data: info,
@@ -175,7 +196,7 @@ class LineGraph extends React.Component {
     }
 
     componentDidMount() {
-        this.retrieveData();
+        this.retrieveChartData();
     }
 
     render() {
@@ -188,7 +209,7 @@ class LineGraph extends React.Component {
                     width="100%"
                 />
             </div>
-        );
+    );
     }
 }
 
@@ -197,5 +218,6 @@ LineGraph.propTypes = {
     quote: PropTypes.string,
     coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
+    isPrice: PropTypes.bool,
 };
 export default LineGraph;
