@@ -6,7 +6,9 @@ class LineGraph extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            hr: 4,
+            hours: 4,
+            days: 7,
+            months: 0,
             options: {
                 chart: {
                     group: "DataCharts",
@@ -157,15 +159,18 @@ class LineGraph extends React.Component {
         return "(" + this.getYAxisText() + ")";
     }
 
-    updateHourChart(params) {
-        this.setState({hr: params}, () => {
+    updateChart(hours, days, months) {
+        console.log("hours: " + hours + " days " + days + " months: " + months);
+        this.setState({hours: hours, days: days, months: months}, () => {
             this.retrieveChartData();
         });
     }
 
     retrieveChartData() {
-        const url = "http://localhost:8080/api/v1/binance/7DayTicker/";
-        fetch(url + this.props.symbol + "/" + this.state.hr + "h")
+        const url = "http://localhost:8080/api/v1/binance/DayTicker/";
+        console.log("retrieve: hours: " + this.state.hours + " days: " + this.state.days + " months: " + this.state.months);
+        let daysOrMonths = (this.state.months === 0 ? this.state.days + "d" : this.state.months + "M");
+        fetch(url + this.props.symbol + "/" + this.state.hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
                 let info = json.map((data) => {

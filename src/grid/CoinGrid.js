@@ -21,17 +21,20 @@ class CoinGrid extends Component {
                     headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
                     cellStyle: (params) => this.getCellFontColor(params),
                 }, {
-                    headerName: "Price", field: "lastPrice", sortable: true,
+                    headerName: "Current Price", field: "lastPrice", sortable: true,
                 }, {
-                    headerName: "High Price", field: "highPrice", sortable: true,
+                    headerName: "24Hr High Price", field: "highPrice", sortable: true,
                 }, {
-                    headerName: "Low Price", field: "lowPrice", sortable: true,
+                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
                 }, {
-                    headerName: "Volume", field: "volume", sortable: true,
+                    headerName: "24Hr Volume", field: "volume", sortable: true,
                 }, {
-                    headerName: "Quote Volume", field: "quoteVolume", sortable: true,
+                    headerName: "24Hr Quote Volume", field: "quoteVolume", sortable: true,
                 },
             ],
+            defaultColDef: {
+                resizable: true
+            },
             gridOptions: {
                 rowHeight: 60,
                 rowStyle: {
@@ -71,8 +74,10 @@ class CoinGrid extends Component {
         let start = this.getStartOfQuote(params.value);
         let coin = params.value.slice(0, start);
         let newStr = coin + "_" + this.quote;
-        let url = "https://www.binance.us/en/trade/" + newStr;
-        let iconLink = "http://localhost:8080/api/v1/binance/icon/" + coin.toLowerCase();
+        const tradeUrl = "https://www.binance.us/en/trade/";
+        let url = tradeUrl + newStr;
+        const iconUrl = "http://localhost:8080/api/v1/binance/icon/";
+        let iconLink = iconUrl + coin.toLowerCase();
         let icon = "<img src = " + iconLink + " style='vertical-align: middle' alt=''/> ";
         let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
         return link;
@@ -104,7 +109,8 @@ class CoinGrid extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        fetch('http://localhost:8080/api/v1/binance/24HourTicker')
+        const url = 'http://localhost:8080/api/v1/binance/24HourTicker';
+        fetch(url)
             .then(result => {
                 return result.json();
             }).then(data => {
@@ -129,6 +135,18 @@ class CoinGrid extends Component {
         } else if (isPrice) {
             this.doPrice(event);
         }
+    }
+
+    onCellMouseOver(event) {
+        let isVolume = event.column.getColId() === "volume";
+        let isQuoteVolume = event.column.getColId() === "quoteVolume";
+        let isPrice = event.column.getColId() === "lastPrice";
+        if (isVolume || isQuoteVolume || isPrice) {
+        }
+    }
+
+    onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 
     doVolume(event, isVolume) {
@@ -171,17 +189,19 @@ class CoinGrid extends Component {
             <div className="header">
                 <div
                     className="ag-theme-balham-dark"
-                    style={{width: 1800, height: 800}}>
+                    style={{width: 1500, height: 2800}}>
                     <AgGridReact
                         reactNext={true}
                         rowSelection={"single"}
                         enableSorting={true}
-                        enableFilter={true}
                         gridOptions={this.state.gridOptions}
                         pagination={false}
                         columnDefs={this.state.columnDefs}
+                        defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
                         onCellClicked={this.onCellClicked.bind(this)}
+                        onCellMouseOver={this.onCellMouseOver.bind(this)}
+                        onFirstDataRendered={this.onFirstDataRendered.bind(this)}
                     >
                     </AgGridReact>
                     <ChartModal isOpen={this.state.isOpen}

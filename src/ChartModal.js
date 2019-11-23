@@ -4,36 +4,37 @@ import LineGraph from "./LineGraph";
 
 class ChartModal extends React.Component {
 
-    onButtonClick(buttonNumber) {
-        this.resetButtonBorder(buttonNumber)
-        this.lineGraph.updateHourChart(buttonNumber);
-    };
-
-    resetButtonBorder(buttonNumber) {
-        let outLine = "3px solid blue";
-        let normal = "1px solid blue";
-
-        if (buttonNumber === 1) {
-            this.button1Hr.style.border = outLine;
-            this.button4Hr.style.border = normal;
-            this.button12Hr.style.border = normal;
-            this.button24Hr.style.border = normal;
-        } else if (buttonNumber === 4) {
-            this.button4Hr.style.border = outLine;
-            this.button1Hr.style.border = normal;
-            this.button12Hr.style.border = normal;
-            this.button24Hr.style.border = normal;
-        } else if (buttonNumber === 12) {
-            this.button12Hr.style.border = outLine;
-            this.button1Hr.style.border = normal;
-            this.button4Hr.style.border = normal;
-            this.button24Hr.style.border = normal;
-        } else if (buttonNumber === 24) {
-            this.button24Hr.style.border = outLine;
-            this.button1Hr.style.border = normal;
-            this.button4Hr.style.border = normal;
-            this.button12Hr.style.border = normal;
+    constructor(props) {
+        super(props);
+        this.state = {
+            hours: 4,
+            days: 7,
+            months: 0,
+            dayMonthStr: "7days"
         }
+    }
+
+    onHourSelectionChange(event) {
+        let value = event.target.value;
+        this.setState({hours: value});
+        this.lineGraph.updateChart(value, this.state.days, this.state.months);
+    }
+
+    onDaySelectionChange(event) {
+        let value = event.target.value;
+        let dayValue = this.state.days;
+        let monthValue = this.state.months;
+
+        if (value.includes("days")) {
+            dayValue = Number(value.charAt(0));
+            monthValue = 0;
+        } else {
+            monthValue = Number(value.charAt(0));
+            dayValue = 0;
+        }
+        let dayMonthStr = (monthValue > 0 ? monthValue.toString() + "months" : dayValue.toString() + "days");
+        this.setState({days: dayValue, dayMonthStr: dayMonthStr, months: monthValue});
+        this.lineGraph.updateChart(this.state.hours, dayValue, monthValue);
     }
 
     render() {
@@ -60,42 +61,57 @@ class ChartModal extends React.Component {
             width: "100%",
             textAlign: "left"
         };
-        const ButtonStyle = {
+        const OptionStyle = {
+            height: 35,
+            width: 100,
             color: "#fff",
             background: "#008FFB",
             border: "1px solid blue",
-            borderBottom: "2px solid blue"
-        };
-        const HighLightButtonStyle = {
-            color: "#fff",
-            background: "#008FFB",
-            border: "3px solid blue",
         };
 
+        console.log("render: " + this.state.dayMonthStr + " hours: " + this.state.hours + " days: " + this.state.days + " months: " + this.state.months);
         return (
             <div style={BackgroundStyle}>
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
-                        <button ref={button1Hr => this.button1Hr = button1Hr}
-                                id="button1Hr"
-                                style={ButtonStyle}
-                                onClick={this.onButtonClick.bind(this, 1)}>1Hr
-                        </button>
-                        <button ref={button4Hr => this.button4Hr = button4Hr}
-                                id="button4Hr"
-                                style={HighLightButtonStyle}
-                                onClick={this.onButtonClick.bind(this, 4)}>4Hr
-                        </button>
-                        <button ref={button12Hr => this.button12Hr = button12Hr}
-                                id="button12Hr"
-                                style={ButtonStyle}
-                                onClick={this.onButtonClick.bind(this, 12)}>12Hr
-                        </button>
-                        <button ref={button24Hr => this.button24Hr = button24Hr}
-                                id="button24Hr"
-                                style={ButtonStyle}
-                                onClick={this.onButtonClick.bind(this, 24)}>24Hr
-                        </button>
+                        <select
+                            style={OptionStyle}
+                            value={this.state.hours}
+                            onChange={this.onHourSelectionChange.bind(this)}>
+                            <option
+                                style={OptionStyle}
+                                value="1">1 Hour
+                            </option>
+                            <option
+                                style={OptionStyle}
+                                value="4">4 Hour
+                            </option>
+                            <option
+                                style={OptionStyle}
+                                value="12">12 Hour
+                            </option>
+                        </select>
+                        <select
+                            style={OptionStyle}
+                            value={this.state.dayMonthStr}
+                            onChange={this.onDaySelectionChange.bind(this)}>
+                            <option
+                                style={OptionStyle}
+                                value="1days">1 Day
+                            </option>
+                            <option
+                                style={OptionStyle}
+                                value="3days">3 Days
+                            </option>
+                            <option
+                                style={OptionStyle}
+                                value="7days">7 Days
+                            </option>
+                            <option
+                                style={OptionStyle}
+                                value="1months">1 Month
+                            </option>
+                        </select>
                         <a id="close" href="#" onClick={this.props.onClose}/>
                     </div>
                     {this.props.children}
