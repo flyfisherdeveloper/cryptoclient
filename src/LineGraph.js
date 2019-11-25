@@ -43,7 +43,7 @@ class LineGraph extends React.Component {
                     style: 'full'
                 },
                 title: {
-                    text: "7-Day " + this.getPriceOrVolumeString() + " Chart for " + this.props.coin,
+                    text: this.getTitle(),
                     style: {
                         fontSize: "32px"
                     },
@@ -141,6 +141,10 @@ class LineGraph extends React.Component {
         };
     }
 
+    getTitle() {
+        return this.getPriceOrVolumeString() + " Chart for " + this.props.coin;
+    }
+
     getPriceOrVolumeString() {
         return (this.props.isPrice ? "Price" : "Volume");
     }
@@ -160,7 +164,6 @@ class LineGraph extends React.Component {
     }
 
     updateChart(hours, days, months) {
-        console.log("hours: " + hours + " days " + days + " months: " + months);
         this.setState({hours: hours, days: days, months: months}, () => {
             this.retrieveChartData();
         });
@@ -168,7 +171,6 @@ class LineGraph extends React.Component {
 
     retrieveChartData() {
         const url = "http://localhost:8080/api/v1/binance/DayTicker/";
-        console.log("retrieve: hours: " + this.state.hours + " days: " + this.state.days + " months: " + this.state.months);
         let daysOrMonths = (this.state.months === 0 ? this.state.days + "d" : this.state.months + "M");
         fetch(url + this.props.symbol + "/" + this.state.hours + "h/" + daysOrMonths)
             .then(result => result.json())
@@ -224,5 +226,8 @@ LineGraph.propTypes = {
     coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool,
+    hours: PropTypes.number,
+    days: PropTypes.number,
+    months: PropTypes.number,
 };
 export default LineGraph;

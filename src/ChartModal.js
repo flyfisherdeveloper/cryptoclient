@@ -9,32 +9,74 @@ class ChartModal extends React.Component {
         this.state = {
             hours: 4,
             days: 7,
-            months: 0,
-            dayMonthStr: "7days"
+            months: 0
         }
     }
 
-    onHourSelectionChange(event) {
-        let value = event.target.value;
-        this.setState({hours: value});
-        this.lineGraph.updateChart(value, this.state.days, this.state.months);
+    onHourButtonClick(buttonNumber) {
+        this.resetHourButtonBorder(buttonNumber);
+        this.setState({hours: buttonNumber});
+        this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
     }
 
-    onDaySelectionChange(event) {
-        let value = event.target.value;
-        let dayValue = this.state.days;
-        let monthValue = this.state.months;
+    onDayButtonClick(buttonNumber) {
+        this.resetDayButtonBorder(buttonNumber);
+        let months = 0;
+        let days = buttonNumber;
 
-        if (value.includes("days")) {
-            dayValue = Number(value.charAt(0));
-            monthValue = 0;
-        } else {
-            monthValue = Number(value.charAt(0));
-            dayValue = 0;
+        if (buttonNumber === 30) {
+            months = 1;
+            days = 0;
         }
-        let dayMonthStr = (monthValue > 0 ? monthValue.toString() + "months" : dayValue.toString() + "days");
-        this.setState({days: dayValue, dayMonthStr: dayMonthStr, months: monthValue});
-        this.lineGraph.updateChart(this.state.hours, dayValue, monthValue);
+        this.setState({days: days, months: months}, () => {
+            this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
+        });
+    }
+
+    resetHourButtonBorder(buttonNumber) {
+        let outLine = "3px solid blue";
+        let normal = "1px solid blue";
+
+        if (buttonNumber === 1) {
+            this.button1Hr.style.border = outLine;
+            this.button4Hr.style.border = normal;
+            this.button12Hr.style.border = normal;
+        } else if (buttonNumber === 4) {
+            this.button4Hr.style.border = outLine;
+            this.button1Hr.style.border = normal;
+            this.button12Hr.style.border = normal;
+        } else if (buttonNumber === 12) {
+            this.button12Hr.style.border = outLine;
+            this.button1Hr.style.border = normal;
+            this.button4Hr.style.border = normal;
+        }
+    }
+
+    resetDayButtonBorder(buttonNumber) {
+        let outLine = "3px solid blue";
+        let normal = "1px solid blue";
+
+        if (buttonNumber === 1) {
+            this.button1Day.style.border = outLine;
+            this.button3Day.style.border = normal;
+            this.button7Day.style.border = normal;
+            this.button1Month.style.border = normal;
+        } else if (buttonNumber === 3) {
+            this.button3Day.style.border = outLine;
+            this.button1Day.style.border = normal;
+            this.button7Day.style.border = normal;
+            this.button1Month.style.border = normal;
+        } else if (buttonNumber === 7) {
+            this.button7Day.style.border = outLine;
+            this.button1Day.style.border = normal;
+            this.button3Day.style.border = normal;
+            this.button1Month.style.border = normal;
+        } else if (buttonNumber === 30) {
+            this.button1Month.style.border = outLine;
+            this.button1Day.style.border = normal;
+            this.button3Day.style.border = normal;
+            this.button7Day.style.border = normal;
+        }
     }
 
     render() {
@@ -61,57 +103,74 @@ class ChartModal extends React.Component {
             width: "100%",
             textAlign: "left"
         };
-        const OptionStyle = {
-            height: 35,
-            width: 100,
+        const ButtonStyle = {
             color: "#fff",
             background: "#008FFB",
             border: "1px solid blue",
+            borderBottom: "2px solid blue"
+        };
+        const HighLightButtonStyle = {
+            color: "#fff",
+            background: "#008FFB",
+            border: "3px solid blue",
+        };
+        const HoursLabelStyle = {
+            marginRight: 10,
+            marginTop: 100,
+            color: "#000000",
+            fontSize: 24,
+        };
+        const DaysLabelStyle = {
+            marginLeft: 40,
+            marginRight: 10,
+            marginTop: 100,
+            color: "#000000",
+            fontSize: 24,
         };
 
-        console.log("render: " + this.state.dayMonthStr + " hours: " + this.state.hours + " days: " + this.state.days + " months: " + this.state.months);
         return (
             <div style={BackgroundStyle}>
                 <div style={ModalStyle}>
                     <div style={HeaderStyle}>
-                        <select
-                            style={OptionStyle}
-                            value={this.state.hours}
-                            onChange={this.onHourSelectionChange.bind(this)}>
-                            <option
-                                style={OptionStyle}
-                                value="1">1 Hour
-                            </option>
-                            <option
-                                style={OptionStyle}
-                                value="4">4 Hour
-                            </option>
-                            <option
-                                style={OptionStyle}
-                                value="12">12 Hour
-                            </option>
-                        </select>
-                        <select
-                            style={OptionStyle}
-                            value={this.state.dayMonthStr}
-                            onChange={this.onDaySelectionChange.bind(this)}>
-                            <option
-                                style={OptionStyle}
-                                value="1days">1 Day
-                            </option>
-                            <option
-                                style={OptionStyle}
-                                value="3days">3 Days
-                            </option>
-                            <option
-                                style={OptionStyle}
-                                value="7days">7 Days
-                            </option>
-                            <option
-                                style={OptionStyle}
-                                value="1months">1 Month
-                            </option>
-                        </select>
+                        <label style={HoursLabelStyle}>Hours:
+                        </label>
+                        <button ref={button1Hr => this.button1Hr = button1Hr}
+                                id="button1Hr"
+                                style={ButtonStyle}
+                                onClick={this.onHourButtonClick.bind(this, 1)}>1Hr
+                        </button>
+                        <button ref={button4Hr => this.button4Hr = button4Hr}
+                                id="button4Hr"
+                                style={HighLightButtonStyle}
+                                onClick={this.onHourButtonClick.bind(this, 4)}>4Hr
+                        </button>
+                        <button ref={button12Hr => this.button12Hr = button12Hr}
+                                id="button12Hr"
+                                style={ButtonStyle}
+                                onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
+                        </button>
+                        <label style={DaysLabelStyle}>Days:
+                        </label>
+                        <button ref={button1Day => this.button1Day = button1Day}
+                                id="button1Day"
+                                style={ButtonStyle}
+                                onClick={this.onDayButtonClick.bind(this, 1)}>1 Day
+                        </button>
+                        <button ref={button3Day => this.button3Day = button3Day}
+                                id="button3Day"
+                                style={ButtonStyle}
+                                onClick={this.onDayButtonClick.bind(this, 3)}>3 Days
+                        </button>
+                        <button ref={button7Day => this.button7Day = button7Day}
+                                id="button7Day"
+                                style={HighLightButtonStyle}
+                                onClick={this.onDayButtonClick.bind(this, 7)}>7 Days
+                        </button>
+                        <button ref={button1Month => this.button1Month = button1Month}
+                                id="button1Month"
+                                style={ButtonStyle}
+                                onClick={this.onDayButtonClick.bind(this, 30)}>1 Month
+                        </button>
                         <a id="close" href="#" onClick={this.props.onClose}/>
                     </div>
                     {this.props.children}
