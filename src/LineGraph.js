@@ -40,21 +40,30 @@ class LineGraph extends React.Component {
                 },
                 markers: {
                     size: 0,
-                    style: 'full'
+                    style: 'hollow'
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: "dark",
+                        type: "vertical",
+                        shadeIntensity: 0.8,
+                    }
                 },
                 title: {
                     text: this.getTitle(),
                     style: {
                         fontSize: "32px"
                     },
-                    align: "middle"
+                    align: "middle",
+                    offsetY: 30
                 },
                 subtitle: {
                     text: this.getSubtitleText(),
                     style: {
                         fontSize: "16px"
                     },
-                    offsetY: 40,
+                    offsetY: 70,
                     align: "middle"
                 },
                 xaxis: {

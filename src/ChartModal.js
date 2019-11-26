@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import LineGraph from "./LineGraph";
+import "./chart-modal-styles.css";
 
 class ChartModal extends React.Component {
 
@@ -28,9 +29,13 @@ class ChartModal extends React.Component {
             months = 1;
             days = 0;
         }
-        this.setState({days: days, months: months}, () => {
-            this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
-        });
+        this.setState({days: days, months: months});
+        this.lineGraph.updateChart(this.state.hours, days, months);
+    }
+
+    onCloseButtonClick(params) {
+        this.setState({hours: 4, days: 7, months: 0});
+        this.props.onClose(params);
     }
 
     resetHourButtonBorder(buttonNumber) {
@@ -83,95 +88,48 @@ class ChartModal extends React.Component {
         if (!this.props.isOpen) {
             return null;
         }
-        const BackgroundStyle = {
-            backgroundColor: "rgb(0,0,0)",
-            position: "fixed",
-            width: 1100,
-            height: 600,
-            top: 100,
-            right: 0,
-            bottom: 0,
-            left: 200
-        };
-        const ModalStyle = {
-            backgroundColor: "#fff",
-            margin: "auto",
-            padding: 5
-        };
-        const HeaderStyle = {
-            height: 29,
-            width: "100%",
-            textAlign: "left"
-        };
-        const ButtonStyle = {
-            color: "#fff",
-            background: "#008FFB",
-            border: "1px solid blue",
-            borderBottom: "2px solid blue"
-        };
-        const HighLightButtonStyle = {
-            color: "#fff",
-            background: "#008FFB",
-            border: "3px solid blue",
-        };
-        const HoursLabelStyle = {
-            marginRight: 10,
-            marginTop: 100,
-            color: "#000000",
-            fontSize: 24,
-        };
-        const DaysLabelStyle = {
-            marginLeft: 40,
-            marginRight: 10,
-            marginTop: 100,
-            color: "#000000",
-            fontSize: 24,
-        };
 
         return (
-            <div style={BackgroundStyle}>
-                <div style={ModalStyle}>
-                    <div style={HeaderStyle}>
-                        <label style={HoursLabelStyle}>Hours:
+            <div className="modal-chart-background">
+                <div className="modal">
+                    <div className="modal-header">
+                        <label className="hours-label">Hours:
                         </label>
                         <button ref={button1Hr => this.button1Hr = button1Hr}
                                 id="button1Hr"
-                                style={ButtonStyle}
                                 onClick={this.onHourButtonClick.bind(this, 1)}>1Hr
                         </button>
                         <button ref={button4Hr => this.button4Hr = button4Hr}
                                 id="button4Hr"
-                                style={HighLightButtonStyle}
+                                className="high-light-button"
                                 onClick={this.onHourButtonClick.bind(this, 4)}>4Hr
                         </button>
                         <button ref={button12Hr => this.button12Hr = button12Hr}
                                 id="button12Hr"
-                                style={ButtonStyle}
                                 onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
                         </button>
-                        <label style={DaysLabelStyle}>Days:
+                        <label className="days-label">Days:
                         </label>
                         <button ref={button1Day => this.button1Day = button1Day}
                                 id="button1Day"
-                                style={ButtonStyle}
                                 onClick={this.onDayButtonClick.bind(this, 1)}>1 Day
                         </button>
                         <button ref={button3Day => this.button3Day = button3Day}
                                 id="button3Day"
-                                style={ButtonStyle}
                                 onClick={this.onDayButtonClick.bind(this, 3)}>3 Days
                         </button>
                         <button ref={button7Day => this.button7Day = button7Day}
                                 id="button7Day"
-                                style={HighLightButtonStyle}
+                                className="high-light-button"
                                 onClick={this.onDayButtonClick.bind(this, 7)}>7 Days
                         </button>
                         <button ref={button1Month => this.button1Month = button1Month}
                                 id="button1Month"
-                                style={ButtonStyle}
                                 onClick={this.onDayButtonClick.bind(this, 30)}>1 Month
                         </button>
-                        <a id="close" href="#" onClick={this.props.onClose}/>
+                        <a id="close" href="#"
+                           onClick={this.onCloseButtonClick.bind(this)}
+                        />
                     </div>
                     {this.props.children}
                 </div>

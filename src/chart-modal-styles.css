@@ -1,0 +1,50 @@
+.modal-chart-background {
+    background-color: #000000;
+    position: fixed;
+    width: 1100px;
+    height: 600px;
+    top: 100px;
+    right: 0;
+    bottom: 0;
+    left: 200px
+}
+
+.modal {
+    background-color: #fff;
+    margin: auto;
+    padding: 5px
+}
+
+.modal-header {
+    height: 29px;
+    width: 100%;
+    text-align: left
+}
+
+button {
+    color: #fff;
+    background: #008FFB;
+    border: 1px solid blue;
+    border-bottom: 2px solid blue
+}
+
+.high-light-button {
+    color: #fff;
+    background: #008FFB;
+    border: 3px solid blue
+}
+
+.hours-label {
+    margin-right: 10px;
+    margin-top: 100px;
+    color: #000000;
+    font-size: 24px
+}
+
+.days-label {
+    margin-left: 40px;
+    margin-right: 10px;
+    margin-top: 100px;
+    color: #000000;
+    font-size: 24px
+}
