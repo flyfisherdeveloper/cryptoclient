@@ -48,3 +48,12 @@ button {
     color: #000000;
     font-size: 24px
 }
+
+.close {
+    display: block;
+    float: right;
+    width: 30px;
+    height: 29px;
+    background: url("close_icon.png") no-repeat center center;
+}
+

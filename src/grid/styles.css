@@ -26,14 +26,6 @@ a {
     text-decoration: none;
 }
 
-#close {
-    display: block;
-    float: right;
-    width: 30px;
-    height: 29px;
-    background: url(http://www.htmlgoodies.com/img/registrationwelcome/close_icon.png) no-repeat center center;
-}
-
 .ag-header-cell-label {
     font-weight: bold;
     font-size: 16px;

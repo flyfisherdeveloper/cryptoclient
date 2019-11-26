@@ -127,7 +127,8 @@ class ChartModal extends React.Component {
                                 id="button1Month"
                                 onClick={this.onDayButtonClick.bind(this, 30)}>1 Month
                         </button>
-                        <a id="close" href="#"
+                        <a href="#"
+                           className="close"
                            onClick={this.onCloseButtonClick.bind(this)}
                         />
                     </div>

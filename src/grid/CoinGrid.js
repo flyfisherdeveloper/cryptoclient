@@ -21,15 +21,15 @@ class CoinGrid extends Component {
                     headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
                     cellStyle: (params) => this.getCellFontColor(params),
                 }, {
-                    headerName: "Current Price", field: "lastPrice", sortable: true,
+                    headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 }, {
                     headerName: "24Hr High Price", field: "highPrice", sortable: true,
                 }, {
                     headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
                 }, {
-                    headerName: "24Hr Volume", field: "volume", sortable: true,
+                    headerName: "24Hr Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 }, {
-                    headerName: "24Hr Quote Volume", field: "quoteVolume", sortable: true,
+                    headerName: "24Hr Quote Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
             ],
             defaultColDef: {
