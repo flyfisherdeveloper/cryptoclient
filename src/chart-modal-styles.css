@@ -31,7 +31,7 @@ button {
 .high-light-button {
     color: #fff;
     background: #008FFB;
-    border: 3px solid blue
+    border: 2px solid blue
 }
 
 .hours-label {
@@ -41,7 +41,7 @@ button {
     font-size: 24px
 }
 
-.days-label {
+.middle-label {
     margin-left: 40px;
     margin-right: 10px;
     margin-top: 100px;
@@ -57,3 +57,10 @@ button {
     background: url("close_icon.png") no-repeat center center;
 }
 
+.type-chart {
+    float: right;
+}
+
+.hidden {
+    display: none;
+}

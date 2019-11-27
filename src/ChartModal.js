@@ -33,13 +33,27 @@ class ChartModal extends React.Component {
         this.lineGraph.updateChart(this.state.hours, days, months);
     }
 
+    onChartTypeClick(buttonType) {
+        let outLine = "2px solid blue";
+        let normal = "1px solid blue";
+        if (buttonType === "area") {
+            this.buttonAreaChart.style.border = outLine;
+            this.buttonCandleStickChart.style.border = normal;
+            this.lineGraph.updateChartType(true);
+        } else {
+            this.buttonAreaChart.style.border = normal;
+            this.buttonCandleStickChart.style.border = outLine;
+            this.lineGraph.updateChartType(false);
+        }
+    }
+
     onCloseButtonClick(params) {
         this.setState({hours: 4, days: 7, months: 0});
         this.props.onClose(params);
     }
 
     resetHourButtonBorder(buttonNumber) {
-        let outLine = "3px solid blue";
+        let outLine = "2px solid blue";
         let normal = "1px solid blue";
 
         if (buttonNumber === 1) {
@@ -58,7 +72,7 @@ class ChartModal extends React.Component {
     }
 
     resetDayButtonBorder(buttonNumber) {
-        let outLine = "3px solid blue";
+        let outLine = "2px solid blue";
         let normal = "1px solid blue";
 
         if (buttonNumber === 1) {
@@ -108,7 +122,7 @@ class ChartModal extends React.Component {
                                 id="button12Hr"
                                 onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
                         </button>
-                        <label className="days-label">Days:
+                        <label className="middle-label">Days:
                         </label>
                         <button ref={button1Day => this.button1Day = button1Day}
                                 id="button1Day"
@@ -126,6 +140,18 @@ class ChartModal extends React.Component {
                         <button ref={button1Month => this.button1Month = button1Month}
                                 id="button1Month"
                                 onClick={this.onDayButtonClick.bind(this, 30)}>1 Month
+                        </button>
+                        <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
+                        </label>
+                        <button ref={buttonAreaChart => this.buttonAreaChart = buttonAreaChart}
+                                id="buttonAreaChart"
+                                className={this.props.isPrice ? "high-light-button" : "hidden"}
+                                onClick={this.onChartTypeClick.bind(this, "area")}>Area
+                        </button>
+                        <button ref={buttonCandleStickChart => this.buttonCandleStickChart = buttonCandleStickChart}
+                                id="buttonCandleStickChart"
+                                className={this.props.isPrice ? "" : "hidden"}
+                                onClick={this.onChartTypeClick.bind(this, "candle")}>Candle Stick
                         </button>
                         <a href="#"
                            className="close"
@@ -145,6 +171,7 @@ class ChartModal extends React.Component {
         );
     }
 }
+
 
 ChartModal.propTypes = {
     onClose: PropTypes.func,

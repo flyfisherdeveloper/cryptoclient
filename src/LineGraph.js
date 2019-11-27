@@ -9,10 +9,11 @@ class LineGraph extends React.Component {
             hours: 4,
             days: 7,
             months: 0,
+            isArea: true,
             options: {
                 chart: {
                     group: "DataCharts",
-                    type: 'area',
+                    //type: "area",
                     animations: {
                         enabled: true
                     },
@@ -178,28 +179,56 @@ class LineGraph extends React.Component {
         });
     }
 
+    updateChartType(isArea) {
+        this.setState({isArea: isArea}, () => {
+            //todo: save json data to avoid round trip?
+            this.retrieveChartData();
+        });
+    }
+
+    getAreaData(json) {
+        let info = json.map((data) => {
+            let date = new Date(data.closeTime);
+            date.setMinutes(date.getMinutes() + 1);
+            let value = 0.0;
+            if (this.props.isQuoteVolume) {
+                value = data.quoteAssetVolume.toPrecision(2);
+            } else if (this.props.isPrice) {
+                value = data.close;
+            } else {
+                value = data.volume.toPrecision(2);
+            }
+            return [date.toLocaleString(), value];
+        });
+        return info;
+    }
+
+    getCandleStickData(json) {
+        let info = json.map((data) => {
+            let date = new Date(data.closeTime);
+            date.setMinutes(date.getMinutes() + 1);
+            let value = [data.open, data.high, data.low, data.close];
+            return [date.toLocaleString(), value];
+        });
+        return info;
+    }
+
     retrieveChartData() {
         const url = "http://localhost:8080/api/v1/binance/DayTicker/";
         let daysOrMonths = (this.state.months === 0 ? this.state.days + "d" : this.state.months + "M");
         fetch(url + this.props.symbol + "/" + this.state.hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
-                let info = json.map((data) => {
-                    let date = new Date(data.closeTime);
-                    date.setMinutes(date.getMinutes() + 1);
-                    let value = 0.0;
-                    if (this.props.isQuoteVolume) {
-                        value = data.quoteAssetVolume.toPrecision(2);
-                    } else if (this.props.isPrice) {
-                        value = data.close;
-                    } else {
-                        value = data.volume.toPrecision(2);
-                    }
-                    return [date.toLocaleString(), value];
-                });
+                let info = null;
+                let isArea = this.state.isArea;
+                if (isArea) {
+                    info = this.getAreaData(json);
+                } else {
+                    info = this.getCandleStickData(json);
+                }
                 let seriesData = [{
                     data: info,
-                    type: "area",
+                    type: (isArea ? "area" : "candlestick"),
                 }];
                 this.setState({series: seriesData});
             }).catch(err => {
@@ -225,7 +254,7 @@ class LineGraph extends React.Component {
                     width="100%"
                 />
             </div>
-    );
+        );
     }
 }
 
