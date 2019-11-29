@@ -27,12 +27,16 @@ class CoinGrid extends Component {
                 }, {
                     headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
                 }, {
-                    headerName: "24Hr Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 }, {
-                    headerName: "24Hr Quote Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Currency Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
-            ],
-            defaultColDef: {
+                {
+                    headerName: "24Hr Volume Change %", field: "volumeChangePercent", sortable: true,
+                    cellStyle: (params) => this.getCellFontColor(params)
+                },
+    ],
+        defaultColDef: {
                 resizable: true
             },
             gridOptions: {
@@ -189,7 +193,7 @@ class CoinGrid extends Component {
             <div className="header">
                 <div
                     className="ag-theme-balham-dark"
-                    style={{width: 1500, height: 2800}}>
+                    style={{width: "100%", height: 2800}}>
                     <AgGridReact
                         reactNext={true}
                         rowSelection={"single"}
