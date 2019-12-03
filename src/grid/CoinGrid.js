@@ -12,31 +12,44 @@ class CoinGrid extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "Coin Pair", field: "symbol", sortable: true,
+                    headerName: "Coin", field: "coin", sortable: true, width: 500,
                     cellRenderer: (params) => this.getLink(params),
-                }, {
-                    headerName: "24Hr Price Change", field: "priceChange", sortable: true,
-                    cellStyle: (params) => this.getCellFontColor(params),
-                }, {
-                    headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColor(params),
-                }, {
-                    headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
-                }, {
-                    headerName: "24Hr High Price", field: "highPrice", sortable: true,
-                }, {
-                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
-                }, {
-                    headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
-                }, {
-                    headerName: "24Hr Currency Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Volume Change %", field: "volumeChangePercent", sortable: true,
+                    headerName: "Currency", field: "currency", sortable: true,
+                },
+                {
+                    headerName: "24Hr Price Change", field: "priceChange", sortable: true,
+                    cellStyle: (params) => this.getCellFontColor(params),
+                },
+                {
+                    headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
+                    cellStyle: (params) => this.getCellFontColor(params),
+                },
+                {
+                    headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
+                },
+                {
+                    headerName: "24Hr High Price", field: "highPrice", sortable: true,
+                },
+                {
+                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
+                },
+                {
+                    headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                },
+                {
+                    headerName: "24Hr Currency Volume",
+                    field: "quoteVolume",
+                    sortable: true,
+                    cellStyle: {cursor: 'pointer'},
+                },
+                {
+                    headerName: "24Hr Currency Volume Change %", field: "volumeChangePercent", sortable: true,
                     cellStyle: (params) => this.getCellFontColor(params)
                 },
-    ],
-        defaultColDef: {
+            ],
+            defaultColDef: {
                 resizable: true
             },
             gridOptions: {
@@ -70,20 +83,9 @@ class CoinGrid extends Component {
     }
 
     getLink(params) {
-        //todo: do this server-side, and include the link in the data passed from the server
-        //get the url of the trading pair - this function only works for USD, USDT, BTC, ETH pairs
-        //that is OK for now, but if there is ever a different pairing of 4 letters (such as LTCDOGE),
-        //then that link won't work here
-        this.quote = this.getQuote(params.value);
-        let start = this.getStartOfQuote(params.value);
-        let coin = params.value.slice(0, start);
-        let newStr = coin + "_" + this.quote;
-        const tradeUrl = "https://www.binance.us/en/trade/";
-        let url = tradeUrl + newStr;
-        const iconUrl = "http://localhost:8080/api/v1/binance/icon/";
-        let iconLink = iconUrl + coin.toLowerCase();
-        let icon = "<img src = " + iconLink + " style='vertical-align: middle' alt=''/> ";
-        let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + url + "'> " + params.value + "</a>";
+        let data = params.data;
+        let icon = "<img src = " + data.iconLink + " style='vertical-align: middle' alt=''/> ";
+        let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
         return link;
     }
 
@@ -150,7 +152,7 @@ class CoinGrid extends Component {
     }
 
     onFirstDataRendered(params) {
-        params.api.sizeColumnsToFit();
+        params.columnApi.autoSizeAllColumns();
     }
 
     doVolume(event, isVolume) {
