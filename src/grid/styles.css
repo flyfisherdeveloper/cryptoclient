@@ -29,6 +29,7 @@ a {
 .ag-header-cell-label {
     font-weight: bold;
     font-size: 16px;
+    color: white;
     display: flex;
     justify-content: left;
 }
@@ -37,6 +38,22 @@ a {
     display: flex;
     justify-content: left;
     align-items: center;
+}
+
+.market-button {
+    font-size: 24px;
+    font-family: sans-serif;
+    background: rgba(0, 0, 0, 0.57);
+    color: rgba(232, 232, 232, 0.57);
+    font-weight: bold;
+    height: 50px;
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+}
+
+.market-button.active {
+    color: #fff;
+    background: #fb2924;
 }
 
 button {

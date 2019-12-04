@@ -12,7 +12,7 @@ class CoinGrid extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "Coin", field: "coin", sortable: true, width: 500,
+                    headerName: "Coin", field: "coin", sortable: true,
                     cellRenderer: (params) => this.getLink(params),
                 },
                 {
@@ -62,6 +62,7 @@ class CoinGrid extends Component {
                 },
             },
             rowData: [],
+            markets: [],
             isOpen: false,
             symbol: "", //i.e. LTCUSDT
             quote: "",  //i.e. USDT
@@ -89,30 +90,6 @@ class CoinGrid extends Component {
         return link;
     }
 
-    getQuoteOffset(params) {
-        let offset = 3;
-        if (params.endsWith("USDT")) {
-            offset = 4;
-        }
-        return offset;
-    }
-
-    getStartOfQuote(str) {
-        let end = str.length;
-        let offset = this.getQuoteOffset(str);
-        return end - offset;
-    }
-
-    getQuote(str) {
-        let start = this.getStartOfQuote(str);
-        return str.slice(start, str.length);
-    }
-
-    getCoin(str) {
-        let offset = this.getStartOfQuote(str);
-        return str.slice(0, offset);
-    }
-
     componentDidMount() {
         this.mounted = true;
         const url = 'http://localhost:8080/api/v1/binance/24HourTicker';
@@ -122,6 +99,8 @@ class CoinGrid extends Component {
             }).then(data => {
             if (this.mounted) {
                 this.setState({rowData: data});
+                let markets = [...new Set(data.map(item => item.currency))];
+                this.setState({markets: markets});
             }
         }).catch(err => {
             if (err.name === 'AbortError') {
@@ -143,14 +122,6 @@ class CoinGrid extends Component {
         }
     }
 
-    onCellMouseOver(event) {
-        let isVolume = event.column.getColId() === "volume";
-        let isQuoteVolume = event.column.getColId() === "quoteVolume";
-        let isPrice = event.column.getColId() === "lastPrice";
-        if (isVolume || isQuoteVolume || isPrice) {
-        }
-    }
-
     onFirstDataRendered(params) {
         params.columnApi.autoSizeAllColumns();
     }
@@ -162,22 +133,21 @@ class CoinGrid extends Component {
         } else {
             this.setState({isQuoteVolume: true});
         }
-        let selectedSymbol = event.api.getSelectedRows()[0].symbol;
-        this.setState({symbol: selectedSymbol});
-        this.setState({quote: this.getQuote(selectedSymbol)});
-        this.setState({coin: this.getCoin(selectedSymbol)});
+        let selectedRow = event.api.getSelectedRows()[0];
+        this.setState({symbol: selectedRow.symbol});
+        this.setState({quote: selectedRow.currency});
+        this.setState({coin: selectedRow.coin});
         this.toggleModal();
     }
 
     doPrice(event) {
         this.setState({isPrice: true});
         this.setState({isQuoteVolume: false});
-        let selectedSymbol = event.api.getSelectedRows()[0].symbol;
-        let selectedPrice = event.api.getSelectedRows()[0].lastPrice;
-        let thePrice = Number(selectedPrice);
-        this.setState({symbol: selectedSymbol});
-        this.setState({quote: this.getQuote(selectedSymbol)});
-        this.setState({coin: this.getCoin(selectedSymbol)});
+        let selectedRow = event.api.getSelectedRows()[0];
+        let thePrice = Number(selectedRow.lastPrice);
+        this.setState({symbol: selectedRow.symbol});
+        this.setState({quote: selectedRow.currency});
+        this.setState({coin: selectedRow.coin});
         this.setState({price: thePrice});
         this.toggleModal();
     }
@@ -191,10 +161,11 @@ class CoinGrid extends Component {
     }
 
     render() {
+        const marketButtons = this.state.markets.map(currency => <button className="market-button">{currency}</button>);
         return (
             <div className="header">
-                <div
-                    className="ag-theme-balham-dark"
+                {marketButtons}
+                <div className="ag-theme-balham-dark"
                     style={{width: "100%", height: 2800}}>
                     <AgGridReact
                         reactNext={true}
@@ -206,7 +177,6 @@ class CoinGrid extends Component {
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
                         onCellClicked={this.onCellClicked.bind(this)}
-                        onCellMouseOver={this.onCellMouseOver.bind(this)}
                         onFirstDataRendered={this.onFirstDataRendered.bind(this)}
                     >
                     </AgGridReact>
