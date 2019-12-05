@@ -111,6 +111,7 @@ class ChartModal extends React.Component {
                         </label>
                         <button ref={button1Hr => this.button1Hr = button1Hr}
                                 id="button1Hr"
+                                className="chart-button"
                                 onClick={this.onHourButtonClick.bind(this, 1)}>1Hr
                         </button>
                         <button ref={button4Hr => this.button4Hr = button4Hr}
@@ -120,16 +121,19 @@ class ChartModal extends React.Component {
                         </button>
                         <button ref={button12Hr => this.button12Hr = button12Hr}
                                 id="button12Hr"
+                                className="chart-button"
                                 onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
                         </button>
                         <label className="middle-label">Days:
                         </label>
                         <button ref={button1Day => this.button1Day = button1Day}
                                 id="button1Day"
+                                className="chart-button"
                                 onClick={this.onDayButtonClick.bind(this, 1)}>1 Day
                         </button>
                         <button ref={button3Day => this.button3Day = button3Day}
                                 id="button3Day"
+                                className="chart-button"
                                 onClick={this.onDayButtonClick.bind(this, 3)}>3 Days
                         </button>
                         <button ref={button7Day => this.button7Day = button7Day}
@@ -139,6 +143,7 @@ class ChartModal extends React.Component {
                         </button>
                         <button ref={button1Month => this.button1Month = button1Month}
                                 id="button1Month"
+                                className="chart-button"
                                 onClick={this.onDayButtonClick.bind(this, 30)}>1 Month
                         </button>
                         <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
@@ -150,7 +155,7 @@ class ChartModal extends React.Component {
                         </button>
                         <button ref={buttonCandleStickChart => this.buttonCandleStickChart = buttonCandleStickChart}
                                 id="buttonCandleStickChart"
-                                className={this.props.isPrice ? "" : "hidden"}
+                                className={this.props.isPrice ? "chart-button" : "hidden"}
                                 onClick={this.onChartTypeClick.bind(this, "candle")}>Candle Stick
                         </button>
                         <a href="#"

@@ -21,7 +21,7 @@
     text-align: left
 }
 
-button {
+.chart-button {
     color: #fff;
     background: #008FFB;
     border: 1px solid blue;
@@ -38,7 +38,7 @@ button {
     margin-right: 10px;
     margin-top: 100px;
     color: #000000;
-    font-size: 24px
+    font-size: 18px;
 }
 
 .middle-label {
@@ -46,7 +46,7 @@ button {
     margin-right: 10px;
     margin-top: 100px;
     color: #000000;
-    font-size: 24px
+    font-size: 18px;
 }
 
 .close {

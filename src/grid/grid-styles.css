@@ -41,37 +41,22 @@ a {
 }
 
 .market-button {
-    font-size: 24px;
-    font-family: sans-serif;
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
     background: rgba(0, 0, 0, 0.57);
-    color: rgba(232, 232, 232, 0.57);
-    font-weight: bold;
-    height: 50px;
     border: 1px solid black;
     border-bottom: 2px solid black;
 }
 
-.market-button.active {
-    color: #fff;
-    background: #fb2924;
-}
-
-button {
-    background: #fff;
-    color: #222;
-    border: 1px solid #e7e7e7;
-    border-bottom: 2px solid #ddd;
-    border-radius: 2px;
-    padding: 4px 17px;
-}
-
-button.active {
-    color: #fff;
-    background: #008FFB;
-    border: 1px solid blue;
-    border-bottom: 2px solid blue;
-}
-
-button:focus {
-    outline: 0;
+/* Style the active class, and buttons on mouse-over */
+.market-button-selected, .market-button:hover, .market-button:focus {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background-color: #666;
+    border: 1px solid black;
+    border-bottom: 2px solid black;
 }

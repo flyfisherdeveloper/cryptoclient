@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
-import "./styles.css"
+import "./grid-styles.css"
 import ChartModal from "../ChartModal";
 
 class CoinGrid extends Component {
@@ -12,7 +12,7 @@ class CoinGrid extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "Coin", field: "coin", sortable: true,
+                    headerName: "Coin", field: "coin", sortable: true, suppressSizeToFit: true, width: 200,
                     cellRenderer: (params) => this.getLink(params),
                 },
                 {
@@ -62,6 +62,7 @@ class CoinGrid extends Component {
                 },
             },
             rowData: [],
+            allRowData: [],
             markets: [],
             isOpen: false,
             symbol: "", //i.e. LTCUSDT
@@ -99,6 +100,7 @@ class CoinGrid extends Component {
             }).then(data => {
             if (this.mounted) {
                 this.setState({rowData: data});
+                this.setState({allRowData: data});
                 let markets = [...new Set(data.map(item => item.currency))];
                 this.setState({markets: markets});
             }
@@ -152,6 +154,23 @@ class CoinGrid extends Component {
         this.toggleModal();
     }
 
+    onMarketButtonClick(currency) {
+        let markets = this.state.markets;
+        markets.forEach(market => this.refs[market].className = "market-button");
+        this.refs[currency].className = "market-button-selected";
+        this.allButton.className = "market-button";
+        let rows = this.state.allRowData;
+        let filteredRows = rows.filter(value => {
+            return value.currency === currency
+        });
+        this.setState({rowData: filteredRows});
+    }
+
+    onAllMarketButtonClick() {
+        this.setState({rowData: this.state.allRowData});
+        this.allButton.className = "market-button";
+    }
+
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
     }
@@ -161,12 +180,19 @@ class CoinGrid extends Component {
     }
 
     render() {
-        const marketButtons = this.state.markets.map(currency => <button className="market-button">{currency}</button>);
+        let marketButtons = this.state.markets.map(currency => <button className="market-button"
+                                                                       ref={currency}
+                                                                       key={currency}
+                                                                       onClick={this.onMarketButtonClick.bind(this, currency)}>{currency}</button>);
+        marketButtons.push(<button className="market-button-selected"
+                                   key="ALL"
+                                   ref={allButton => this.allButton = allButton}
+                                   onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
         return (
             <div className="header">
                 {marketButtons}
                 <div className="ag-theme-balham-dark"
-                    style={{width: "100%", height: 2800}}>
+                     style={{width: "100%", height: 2800}}>
                     <AgGridReact
                         reactNext={true}
                         rowSelection={"single"}
