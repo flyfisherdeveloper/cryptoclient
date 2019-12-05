@@ -154,9 +154,13 @@ class CoinGrid extends Component {
         this.toggleModal();
     }
 
-    onMarketButtonClick(currency) {
+    resetMarketButtons() {
         let markets = this.state.markets;
         markets.forEach(market => this.refs[market].className = "market-button");
+    }
+
+    onMarketButtonClick(currency) {
+        this.resetMarketButtons();
         this.refs[currency].className = "market-button-selected";
         this.allButton.className = "market-button";
         let rows = this.state.allRowData;
@@ -167,8 +171,9 @@ class CoinGrid extends Component {
     }
 
     onAllMarketButtonClick() {
-        this.setState({rowData: this.state.allRowData});
+        this.resetMarketButtons();
         this.allButton.className = "market-button";
+        this.setState({rowData: this.state.allRowData});
     }
 
     toggleModal() {

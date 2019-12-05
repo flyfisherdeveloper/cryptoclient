@@ -34,15 +34,13 @@ class ChartModal extends React.Component {
     }
 
     onChartTypeClick(buttonType) {
-        let outLine = "2px solid blue";
-        let normal = "1px solid blue";
         if (buttonType === "area") {
-            this.buttonAreaChart.style.border = outLine;
-            this.buttonCandleStickChart.style.border = normal;
+            this.buttonAreaChart.className = "high-light-button";
+            this.buttonCandleStickChart.className = "chart-button";
             this.lineGraph.updateChartType(true);
         } else {
-            this.buttonAreaChart.style.border = normal;
-            this.buttonCandleStickChart.style.border = outLine;
+            this.buttonAreaChart.className = "chart-button";
+            this.buttonCandleStickChart.className = "high-light-button";
             this.lineGraph.updateChartType(false);
         }
     }
@@ -53,48 +51,42 @@ class ChartModal extends React.Component {
     }
 
     resetHourButtonBorder(buttonNumber) {
-        let outLine = "2px solid blue";
-        let normal = "1px solid blue";
-
         if (buttonNumber === 1) {
-            this.button1Hr.style.border = outLine;
-            this.button4Hr.style.border = normal;
-            this.button12Hr.style.border = normal;
+            this.button1Hr.className = "high-light-button";
+            this.button4Hr.className = "chart-button";
+            this.button12Hr.className = "chart-button";
         } else if (buttonNumber === 4) {
-            this.button4Hr.style.border = outLine;
-            this.button1Hr.style.border = normal;
-            this.button12Hr.style.border = normal;
+            this.button4Hr.className = "high-light-button";
+            this.button1Hr.className = "chart-button";
+            this.button12Hr.className = "chart-button";
         } else if (buttonNumber === 12) {
-            this.button12Hr.style.border = outLine;
-            this.button1Hr.style.border = normal;
-            this.button4Hr.style.border = normal;
+            this.button12Hr.className = "high-light-button";
+            this.button1Hr.className = "chart-button";
+            this.button4Hr.className = "chart-button";
         }
     }
 
     resetDayButtonBorder(buttonNumber) {
-        let outLine = "2px solid blue";
-        let normal = "1px solid blue";
-
         if (buttonNumber === 1) {
-            this.button1Day.style.border = outLine;
-            this.button3Day.style.border = normal;
-            this.button7Day.style.border = normal;
-            this.button1Month.style.border = normal;
+            this.button1Day.className = "high-light-button";
+            this.button3Day.className = "chart-button";
+            this.button7Day.className = "chart-button";
+            this.button1Month.className = "chart-button";
         } else if (buttonNumber === 3) {
-            this.button3Day.style.border = outLine;
-            this.button1Day.style.border = normal;
-            this.button7Day.style.border = normal;
-            this.button1Month.style.border = normal;
+            this.button3Day.className = "high-light-button";
+            this.button1Day.className = "chart-button";
+            this.button7Day.className = "chart-button";
+            this.button1Month.className = "chart-button";
         } else if (buttonNumber === 7) {
-            this.button7Day.style.border = outLine;
-            this.button1Day.style.border = normal;
-            this.button3Day.style.border = normal;
-            this.button1Month.style.border = normal;
+            this.button7Day.className = "high-light-button";
+            this.button1Day.className = "chart-button";
+            this.button3Day.className = "chart-button";
+            this.button1Month.className = "chart-button";
         } else if (buttonNumber === 30) {
-            this.button1Month.style.border = outLine;
-            this.button1Day.style.border = normal;
-            this.button3Day.style.border = normal;
-            this.button7Day.style.border = normal;
+            this.button1Month.className = "high-light-button";
+            this.button1Day.className = "chart-button";
+            this.button3Day.className = "chart-button";
+            this.button7Day.className = "chart-button";
         }
     }
 
