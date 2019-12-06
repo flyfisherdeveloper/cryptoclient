@@ -1,19 +1,15 @@
-.header {
+.grid-background {
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.57);
+    background: #2c2c2c;
     padding: 40px;
+    text-align: left;
+    font-size: 24px;
 }
 
 .icon {
     height: 20px;
     width: 20px;
     display: block;
-}
-
-.header h1 {
-    text-align: left;
-    font-size: 24px;
-    font-family: sans-serif
 }
 
 a {
@@ -59,4 +55,28 @@ a {
     background-color: #666;
     border: 1px solid black;
     border-bottom: 2px solid black;
+}
+
+.market-label {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.exchange-select {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.57);
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    margin-right: 50px;
+}
+
+.info-section {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: right;
 }

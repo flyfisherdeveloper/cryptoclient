@@ -12,41 +12,41 @@ class CoinGrid extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "Coin", field: "coin", sortable: true, suppressSizeToFit: true, width: 200,
-                    cellRenderer: (params) => this.getLink(params),
+                    headerName: "Coin", field: "coin", sortable: true, width: 150,
+                    cellRenderer: (params) => this.getLink(params), cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "Currency", field: "currency", sortable: true,
+                    headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
                 },
                 {
                     headerName: "24Hr Price Change", field: "priceChange", sortable: true,
-                    cellStyle: (params) => this.getCellFontColor(params),
+                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
                 },
                 {
                     headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColor(params),
+                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
                 },
                 {
                     headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr High Price", field: "highPrice", sortable: true,
+                    headerName: "24Hr High Price", field: "highPrice", sortable: true, cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true,
+                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true, cellStyle: {border: 'none !important'}
                 },
                 {
                     headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Currency Volume",
+                    headerName: "24Hr Market Volume",
                     field: "quoteVolume",
                     sortable: true,
                     cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Currency Volume Change %", field: "volumeChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColor(params)
+                    headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
+                    cellStyle: (params) => this.getCellFontColorNoSelection(params)
                 },
             ],
             defaultColDef: {
@@ -74,14 +74,14 @@ class CoinGrid extends Component {
         }
     }
 
-    getCellFontColor(params) {
+    getCellFontColorNoSelection(params) {
         if (params.value === 0.0) {
-            return {color: 'white'}
+            return {color: 'white', border: 'none !important' };
         }
         if (params.value < 0.0) {
-            return {color: 'red'};
+            return {color: 'red', border: 'none !important'};
         }
-        return {color: 'green'};
+        return {color: 'green', border: 'none !important'};
     }
 
     getLink(params) {
@@ -124,8 +124,9 @@ class CoinGrid extends Component {
         }
     }
 
-    onFirstDataRendered(params) {
-        params.columnApi.autoSizeAllColumns();
+    onGridReady(params) {
+        let columns = params.columnApi.getAllColumns().filter(col => col.colId !== "coin");
+        params.columnApi.autoSizeColumns(columns);
     }
 
     doVolume(event, isVolume) {
@@ -157,12 +158,12 @@ class CoinGrid extends Component {
     resetMarketButtons() {
         let markets = this.state.markets;
         markets.forEach(market => this.refs[market].className = "market-button");
+        this.allButton.className = "market-button";
     }
 
     onMarketButtonClick(currency) {
         this.resetMarketButtons();
         this.refs[currency].className = "market-button-selected";
-        this.allButton.className = "market-button";
         let rows = this.state.allRowData;
         let filteredRows = rows.filter(value => {
             return value.currency === currency
@@ -172,7 +173,7 @@ class CoinGrid extends Component {
 
     onAllMarketButtonClick() {
         this.resetMarketButtons();
-        this.allButton.className = "market-button";
+        this.allButton.className = "market-button-selected";
         this.setState({rowData: this.state.allRowData});
     }
 
@@ -194,33 +195,40 @@ class CoinGrid extends Component {
                                    ref={allButton => this.allButton = allButton}
                                    onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
         return (
-            <div className="header">
-                {marketButtons}
-                <div className="ag-theme-balham-dark"
-                     style={{width: "100%", height: 2800}}>
-                    <AgGridReact
-                        reactNext={true}
-                        rowSelection={"single"}
-                        enableSorting={true}
-                        gridOptions={this.state.gridOptions}
-                        pagination={false}
-                        columnDefs={this.state.columnDefs}
-                        defaultColDef={this.state.defaultColDef}
-                        rowData={this.state.rowData}
-                        onCellClicked={this.onCellClicked.bind(this)}
-                        onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                    >
-                    </AgGridReact>
-                    <ChartModal isOpen={this.state.isOpen}
-                                symbol={this.state.symbol}
-                                quote={this.state.quote}
-                                coin={this.state.coin}
-                                isQuoteVolume={this.state.isQuoteVolume}
-                                isPrice={this.state.isPrice}
-                                onClose={this.toggleModal}>
-                    </ChartModal>
+            <div className="grid-background">
+                <div className="info-section">
+                    <label className="market-label">Exchange:</label>
+                    <select className="exchange-select">
+                        <option>Binance USA</option>
+                    </select>
+                    <label className="market-label">Market:</label>
+                    {marketButtons}
                 </div>
-            </div>
+                    <div className="ag-theme-balham-dark"
+                         style={{width: "100%", height: 2800}}>
+                        <AgGridReact
+                            reactNext={true}
+                            rowSelection={"single"}
+                            enableSorting={true}
+                            gridOptions={this.state.gridOptions}
+                            pagination={false}
+                            columnDefs={this.state.columnDefs}
+                            defaultColDef={this.state.defaultColDef}
+                            rowData={this.state.rowData}
+                            onCellClicked={this.onCellClicked.bind(this)}
+                            onGridReady={this.onGridReady.bind(this)}
+                        >
+                        </AgGridReact>
+                        <ChartModal isOpen={this.state.isOpen}
+                                    symbol={this.state.symbol}
+                                    quote={this.state.quote}
+                                    coin={this.state.coin}
+                                    isQuoteVolume={this.state.isQuoteVolume}
+                                    isPrice={this.state.isPrice}
+                                    onClose={this.toggleModal}>
+                        </ChartModal>
+                    </div>
+                </div>
         );
     }
 }
