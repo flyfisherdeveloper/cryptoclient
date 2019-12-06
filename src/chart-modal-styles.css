@@ -12,7 +12,7 @@
 .modal {
     background-color: #fff;
     margin: auto;
-    padding: 5px
+    padding: 1px
 }
 
 .modal-header {
@@ -22,15 +22,12 @@
 }
 
 .chart-button {
-    color: #fff;
-    background: #008FFB;
-    border: 1px solid blue;
-    border-bottom: 2px solid blue
+    background-color: lightgray;
+    border: 1px solid black
 }
 
 .high-light-button {
-    color: #fff;
-    background: #008FFB;
+    background-color: lightgray;
     border: 2px solid blue
 }
 

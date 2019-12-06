@@ -13,13 +13,13 @@ class LineGraph extends React.Component {
             options: {
                 chart: {
                     group: "DataCharts",
-                    //type: "area",
                     animations: {
                         enabled: true
                     },
                     zoom: {
                         type: "x",
-                        enabled: true
+                        enabled: true,
+                        autoScaleYaxis: true
                     },
                     toolbar: {
                         show: true,
