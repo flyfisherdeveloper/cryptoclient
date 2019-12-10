@@ -39,10 +39,7 @@ class CoinGrid extends Component {
                     headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Market Volume",
-                    field: "quoteVolume",
-                    sortable: true,
-                    cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Market Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
                     headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,

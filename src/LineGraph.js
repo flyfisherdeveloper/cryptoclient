@@ -29,8 +29,8 @@ class LineGraph extends React.Component {
                             zoom: true,
                             zoomin: true,
                             zoomout: true,
-                            pan: false,
-                            reset: false,
+                            pan: true,
+                            reset: true,
                         },
                         autoSelected: 'zoom'
                     },
@@ -85,8 +85,9 @@ class LineGraph extends React.Component {
                             fontFamily: 'Helvetica, Arial, sans-serif',
                             cssClass: 'apexcharts-xaxis-label',
                         },
-                        offsetX: -20,
-                        offsetY: 0,
+                        //offsetX: -20,
+                        offsetX: 0,
+                        offsetY: 0
                     },
                 },
                 yaxis: [
@@ -119,7 +120,7 @@ class LineGraph extends React.Component {
                                 cssClass: 'apexcharts-yaxis-title',
                             },
                         },
-                        tooltip: {enabled: false}
+                        tooltip: {enabled: true}
                     },
                 ],
                 stroke: {
@@ -130,6 +131,7 @@ class LineGraph extends React.Component {
                     show: true
                 },
                 tooltip: {
+                    enabled: true,
                     shared: true,
                     theme: "dark",
                     x: {
@@ -200,6 +202,7 @@ class LineGraph extends React.Component {
             }
             return [date.toLocaleString(), value];
         });
+        console.log(info);
         return info;
     }
 
@@ -208,7 +211,7 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = [data.open, data.high, data.low, data.close];
-            return [date.toLocaleString(), value];
+            return {x: date.toLocaleString(), y: value};
         });
         return info;
     }
