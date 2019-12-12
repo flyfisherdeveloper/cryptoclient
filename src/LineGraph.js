@@ -1,5 +1,6 @@
 import React from "react";
-import Chart from "react-apexcharts";
+//import Chart from "react-apexcharts";
+import ReactApexChart from "react-apexcharts";
 import PropTypes from "prop-types";
 
 class LineGraph extends React.Component {
@@ -48,7 +49,7 @@ class LineGraph extends React.Component {
                     gradient: {
                         shade: "dark",
                         type: "vertical",
-                        shadeIntensity: 0.8,
+                        shadeIntensity: 0.4,
                     }
                 },
                 title: {
@@ -92,6 +93,9 @@ class LineGraph extends React.Component {
                 },
                 yaxis: [
                     {
+                        min: function (min) {
+                            return (min < 0 ? 0 : min);
+                        },
                         axisTicks: {show: true},
                         axisBorder: {
                             show: true,
@@ -137,14 +141,14 @@ class LineGraph extends React.Component {
                     x: {
                         format: "MM/dd/yyyy HH:mm"
                     },
+                    show: true,
                     y: {
                         title: {
                             formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
                         }
-                    }
+                    },
                 }
             },
-
             series: [
                 {
                     data: [],
@@ -188,6 +192,33 @@ class LineGraph extends React.Component {
         });
     }
 
+    getCandleStickTooltip() {
+        return {
+            custom: function ({seriesIndex, dataPointIndex, w}) {
+                const o = w.globals.seriesCandleO[seriesIndex][dataPointIndex];
+                const h = w.globals.seriesCandleH[seriesIndex][dataPointIndex];
+                const l = w.globals.seriesCandleL[seriesIndex][dataPointIndex];
+                const c = w.globals.seriesCandleC[seriesIndex][dataPointIndex];
+                return (
+                    '<div class="apexcharts-tooltip-candlestick">' +
+                    '<div>Open: <span class="value">' +
+                    o +
+                    '</span></div>' +
+                    '<div>High: <span class="value">' +
+                    h +
+                    '</span></div>' +
+                    '<div>Low: <span class="value">' +
+                    l +
+                    '</span></div>' +
+                    '<div>Close: <span class="value">' +
+                    c +
+                    '</span></div>' +
+                    '</div>'
+                )
+            }
+        }
+    }
+
     getAreaData(json) {
         let info = json.map((data) => {
             let date = new Date(data.closeTime);
@@ -202,7 +233,6 @@ class LineGraph extends React.Component {
             }
             return [date.toLocaleString(), value];
         });
-        console.log(info);
         return info;
     }
 
@@ -211,7 +241,7 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = [data.open, data.high, data.low, data.close];
-            return {x: date.toLocaleString(), y: value};
+            return {x: date.toLocaleString(), y: value, tooltip: this.getCandleStickTooltip()};
         });
         return info;
     }
@@ -248,11 +278,16 @@ class LineGraph extends React.Component {
     }
 
     render() {
+        let type = "candlestick";
+        if (this.state.isArea) {
+            type = "area";
+        }
         return (
             <div style={{width: "100%", height: "100%"}}>
-                <Chart
+                <ReactApexChart
                     options={this.state.options}
                     series={this.state.series}
+                    type={type}
                     height="100%"
                     width="100%"
                 />

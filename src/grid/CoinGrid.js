@@ -197,6 +197,7 @@ class CoinGrid extends Component {
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
+                        <option>Coin Market Cap</option>
                     </select>
                     <label className="market-label">Market:</label>
                     {marketButtons}
