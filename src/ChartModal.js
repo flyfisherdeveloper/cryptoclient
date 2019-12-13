@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import LineGraph from "./LineGraph";
+import CandleStickChart from "./CandleStickChart";
 import "./chart-modal-styles.css";
 
 class ChartModal extends React.Component {
@@ -10,14 +11,19 @@ class ChartModal extends React.Component {
         this.state = {
             hours: 4,
             days: 7,
-            months: 0
+            months: 0,
+            isArea: true
         }
     }
 
     onHourButtonClick(buttonNumber) {
         this.resetHourButtonBorder(buttonNumber);
         this.setState({hours: buttonNumber});
-        this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
+        if (this.state.isArea) {
+            this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
+        } else {
+            this.candleStickChart.updateChart(buttonNumber, this.state.days, this.state.months);
+        }
     }
 
     onDayButtonClick(buttonNumber) {
@@ -30,23 +36,28 @@ class ChartModal extends React.Component {
             days = 0;
         }
         this.setState({days: days, months: months});
-        this.lineGraph.updateChart(this.state.hours, days, months);
+        if (this.state.isArea) {
+            this.lineGraph.updateChart(this.state.hours, days, months);
+        } else {
+            this.candleStickChart.updateChart(this.state.hours, days, months);
+        }
     }
 
     onChartTypeClick(buttonType) {
         if (buttonType === "area") {
+            this.setState({isArea: true});
             this.buttonAreaChart.className = "high-light-button";
             this.buttonCandleStickChart.className = "chart-button";
-            this.lineGraph.updateChartType(true);
         } else {
+            this.setState({isArea: false});
             this.buttonAreaChart.className = "chart-button";
             this.buttonCandleStickChart.className = "high-light-button";
-            this.lineGraph.updateChartType(false);
         }
     }
 
     onCloseButtonClick(params) {
         this.setState({hours: 4, days: 7, months: 0});
+        this.setState({isArea: true});
         this.props.onClose(params);
     }
 
@@ -94,7 +105,28 @@ class ChartModal extends React.Component {
         if (!this.props.isOpen) {
             return null;
         }
-
+        let chart = null;
+        if (this.state.isArea) {
+            chart = <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
+                               symbol={this.props.symbol}
+                               quote={this.props.quote}
+                               coin={this.props.coin}
+                               hours={this.state.hours}
+                               days={this.state.days}
+                               months={this.state.months}
+                               isQuoteVolume={this.props.isQuoteVolume}
+                               isPrice={this.props.isPrice}
+            />
+        } else {
+            chart = <CandleStickChart ref={candleStickChart => this.candleStickChart = candleStickChart}
+                                      symbol={this.props.symbol}
+                                      quote={this.props.quote}
+                                      coin={this.props.coin}
+                                      hours={this.state.hours}
+                                      days={this.state.days}
+                                      months={this.state.months}
+            />
+        }
         return (
             <div className="modal-chart-background">
                 <div className="modal">
@@ -157,13 +189,7 @@ class ChartModal extends React.Component {
                     </div>
                     {this.props.children}
                 </div>
-                <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
-                           symbol={this.props.symbol}
-                           quote={this.props.quote}
-                           coin={this.props.coin}
-                           isQuoteVolume={this.props.isQuoteVolume}
-                           isPrice={this.props.isPrice}
-                />
+                {chart}
             </div>
         );
     }

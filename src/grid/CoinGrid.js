@@ -111,6 +111,9 @@ class CoinGrid extends Component {
     }
 
     onCellClicked(event) {
+        if (this.state.isOpen) {
+            return;
+        }
         let isVolume = event.column.getColId() === "volume";
         let isQuoteVolume = event.column.getColId() === "quoteVolume";
         let isPrice = event.column.getColId() === "lastPrice";

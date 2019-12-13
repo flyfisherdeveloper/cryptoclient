@@ -2,7 +2,7 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import PropTypes from "prop-types";
 
-class LineGraph extends React.Component {
+class CandleStickChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -48,7 +48,7 @@ class LineGraph extends React.Component {
                     }
                 },
                 title: {
-                    text: this.getTitle(),
+                    text: "Price Chart for " + this.props.coin,
                     style: {
                         fontSize: "32px"
                     },
@@ -56,7 +56,7 @@ class LineGraph extends React.Component {
                     offsetY: 30
                 },
                 subtitle: {
-                    text: this.getSubtitleText(),
+                    text: "(Price in " + this.props.quote + ")",
                     style: {
                         fontSize: "16px"
                     },
@@ -107,7 +107,7 @@ class LineGraph extends React.Component {
                             }
                         },
                         title: {
-                            text: this.getYAxisText(),
+                            text: "Price in " + this.props.quote,
                             rotate: 90,
                             offsetX: -7,
                             offsetY: 0,
@@ -134,13 +134,10 @@ class LineGraph extends React.Component {
                     theme: "dark",
                     x: {
                         format: "MM/dd/yyyy HH:mm",
-                        show: false,
                     },
                     show: true,
                     y: {
-                        title: {
-                            formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
-                        }
+                        title: this.props.coin,
                     },
                 }
             },
@@ -152,47 +149,8 @@ class LineGraph extends React.Component {
         };
     }
 
-    getTitle() {
-        return this.getPriceOrVolumeString() + " Chart for " + this.props.coin;
-    }
-
-    getPriceOrVolumeString() {
-        return (this.props.isPrice ? "Price" : "Volume");
-    }
-
-    getYAxisText() {
-        if (this.props.isPrice) {
-            return "Price in " + this.props.quote;
-        }
-        return "Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin);
-    }
-
-    getSubtitleText() {
-        if (this.props.isPrice) {
-            return "(Price in " + this.props.quote + ")";
-        }
-        return "(" + this.getYAxisText() + ")";
-    }
-
     updateChart(hours, days, months) {
         this.retrieveChartData(hours, days, months);
-    }
-
-    getAreaData(json) {
-        let info = json.map((data) => {
-            let date = new Date(data.closeTime);
-            date.setMinutes(date.getMinutes() + 1);
-            let value = 0.0;
-            if (this.props.isQuoteVolume) {
-                value = data.quoteAssetVolume.toPrecision(2);
-            } else if (this.props.isPrice) {
-                value = data.close;
-            } else {
-                value = data.volume.toPrecision(2);
-            }
-            return [date.toLocaleString(), value];
-        });
-        return info;
     }
 
     getCandleStickData(json) {
@@ -212,7 +170,7 @@ class LineGraph extends React.Component {
             .then(result => result.json())
             .then((json) => {
                 let info = null;
-                info = this.getAreaData(json);
+                info = this.getCandleStickData(json);
                 let seriesData = [{
                     data: info,
                 }];
@@ -236,7 +194,7 @@ class LineGraph extends React.Component {
                 <ReactApexChart
                     options={this.state.options}
                     series={this.state.series}
-                    type={"area"}
+                    type={"candlestick"}
                     height="100%"
                     width="100%"
                 />
@@ -245,14 +203,12 @@ class LineGraph extends React.Component {
     }
 }
 
-LineGraph.propTypes = {
+CandleStickChart.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool,
-    isPrice: PropTypes.bool,
     hours: PropTypes.number,
     days: PropTypes.number,
     months: PropTypes.number,
 };
-export default LineGraph;
+export default CandleStickChart;
