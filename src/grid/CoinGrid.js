@@ -90,7 +90,7 @@ class CoinGrid extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        const url = 'http://localhost:8080/api/v1/binance/24HourTicker';
+        const url = 'http://localhost:5000/api/v1/binance/24HourTicker';
         fetch(url)
             .then(result => {
                 return result.json();
@@ -111,6 +111,7 @@ class CoinGrid extends Component {
     }
 
     onCellClicked(event) {
+        console.log("envirnment: " + process.env.REACT_APP_API_HOST);
         if (this.state.isOpen) {
             return;
         }

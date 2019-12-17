@@ -206,7 +206,7 @@ class LineGraph extends React.Component {
     }
 
     retrieveChartData(hours, days, months) {
-        const url = "http://localhost:8080/api/v1/binance/DayTicker/";
+        const url = "http://localhost:5000/api/v1/binance/DayTicker/";
         let daysOrMonths = (months === 0 ? days + "d" : months + "M");
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
