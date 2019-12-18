@@ -1,0 +1,97 @@
+.grid-background {
+    overflow: hidden;
+    background: #2c2c2c;
+    padding: 40px;
+    text-align: left;
+    font-size: 24px;
+}
+
+.icon {
+    height: 20px;
+    width: 20px;
+    display: block;
+}
+
+a {
+    color: #ff9e18;
+    font-size: 15px;
+    padding: 0 12px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    text-decoration: none;
+}
+
+.ag-header-cell-label {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    display: flex;
+    justify-content: left;
+}
+
+.ag-row .ag-cell {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.market-button {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.57);
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    outline: black;
+}
+
+/* Style the active class, and buttons on mouse-over */
+.market-button-selected, .market-button:hover, .market-button:focus {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background-color: #666;
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    outline: black;
+}
+
+.market-label {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.exchange-select {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.57);
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    margin-right: 50px;
+    outline: black;
+}
+
+.exchange-option {
+    padding: 10px 16px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.57);
+    border: 1px solid black;
+    border-bottom: 2px solid black;
+    margin-right: 50px;
+    outline: black;
+}
+
+.info-section {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: right;
+}
