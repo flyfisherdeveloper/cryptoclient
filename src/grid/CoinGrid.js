@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import "./grid-styles.css"
 import ChartModal from "../ChartModal";
+import urlObject from "../UrlObject";
 
 class CoinGrid extends Component {
     mounted = false;
@@ -90,7 +91,11 @@ class CoinGrid extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        const url = 'http://localhost:5000/api/v1/binance/24HourTicker';
+        urlObject.apiHost = process.env.REACT_APP_API_HOST;
+        //freezing the object prevents other places from modifying it
+        Object.freeze(urlObject);
+        const url = urlObject.apiHost + "/24HourTicker";
+        console.log("coingrid: " + url);
         fetch(url)
             .then(result => {
                 return result.json();
@@ -111,7 +116,6 @@ class CoinGrid extends Component {
     }
 
     onCellClicked(event) {
-        console.log("envirnment: " + process.env.REACT_APP_API_HOST);
         if (this.state.isOpen) {
             return;
         }

@@ -6,7 +6,6 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import logo from './increasing.png';
 
 class App extends Component {
-
     render() {
         return (
             <div className="App">

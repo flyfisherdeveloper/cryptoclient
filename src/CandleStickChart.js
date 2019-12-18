@@ -1,6 +1,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 import PropTypes from "prop-types";
+import urlObject from "./UrlObject";
 
 class CandleStickChart extends React.Component {
     constructor(props) {
@@ -164,7 +165,7 @@ class CandleStickChart extends React.Component {
     }
 
     retrieveChartData(hours, days, months) {
-        const url = "http://localhost:5000/api/v1/binance/DayTicker/";
+        const url = urlObject.apiHost + "/DayTicker/";
         let daysOrMonths = (months === 0 ? days + "d" : months + "M");
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
