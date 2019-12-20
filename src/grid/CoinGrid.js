@@ -95,11 +95,12 @@ class CoinGrid extends Component {
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
         const url = urlObject.apiHost + "/24HourTicker";
-        console.log("coingrid: " + url);
+        console.log("url: " + url);
         fetch(url)
             .then(result => {
                 return result.json();
             }).then(data => {
+                console.log(data);
             if (this.mounted) {
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
@@ -211,7 +212,7 @@ class CoinGrid extends Component {
                     {marketButtons}
                 </div>
                     <div className="ag-theme-balham-dark"
-                         style={{width: "100%", height: 2800}}>
+                         style={{width: "100%", height: 3000}}>
                         <AgGridReact
                             reactNext={true}
                             rowSelection={"single"}
