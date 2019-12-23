@@ -2,7 +2,12 @@
   "name": "scannerclient",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "ag-grid-community": "^22.1.1",
+    "ag-grid-react": "^22.1.1",
+    "react-popup": "^0.10.0",
+    "react-scripts": "^3.3.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

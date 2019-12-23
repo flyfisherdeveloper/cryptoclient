@@ -3,6 +3,8 @@ import {AgGridReact} from "ag-grid-react";
 import "./grid-styles.css"
 import ChartModal from "../ChartModal";
 import urlObject from "../UrlObject";
+import info from './info_black.png';
+import Popup from 'react-popup';
 
 class CoinGrid extends Component {
     mounted = false;
@@ -28,19 +30,28 @@ class CoinGrid extends Component {
                     cellStyle: (params) => this.getCellFontColorNoSelection(params),
                 },
                 {
-                    headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr High Price", field: "highPrice", sortable: true, cellStyle: {border: 'none !important'}
+                    headerName: "24Hr High Price",
+                    field: "highPrice",
+                    sortable: true,
+                    cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true, cellStyle: {border: 'none !important'}
+                    headerName: "24Hr Low Price",
+                    field: "lowPrice",
+                    sortable: true,
+                    cellStyle: {border: 'none !important'}
                 },
                 {
                     headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Market Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Market Volume",
+                    field: "quoteVolume",
+                    sortable: true,
+                    cellStyle: {cursor: 'pointer'},
                 },
                 {
                     headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
@@ -74,7 +85,7 @@ class CoinGrid extends Component {
 
     getCellFontColorNoSelection(params) {
         if (params.value === 0.0) {
-            return {color: 'white', border: 'none !important' };
+            return {color: 'white', border: 'none !important'};
         }
         if (params.value < 0.0) {
             return {color: 'red', border: 'none !important'};
@@ -100,7 +111,7 @@ class CoinGrid extends Component {
             .then(result => {
                 return result.json();
             }).then(data => {
-                console.log(data);
+            console.log(data);
             if (this.mounted) {
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
@@ -183,6 +194,10 @@ class CoinGrid extends Component {
         this.setState({rowData: this.state.allRowData});
     }
 
+    onInfoClick() {
+        Popup.alert('jeff jeff');
+    }
+
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
     }
@@ -203,6 +218,7 @@ class CoinGrid extends Component {
         return (
             <div className="grid-background">
                 <div className="info-section">
+                    <img src={info} className="info-button" onClick={this.onInfoClick.bind(this)} alt="Information"/>
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
@@ -211,31 +227,31 @@ class CoinGrid extends Component {
                     <label className="market-label">Market:</label>
                     {marketButtons}
                 </div>
-                    <div className="ag-theme-balham-dark"
-                         style={{width: "100%", height: 3000}}>
-                        <AgGridReact
-                            reactNext={true}
-                            rowSelection={"single"}
-                            enableSorting={true}
-                            gridOptions={this.state.gridOptions}
-                            pagination={false}
-                            columnDefs={this.state.columnDefs}
-                            defaultColDef={this.state.defaultColDef}
-                            rowData={this.state.rowData}
-                            onCellClicked={this.onCellClicked.bind(this)}
-                            onGridReady={this.onGridReady.bind(this)}
-                        >
-                        </AgGridReact>
-                        <ChartModal isOpen={this.state.isOpen}
-                                    symbol={this.state.symbol}
-                                    quote={this.state.quote}
-                                    coin={this.state.coin}
-                                    isQuoteVolume={this.state.isQuoteVolume}
-                                    isPrice={this.state.isPrice}
-                                    onClose={this.toggleModal}>
-                        </ChartModal>
-                    </div>
+                <div className="ag-theme-balham-dark"
+                     style={{width: "100%", height: 3000}}>
+                    <AgGridReact
+                        reactNext={true}
+                        rowSelection={"single"}
+                        enableSorting={true}
+                        gridOptions={this.state.gridOptions}
+                        pagination={false}
+                        columnDefs={this.state.columnDefs}
+                        defaultColDef={this.state.defaultColDef}
+                        rowData={this.state.rowData}
+                        onCellClicked={this.onCellClicked.bind(this)}
+                        onGridReady={this.onGridReady.bind(this)}
+                    >
+                    </AgGridReact>
+                    <ChartModal isOpen={this.state.isOpen}
+                                symbol={this.state.symbol}
+                                quote={this.state.quote}
+                                coin={this.state.coin}
+                                isQuoteVolume={this.state.isQuoteVolume}
+                                isPrice={this.state.isPrice}
+                                onClose={this.toggleModal}>
+                    </ChartModal>
                 </div>
+            </div>
         );
     }
 }
