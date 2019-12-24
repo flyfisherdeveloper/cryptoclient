@@ -4,7 +4,7 @@ import "./grid-styles.css"
 import ChartModal from "../ChartModal";
 import urlObject from "../UrlObject";
 import info from './info_black.png';
-import Popup from 'react-popup';
+import Popup from 'reactjs-popup';
 
 class CoinGrid extends Component {
     mounted = false;
@@ -45,10 +45,10 @@ class CoinGrid extends Component {
                     cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Market Volume",
+                    headerName: "24Hr Market Volume ⓘ",
                     field: "quoteVolume",
                     sortable: true,
                     cellStyle: {cursor: 'pointer'},
@@ -95,8 +95,9 @@ class CoinGrid extends Component {
 
     getLink(params) {
         let data = params.data;
-        let icon = "<img src = " + data.iconLink + " style='vertical-align: middle' alt=''/> ";
+        let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon  + " \"> ";
         let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
+        console.log(link);
         return link;
     }
 
@@ -106,12 +107,10 @@ class CoinGrid extends Component {
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
         const url = urlObject.apiHost + "/24HourTicker";
-        console.log("url: " + url);
         fetch(url)
             .then(result => {
                 return result.json();
             }).then(data => {
-            console.log(data);
             if (this.mounted) {
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
@@ -194,10 +193,6 @@ class CoinGrid extends Component {
         this.setState({rowData: this.state.allRowData});
     }
 
-    onInfoClick() {
-        Popup.alert('jeff jeff');
-    }
-
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
     }
@@ -215,10 +210,37 @@ class CoinGrid extends Component {
                                    key="ALL"
                                    ref={allButton => this.allButton = allButton}
                                    onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
+
+        const ToolTipInfo = () => (
+            <div className="tooltip-info">
+                <div className="tooltip-info-header">ⓘ</div>
+                <span>
+                    To see detailed price or volume information,
+                    click on a cell in a column with a 'ⓘ'.
+                    <br />
+                    <br />
+                        (i.e. "Current Price ⓘ" column.)
+                </span>
+            </div>
+        );
+
+        const Tooltip = () => (
+            <Popup
+                trigger={open => (
+                    <button className="info-button">
+                        <img src={info} className="info-button" alt="Information"/>
+                    </button>
+                )}
+                position={"right top"}
+                closeOnDocumentClick
+            >
+                <ToolTipInfo/>
+            </Popup>
+        );
         return (
             <div className="grid-background">
                 <div className="info-section">
-                    <img src={info} className="info-button" onClick={this.onInfoClick.bind(this)} alt="Information"/>
+                    <Tooltip/>
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
