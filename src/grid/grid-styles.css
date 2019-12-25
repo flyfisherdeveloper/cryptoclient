@@ -114,3 +114,9 @@ a {
     margin-right: 50px;
     outline: black;
 }
+
+.loader-style {
+    float: right;
+    height: 1000px;
+    width: 1000px;
+}

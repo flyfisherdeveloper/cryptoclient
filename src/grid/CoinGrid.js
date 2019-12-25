@@ -5,6 +5,7 @@ import ChartModal from "../ChartModal";
 import urlObject from "../UrlObject";
 import info from './info_black.png';
 import Popup from 'reactjs-popup';
+import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
@@ -79,7 +80,8 @@ class CoinGrid extends Component {
             coin: "",   //i.e. LTC
             price: 0.0,
             isQuoteVolume: false,
-            isPrice: false
+            isPrice: false,
+            isLoading: true
         }
     }
 
@@ -95,7 +97,7 @@ class CoinGrid extends Component {
 
     getLink(params) {
         let data = params.data;
-        let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon  + " \"> ";
+        let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon + " \"> ";
         let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
         console.log(link);
         return link;
@@ -117,7 +119,9 @@ class CoinGrid extends Component {
                 let markets = [...new Set(data.map(item => item.currency))];
                 this.setState({markets: markets});
             }
+            this.setState({isLoading: false});
         }).catch(err => {
+            this.setState({isLoading: false});
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
                 return;
@@ -211,20 +215,19 @@ class CoinGrid extends Component {
                                    ref={allButton => this.allButton = allButton}
                                    onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
 
-        const ToolTipInfo = () => (
+        const toolTipInfo =
             <div className="tooltip-info">
                 <div className="tooltip-info-header">ⓘ</div>
                 <span>
                     To see detailed price or volume information,
                     click on a cell in a column with a 'ⓘ'.
-                    <br />
-                    <br />
+                    <br/>
+                    <br/>
                         (i.e. "Current Price ⓘ" column.)
                 </span>
-            </div>
-        );
+            </div>;
 
-        const Tooltip = () => (
+        const tooltip =
             <Popup
                 trigger={open => (
                     <button className="info-button">
@@ -234,13 +237,37 @@ class CoinGrid extends Component {
                 position={"right top"}
                 closeOnDocumentClick
             >
-                <ToolTipInfo/>
-            </Popup>
-        );
+                {toolTipInfo}
+            </Popup>;
+
+        const agGrid =
+            <AgGridReact
+                reactNext={true}
+                rowSelection={"single"}
+                enableSorting={true}
+                gridOptions={this.state.gridOptions}
+                pagination={false}
+                columnDefs={this.state.columnDefs}
+                defaultColDef={this.state.defaultColDef}
+                rowData={this.state.rowData}
+                onCellClicked={this.onCellClicked.bind(this)}
+                onGridReady={this.onGridReady.bind(this)}
+            >
+            </AgGridReact>;
+
+        const spinner =
+            <Loader className="loader-style"
+                    type="Puff"
+                    color="#3c3bff"
+                    timeout={8000} //8 secs
+            />;
+
+        let gridOrSpinner = this.state.isLoading ? spinner : agGrid;
+
         return (
             <div className="grid-background">
                 <div className="info-section">
-                    <Tooltip/>
+                    {tooltip}
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
@@ -251,19 +278,7 @@ class CoinGrid extends Component {
                 </div>
                 <div className="ag-theme-balham-dark"
                      style={{width: "100%", height: 3000}}>
-                    <AgGridReact
-                        reactNext={true}
-                        rowSelection={"single"}
-                        enableSorting={true}
-                        gridOptions={this.state.gridOptions}
-                        pagination={false}
-                        columnDefs={this.state.columnDefs}
-                        defaultColDef={this.state.defaultColDef}
-                        rowData={this.state.rowData}
-                        onCellClicked={this.onCellClicked.bind(this)}
-                        onGridReady={this.onGridReady.bind(this)}
-                    >
-                    </AgGridReact>
+                    {gridOrSpinner}
                     <ChartModal isOpen={this.state.isOpen}
                                 symbol={this.state.symbol}
                                 quote={this.state.quote}
