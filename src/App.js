@@ -11,7 +11,7 @@ class App extends Component {
             <div className="App">
                 <img src={logo} className="App-logo" alt="Crypto USA"/>
                 <div className="App-header">
-                    <a href="#home" className="App-link">Crypto USA</a>
+                    <a href="#home" className="App-link">Coin Info-USA</a>
                 </div>
                 <CoinGrid/>
             </div>

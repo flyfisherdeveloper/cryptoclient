@@ -6,13 +6,13 @@
     top: 100px;
     right: 0;
     bottom: 0;
-    left: 200px
+    left: 20%;
 }
 
 .modal {
     background-color: #fff;
     margin: auto;
-    padding: 1px
+    padding: 1px;
 }
 
 .modal-header {

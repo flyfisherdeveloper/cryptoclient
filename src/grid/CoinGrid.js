@@ -3,6 +3,9 @@ import {AgGridReact} from "ag-grid-react";
 import "./grid-styles.css"
 import ChartModal from "../ChartModal";
 import urlObject from "../UrlObject";
+import info from './info_black.png';
+import Popup from 'reactjs-popup';
+import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
@@ -28,19 +31,28 @@ class CoinGrid extends Component {
                     cellStyle: (params) => this.getCellFontColorNoSelection(params),
                 },
                 {
-                    headerName: "Current Price", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr High Price", field: "highPrice", sortable: true, cellStyle: {border: 'none !important'}
+                    headerName: "24Hr High Price",
+                    field: "highPrice",
+                    sortable: true,
+                    cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "24Hr Low Price", field: "lowPrice", sortable: true, cellStyle: {border: 'none !important'}
+                    headerName: "24Hr Low Price",
+                    field: "lowPrice",
+                    sortable: true,
+                    cellStyle: {border: 'none !important'}
                 },
                 {
-                    headerName: "24Hr Coin Volume", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 },
                 {
-                    headerName: "24Hr Market Volume", field: "quoteVolume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    headerName: "24Hr Market Volume ⓘ",
+                    field: "quoteVolume",
+                    sortable: true,
+                    cellStyle: {cursor: 'pointer'},
                 },
                 {
                     headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
@@ -68,13 +80,14 @@ class CoinGrid extends Component {
             coin: "",   //i.e. LTC
             price: 0.0,
             isQuoteVolume: false,
-            isPrice: false
+            isPrice: false,
+            isLoading: true
         }
     }
 
     getCellFontColorNoSelection(params) {
         if (params.value === 0.0) {
-            return {color: 'white', border: 'none !important' };
+            return {color: 'white', border: 'none !important'};
         }
         if (params.value < 0.0) {
             return {color: 'red', border: 'none !important'};
@@ -84,8 +97,9 @@ class CoinGrid extends Component {
 
     getLink(params) {
         let data = params.data;
-        let icon = "<img src = " + data.iconLink + " style='vertical-align: middle' alt=''/> ";
+        let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon + " \"> ";
         let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
+        console.log(link);
         return link;
     }
 
@@ -95,7 +109,6 @@ class CoinGrid extends Component {
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
         const url = urlObject.apiHost + "/24HourTicker";
-        console.log("coingrid: " + url);
         fetch(url)
             .then(result => {
                 return result.json();
@@ -106,7 +119,9 @@ class CoinGrid extends Component {
                 let markets = [...new Set(data.map(item => item.currency))];
                 this.setState({markets: markets});
             }
+            this.setState({isLoading: false});
         }).catch(err => {
+            this.setState({isLoading: false});
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
                 return;
@@ -199,9 +214,60 @@ class CoinGrid extends Component {
                                    key="ALL"
                                    ref={allButton => this.allButton = allButton}
                                    onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
+
+        const toolTipInfo =
+            <div className="tooltip-info">
+                <div className="tooltip-info-header">ⓘ</div>
+                <span>
+                    To see detailed price or volume information,
+                    click on a cell in a column with a 'ⓘ'.
+                    <br/>
+                    <br/>
+                        (i.e. "Current Price ⓘ" column.)
+                </span>
+            </div>;
+
+        const tooltip =
+            <Popup
+                trigger={open => (
+                    <button className="info-button">
+                        <img src={info} className="info-button" alt="Information"/>
+                    </button>
+                )}
+                position={"right top"}
+                closeOnDocumentClick
+            >
+                {toolTipInfo}
+            </Popup>;
+
+        const agGrid =
+            <AgGridReact
+                reactNext={true}
+                rowSelection={"single"}
+                enableSorting={true}
+                gridOptions={this.state.gridOptions}
+                pagination={false}
+                columnDefs={this.state.columnDefs}
+                defaultColDef={this.state.defaultColDef}
+                rowData={this.state.rowData}
+                onCellClicked={this.onCellClicked.bind(this)}
+                onGridReady={this.onGridReady.bind(this)}
+            >
+            </AgGridReact>;
+
+        const spinner =
+            <Loader className="loader-style"
+                    type="Puff"
+                    color="#3c3bff"
+                    timeout={8000} //8 secs
+            />;
+
+        let gridOrSpinner = this.state.isLoading ? spinner : agGrid;
+
         return (
             <div className="grid-background">
                 <div className="info-section">
+                    {tooltip}
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
@@ -210,31 +276,19 @@ class CoinGrid extends Component {
                     <label className="market-label">Market:</label>
                     {marketButtons}
                 </div>
-                    <div className="ag-theme-balham-dark"
-                         style={{width: "100%", height: 2800}}>
-                        <AgGridReact
-                            reactNext={true}
-                            rowSelection={"single"}
-                            enableSorting={true}
-                            gridOptions={this.state.gridOptions}
-                            pagination={false}
-                            columnDefs={this.state.columnDefs}
-                            defaultColDef={this.state.defaultColDef}
-                            rowData={this.state.rowData}
-                            onCellClicked={this.onCellClicked.bind(this)}
-                            onGridReady={this.onGridReady.bind(this)}
-                        >
-                        </AgGridReact>
-                        <ChartModal isOpen={this.state.isOpen}
-                                    symbol={this.state.symbol}
-                                    quote={this.state.quote}
-                                    coin={this.state.coin}
-                                    isQuoteVolume={this.state.isQuoteVolume}
-                                    isPrice={this.state.isPrice}
-                                    onClose={this.toggleModal}>
-                        </ChartModal>
-                    </div>
+                <div className="ag-theme-balham-dark"
+                     style={{width: "100%", height: 3000}}>
+                    {gridOrSpinner}
+                    <ChartModal isOpen={this.state.isOpen}
+                                symbol={this.state.symbol}
+                                quote={this.state.quote}
+                                coin={this.state.coin}
+                                isQuoteVolume={this.state.isQuoteVolume}
+                                isPrice={this.state.isPrice}
+                                onClose={this.toggleModal}>
+                    </ChartModal>
                 </div>
+            </div>
         );
     }
 }

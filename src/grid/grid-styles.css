@@ -66,6 +66,31 @@ a {
     margin-right: 10px;
 }
 
+.info-button {
+    background: #2c2c2c;
+    border: #2c2c2c;
+    float: left;
+}
+
+.tooltip-info {
+    font-size: 18px;
+    background: #fdffb1;
+    text-align: left;
+}
+
+.tooltip-info > .tooltip-info-header {
+    background: #fdffb1;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.info-section {
+    text-align: right;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 .exchange-select {
     padding: 10px 16px;
     cursor: pointer;
@@ -90,8 +115,8 @@ a {
     outline: black;
 }
 
-.info-section {
-    width: 100%;
-    margin-bottom: 10px;
-    text-align: right;
+.loader-style {
+    float: right;
+    height: 1000px;
+    width: 1000px;
 }
