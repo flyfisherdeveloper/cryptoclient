@@ -99,13 +99,15 @@ class CoinGrid extends Component {
         let data = params.data;
         let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon + " \"> ";
         let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
-        console.log(link);
         return link;
     }
 
     componentDidMount() {
         this.mounted = true;
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
+        if (typeof urlObject.apiHost == "undefined") {
+            urlObject.apiHost = "http://cryptoserver-env.ejw5zw3eqw.us-east-2.elasticbeanstalk.com/api/v1/binance";
+        }
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
         const url = urlObject.apiHost + "/24HourTicker";
