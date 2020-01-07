@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import CoinGrid from "./grid/CoinGrid";
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import logo from './increasing.png';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+    render() {
+        return (
+            <div className="App">
+                <img src={logo} className="App-logo" alt="Crypto USA"/>
+                <div className="App-header">
+                    <a href="#home" className="App-link">Coin Info-USA</a>
+                </div>
+                <CoinGrid/>
+            </div>
+        );
+    }
 }
 
 export default App;
