@@ -40,14 +40,6 @@ class CandleStickChart extends React.Component {
                     size: 0,
                     style: 'hollow'
                 },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: "dark",
-                        type: "vertical",
-                        shadeIntensity: 0.4,
-                    }
-                },
                 title: {
                     text: "Price Chart for " + this.props.coin,
                     style: {
