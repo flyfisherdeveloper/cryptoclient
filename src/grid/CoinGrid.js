@@ -106,7 +106,7 @@ class CoinGrid extends Component {
         this.mounted = true;
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
         if (typeof urlObject.apiHost == "undefined") {
-            urlObject.apiHost = "http://grid.coininfousa.cc/api/v1/binance";
+            urlObject.apiHost = "https://grid.coininfousa.cc/api/v1/binance";
         }
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
@@ -273,7 +273,6 @@ class CoinGrid extends Component {
                     <label className="market-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
-                        <option>Coin Market Cap</option>
                     </select>
                     <label className="market-label">Market:</label>
                     {marketButtons}
