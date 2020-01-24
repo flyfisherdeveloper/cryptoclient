@@ -131,7 +131,7 @@ class ChartModal extends React.Component {
             <div className="modal-chart-background">
                 <div className="modal">
                     <div className="modal-header">
-                        <label className="hours-label">Hours:
+                        <label className="hours-label">Time Frame:
                         </label>
                         <button ref={button1Hr => this.button1Hr = button1Hr}
                                 id="button1Hr"
@@ -148,7 +148,7 @@ class ChartModal extends React.Component {
                                 className="chart-button"
                                 onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
                         </button>
-                        <label className="middle-label">Days:
+                        <label className="middle-label">Time Period:
                         </label>
                         <button ref={button1Day => this.button1Day = button1Day}
                                 id="button1Day"
