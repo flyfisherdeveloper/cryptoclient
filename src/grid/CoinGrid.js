@@ -17,7 +17,7 @@ class CoinGrid extends Component {
             columnDefs: [
                 {
                     headerName: "Coin", field: "coin", sortable: true, width: 150,
-                    cellRenderer: (params) => this.getLink(params), cellStyle: {border: 'none !important'}
+                    cellRenderer: (params) => this.getLink(params), cellStyle: {border: 'none !important'},
                 },
                 {
                     headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
@@ -25,38 +25,46 @@ class CoinGrid extends Component {
                 {
                     headerName: "24Hr Price Change", field: "priceChange", sortable: true,
                     cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
                     cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr High Price",
                     field: "highPrice",
                     sortable: true,
-                    cellStyle: {border: 'none !important'}
+                    cellStyle: {border: 'none !important'},
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr Low Price",
                     field: "lowPrice",
                     sortable: true,
-                    cellStyle: {border: 'none !important'}
+                    cellStyle: {border: 'none !important'},
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr Market Volume ⓘ",
                     field: "quoteVolume",
                     sortable: true,
                     cellStyle: {cursor: 'pointer'},
+                    comparator: this.columnComparator
                 },
                 {
                     headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColorNoSelection(params)
+                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                    comparator: this.columnComparator
                 },
             ],
             defaultColDef: {
@@ -102,6 +110,24 @@ class CoinGrid extends Component {
         return link;
     }
 
+    formatNumber(num) {
+        let num_parts = num.toString().split(".");
+        num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return num_parts.join(".");
+    }
+
+    //Format the data to have commas: i.e. 12500 becomes 12,500
+    formatData(data) {
+        data.map(item => item.priceChange = this.formatNumber(item.priceChange));
+        data.map(item => item.priceChangePercent = this.formatNumber(item.priceChangePercent));
+        data.map(item => item.lastPrice = this.formatNumber(item.lastPrice));
+        data.map(item => item.highPrice = this.formatNumber(item.highPrice));
+        data.map(item => item.lowPrice = this.formatNumber(item.lowPrice));
+        data.map(item => item.volume = this.formatNumber(item.volume));
+        data.map(item => item.quoteVolume = this.formatNumber(item.quoteVolume));
+        data.map(item => item.volumeChangePercent = this.formatNumber(item.volumeChangePercent));
+    }
+
     componentDidMount() {
         this.mounted = true;
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
@@ -116,6 +142,7 @@ class CoinGrid extends Component {
                 return result.json();
             }).then(data => {
             if (this.mounted) {
+                this.formatData(data);
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
                 let markets = [...new Set(data.map(item => item.currency))];
@@ -149,6 +176,14 @@ class CoinGrid extends Component {
     onGridReady(params) {
         let columns = params.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         params.columnApi.autoSizeColumns(columns);
+    }
+
+    columnComparator(value1, value2) {
+        let str1 = value1.replace(/,/g, '');
+        let str2 = value2.replace(/,/g, '');
+        let num1 = parseFloat(str1);
+        let num2 = parseFloat(str2);
+        return  num1 - num2;
     }
 
     doVolume(event, isVolume) {
