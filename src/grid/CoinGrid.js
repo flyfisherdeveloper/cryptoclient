@@ -183,7 +183,7 @@ class CoinGrid extends Component {
         let str2 = value2.replace(/,/g, '');
         let num1 = parseFloat(str1);
         let num2 = parseFloat(str2);
-        return  num1 - num2;
+        return num1 - num2;
     }
 
     doVolume(event, isVolume) {
@@ -242,17 +242,8 @@ class CoinGrid extends Component {
         this.mounted = false;
     }
 
-    render() {
-        let marketButtons = this.state.markets.map(currency => <button className="market-button"
-                                                                       ref={currency}
-                                                                       key={currency}
-                                                                       onClick={this.onMarketButtonClick.bind(this, currency)}>{currency}</button>);
-        marketButtons.push(<button className="market-button-selected"
-                                   key="ALL"
-                                   ref={allButton => this.allButton = allButton}
-                                   onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
-
-        const toolTipInfo =
+    getToolTipInfo() {
+        return (
             <div className="tooltip-info">
                 <div className="tooltip-info-header">ⓘ</div>
                 <span>
@@ -262,9 +253,11 @@ class CoinGrid extends Component {
                     <br/>
                         (i.e. "Current Price ⓘ" column.)
                 </span>
-            </div>;
+            </div>);
+    }
 
-        const tooltip =
+    getToolTip(toolTipInfo) {
+        return (
             <Popup
                 trigger={open => (
                     <button className="info-button">
@@ -275,9 +268,11 @@ class CoinGrid extends Component {
                 closeOnDocumentClick
             >
                 {toolTipInfo}
-            </Popup>;
+            </Popup>);
+    }
 
-        const agGrid =
+    getGrid() {
+        return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
@@ -290,16 +285,37 @@ class CoinGrid extends Component {
                 onCellClicked={this.onCellClicked.bind(this)}
                 onGridReady={this.onGridReady.bind(this)}
             >
-            </AgGridReact>;
+            </AgGridReact>);
+    }
 
-        const spinner =
+    getSpinner() {
+        return (
             <Loader className="loader-style"
                     type="Puff"
                     color="#3c3bff"
                     timeout={8000} //8 secs
-            />;
+            />);
+    }
 
-        let gridOrSpinner = this.state.isLoading ? spinner : agGrid;
+    getMarketButtons() {
+        let marketButtons = this.state.markets.map(currency => <button className="market-button"
+                                                                       ref={currency}
+                                                                       key={currency}
+                                                                       onClick={this.onMarketButtonClick.bind(this, currency)}>{currency}</button>);
+        marketButtons.push(<button className="market-button-selected"
+                                   key="ALL"
+                                   ref={allButton => this.allButton = allButton}
+                                   onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
+        return marketButtons;
+    }
+
+    render() {
+        const marketButtons =  this.getMarketButtons();
+        const toolTipInfo = this.getToolTipInfo();
+        const tooltip = this.getToolTip(toolTipInfo);
+        const agGrid = this.getGrid();
+        const spinner = this.getSpinner();
+        const gridOrSpinner = this.state.isLoading ? spinner : agGrid;
 
         return (
             <div className="grid-background">
