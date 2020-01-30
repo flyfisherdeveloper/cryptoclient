@@ -9,64 +9,14 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
+    displayMap = new Map([["Volume Information", "volume"], ["Price Information", "price"]]);
+    columnApi = null;
 
     constructor(props) {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
+
         this.state = {
-            columnDefs: [
-                {
-                    headerName: "Coin", field: "coin", sortable: true, width: 150,
-                    cellRenderer: (params) => this.getLink(params), cellStyle: {border: 'none !important'},
-                },
-                {
-                    headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
-                },
-                {
-                    headerName: "24Hr Price Change", field: "priceChange", sortable: true,
-                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr High Price",
-                    field: "highPrice",
-                    sortable: true,
-                    cellStyle: {border: 'none !important'},
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr Low Price",
-                    field: "lowPrice",
-                    sortable: true,
-                    cellStyle: {border: 'none !important'},
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr Market Volume ⓘ",
-                    field: "quoteVolume",
-                    sortable: true,
-                    cellStyle: {cursor: 'pointer'},
-                    comparator: this.columnComparator
-                },
-                {
-                    headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
-                    cellStyle: (params) => this.getCellFontColorNoSelection(params),
-                    comparator: this.columnComparator
-                },
-            ],
             defaultColDef: {
                 resizable: true
             },
@@ -86,11 +36,97 @@ class CoinGrid extends Component {
             symbol: "", //i.e. LTCUSDT
             quote: "",  //i.e. USDT
             coin: "",   //i.e. LTC
-            price: 0.0,
             isQuoteVolume: false,
             isPrice: false,
-            isLoading: true
+            isLoading: true,
+            volumeDisplay: false,
+            priceDisplay: false,
+            allDisplay: true
         }
+    }
+
+    getAllColumnDefs() {
+        return [
+            {
+                headerName: "Coin", field: "coin", sortable: true, width: 150,
+                cellRenderer: (params) => this.getLink(params), cellStyle: {border: 'none !important'},
+            },
+            {
+                headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
+            },
+            {
+                headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Price Change", field: "priceChange", sortable: true,
+                cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Price Change %", field: "priceChangePercent", sortable: true,
+                cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr High Price",
+                field: "highPrice",
+                sortable: true,
+                cellStyle: {border: 'none !important'},
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Low Price",
+                field: "lowPrice",
+                sortable: true,
+                cellStyle: {border: 'none !important'},
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Market Volume ⓘ",
+                field: "quoteVolume",
+                sortable: true,
+                cellStyle: {cursor: 'pointer'},
+                comparator: this.columnComparator
+            },
+            {
+                headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
+                cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                comparator: this.columnComparator
+            },
+        ];
+    }
+
+    getColumnDefs() {
+        let all = this.getAllColumnDefs();
+        let volume = all.filter(col => col.field === "volume");
+        let quoteVolume = all.filter(col => col.field === "quoteVolume");
+        let volumeChangePercent = all.filter(col => col.field === "volumeChangePercent");
+        let volumeColumns = [volume, quoteVolume, volumeChangePercent];
+
+        let price = all.filter(col => col.field === "lastPrice");
+        let priceChange = all.filter(col => col.field === "priceChange");
+        let pricePercent = all.filter(col => col.field === "priceChangePercent");
+        let highPrice = all.filter(col => col.field === "highPrice");
+        let lowPrice = all.filter(col => col.field === "lowPrice");
+        let priceColumns = [price, priceChange, pricePercent, highPrice, lowPrice];
+
+        if (this.state.volumeDisplay) {
+            volumeColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), true));
+            priceColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), false));
+        }
+        if (this.state.priceDisplay) {
+            volumeColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), false));
+            priceColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), true));
+        }
+        if (this.state.allDisplay && this.columnApi != null) {
+            all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
+        }
+        return all;
     }
 
     getCellFontColorNoSelection(params) {
@@ -106,8 +142,7 @@ class CoinGrid extends Component {
     getLink(params) {
         let data = params.data;
         let icon = "<img style='vertical-align: middle' alt=''/ src=\"data:image/png;base64, " + data.icon + " \"> ";
-        let link = icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
-        return link;
+        return icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
     }
 
     formatNumber(num) {
@@ -173,9 +208,10 @@ class CoinGrid extends Component {
         }
     }
 
-    onGridReady(params) {
-        let columns = params.columnApi.getAllColumns().filter(col => col.colId !== "coin");
-        params.columnApi.autoSizeColumns(columns);
+    onGridReady(grid) {
+        let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
+        this.columnApi = grid.columnApi;
+        grid.columnApi.autoSizeColumns(columns);
     }
 
     columnComparator(value1, value2) {
@@ -204,23 +240,26 @@ class CoinGrid extends Component {
         this.setState({isPrice: true});
         this.setState({isQuoteVolume: false});
         let selectedRow = event.api.getSelectedRows()[0];
-        let thePrice = Number(selectedRow.lastPrice);
         this.setState({symbol: selectedRow.symbol});
         this.setState({quote: selectedRow.currency});
         this.setState({coin: selectedRow.coin});
-        this.setState({price: thePrice});
         this.toggleModal();
     }
 
     resetMarketButtons() {
         let markets = this.state.markets;
-        markets.forEach(market => this.refs[market].className = "market-button");
-        this.allButton.className = "market-button";
+        markets.forEach(market => this.refs[market].className = "toolbar-button");
+        this.allButton.className = "toolbar-button";
+    }
+
+    resetDisplayButtons() {
+        this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
+        this.allDisplayButton.className = "toolbar-button";
     }
 
     onMarketButtonClick(currency) {
         this.resetMarketButtons();
-        this.refs[currency].className = "market-button-selected";
+        this.refs[currency].className = "toolbar-button-selected";
         let rows = this.state.allRowData;
         let filteredRows = rows.filter(value => {
             return value.currency === currency
@@ -228,10 +267,34 @@ class CoinGrid extends Component {
         this.setState({rowData: filteredRows});
     }
 
+    onDisplayButtonClick(display) {
+        this.resetDisplayButtons();
+        this.refs[display].className = "toolbar-button-selected";
+        //todo: fix this
+        if (display === "volume") {
+            this.setState({volumeDisplay: true});
+            this.setState({priceDisplay: false});
+            this.setState({allDisplay: false});
+        }
+        if (display === "price") {
+            this.setState({volumeDisplay: false});
+            this.setState({priceDisplay: true});
+            this.setState({allDisplay: false});
+        }
+    }
+
     onAllMarketButtonClick() {
         this.resetMarketButtons();
-        this.allButton.className = "market-button-selected";
+        this.allButton.className = "toolbar-button-selected";
         this.setState({rowData: this.state.allRowData});
+    }
+
+    onAllDisplayButtonClick() {
+        this.resetDisplayButtons();
+        this.allDisplayButton.className = "toolbar-button-selected";
+        this.setState({volumeDisplay: false});
+        this.setState({priceDisplay: false});
+        this.setState({allDisplay: true});
     }
 
     toggleModal() {
@@ -272,6 +335,7 @@ class CoinGrid extends Component {
     }
 
     getGrid() {
+        const columnDefs = this.getColumnDefs();
         return (
             <AgGridReact
                 reactNext={true}
@@ -279,7 +343,7 @@ class CoinGrid extends Component {
                 enableSorting={true}
                 gridOptions={this.state.gridOptions}
                 pagination={false}
-                columnDefs={this.state.columnDefs}
+                columnDefs={columnDefs}
                 defaultColDef={this.state.defaultColDef}
                 rowData={this.state.rowData}
                 onCellClicked={this.onCellClicked.bind(this)}
@@ -298,38 +362,79 @@ class CoinGrid extends Component {
     }
 
     getMarketButtons() {
-        let marketButtons = this.state.markets.map(currency => <button className="market-button"
+        let marketButtons = this.state.markets.map(currency => <button className="toolbar-button"
                                                                        ref={currency}
                                                                        key={currency}
                                                                        onClick={this.onMarketButtonClick.bind(this, currency)}>{currency}</button>);
-        marketButtons.push(<button className="market-button-selected"
+        marketButtons.push(<button className="toolbar-button-selected"
                                    key="ALL"
                                    ref={allButton => this.allButton = allButton}
                                    onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
         return marketButtons;
     }
 
+    getDisplayButtons() {
+        let displayButtons = [];
+        let which = 0;
+        this.displayMap.forEach((key, value) => {
+            displayButtons[which++] = <button className="toolbar-button"
+                                              ref={key}
+                                              key={key}
+                                              onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+        });
+        displayButtons.push(<button className="toolbar-button-selected"
+                                    key="AllDisplay"
+                                    ref={allDisplayButton => this.allDisplayButton = allDisplayButton}
+                                    onClick={this.onAllDisplayButtonClick.bind(this)}>ALL</button>);
+        return displayButtons;
+    }
+
     render() {
-        const marketButtons =  this.getMarketButtons();
+        const marketButtons = this.getMarketButtons();
+        const displayButtons = this.getDisplayButtons();
         const toolTipInfo = this.getToolTipInfo();
         const tooltip = this.getToolTip(toolTipInfo);
-        const agGrid = this.getGrid();
+        this.grid = this.getGrid();
         const spinner = this.getSpinner();
-        const gridOrSpinner = this.state.isLoading ? spinner : agGrid;
+        const gridOrSpinner = this.state.isLoading ? spinner : this.grid;
+        const gridStyles = {
+            normalStyle: {
+                width: "100%",
+                height: 3000
+            },
+            volumeStyle: {
+                width: "51%",
+                height: 3000,
+                padding: "0% 20%"
+            },
+            priceStyle: {
+                width: "75%",
+                height: 3000
+            },
+        };
+        let whichStyle = gridStyles.normalStyle;
+        if (this.state.volumeDisplay) {
+            whichStyle = gridStyles.volumeStyle;
+        }
+        if (this.state.priceDisplay) {
+            whichStyle = gridStyles.priceStyle;
+        }
 
         return (
             <div className="grid-background">
-                <div className="info-section">
+                <div className="toolbar-section">
                     {tooltip}
-                    <label className="market-label">Exchange:</label>
+                    <label className="toolbar-label">Display:</label>
+                    {displayButtons}
+                    <label className="toolbar-label">Exchange:</label>
                     <select className="exchange-select">
                         <option>Binance USA</option>
                     </select>
-                    <label className="market-label">Market:</label>
+                    <label className="toolbar-label">Market:</label>
                     {marketButtons}
                 </div>
                 <div className="ag-theme-balham-dark"
-                     style={{width: "100%", height: 3000}}>
+                     style={whichStyle}>
                     {gridOrSpinner}
                     <ChartModal isOpen={this.state.isOpen}
                                 symbol={this.state.symbol}

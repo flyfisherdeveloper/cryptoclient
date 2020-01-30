@@ -35,7 +35,7 @@ a {
     align-items: center;
 }
 
-.market-button {
+.toolbar-button {
     padding: 10px 16px;
     cursor: pointer;
     color: white;
@@ -47,7 +47,7 @@ a {
 }
 
 /* Style the active class, and buttons on mouse-over */
-.market-button-selected, .market-button:hover, .market-button:focus {
+.toolbar-button-selected, .toolbar-button:hover, .toolbar-button:focus {
     padding: 10px 16px;
     cursor: pointer;
     color: white;
@@ -58,10 +58,11 @@ a {
     outline: black;
 }
 
-.market-label {
+.toolbar-label {
     color: white;
     font-weight: bold;
     font-size: 18px;
+    margin-left: 20px;
     margin-right: 10px;
 }
 
@@ -84,7 +85,7 @@ a {
     text-align: left;
 }
 
-.info-section {
+.toolbar-section {
     text-align: right;
     width: 100%;
     margin-bottom: 10px;
@@ -116,6 +117,6 @@ a {
 
 .loader-style {
     float: right;
-    height: 1000px;
-    width: 1000px;
+    height: 50%;
+    width: 50%;
 }
