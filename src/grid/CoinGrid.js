@@ -163,6 +163,29 @@ class CoinGrid extends Component {
         data.map(item => item.volumeChangePercent = this.formatNumber(item.volumeChangePercent));
     }
 
+    //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
+    formatPriceData(data) {
+        data.map(item => item.currency === "USDT" ? item.lastPrice = "₮ " + item.lastPrice : item.lastPrice);
+        data.map(item => item.currency === "USD" ? item.lastPrice = "$ " + item.lastPrice : item.lastPrice);
+        data.map(item => item.currency === "BTC" ? item.lastPrice = "₿ " + item.lastPrice : item.lastPrice);
+
+        data.map(item => item.currency === "USDT" ? item.priceChange = "₮ " + item.priceChange : item.priceChange);
+        data.map(item => item.currency === "USD" ? item.priceChange = "$ " + item.priceChange : item.priceChange);
+        data.map(item => item.currency === "BTC" ? item.priceChange = "₿ " + item.priceChange : item.priceChange);
+
+        data.map(item => item.currency === "USDT" ? item.highPrice = "₮ " + item.highPrice : item.highPrice);
+        data.map(item => item.currency === "USD" ? item.highPrice = "$ " + item.highPrice : item.highPrice);
+        data.map(item => item.currency === "BTC" ? item.highPrice = "₿ " + item.highPrice : item.highPrice);
+
+        data.map(item => item.currency === "USDT" ? item.lowPrice = "₮ " + item.lowPrice : item.lowPrice);
+        data.map(item => item.currency === "USD" ? item.lowPrice = "$ " + item.lowPrice : item.lowPrice);
+        data.map(item => item.currency === "BTC" ? item.lowPrice = "₿ " + item.lowPrice : item.lowPrice);
+
+        data.map(item => item.currency === "USDT" ? item.quoteVolume = "₮ " + item.quoteVolume : item.quoteVolume);
+        data.map(item => item.currency === "USD" ? item.quoteVolume = "$ " + item.quoteVolume : item.quoteVolume);
+        data.map(item => item.currency === "BTC" ? item.quoteVolume = "₿ " + item.quoteVolume : item.quoteVolume);
+    }
+
     componentDidMount() {
         this.mounted = true;
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
@@ -178,6 +201,7 @@ class CoinGrid extends Component {
             }).then(data => {
             if (this.mounted) {
                 this.formatData(data);
+                this.formatPriceData(data);
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
                 let markets = [...new Set(data.map(item => item.currency))];
@@ -391,6 +415,12 @@ class CoinGrid extends Component {
     }
 
     render() {
+        //slight style change for a mobile device
+        let toolbarStyle = "toolbar-section";
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            toolbarStyle = "toolbar-section-mobile";
+        }
         const marketButtons = this.getMarketButtons();
         const displayButtons = this.getDisplayButtons();
         const toolTipInfo = this.getToolTipInfo();
@@ -424,7 +454,7 @@ class CoinGrid extends Component {
 
         return (
             <div className="grid-background">
-                <div className="toolbar-section">
+                <div className={toolbarStyle}>
                     {tooltip}
                     <label className="toolbar-label-start">Display:</label>
                     {displayButtons}
