@@ -102,6 +102,12 @@ class ChartModal extends React.Component {
     }
 
     render() {
+        //slight style change for a mobile device
+        let modalStyle = "modal-chart-background";
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            modalStyle = "modal-chart-background-mobile";
+        }
         if (!this.props.isOpen) {
             return null;
         }
@@ -128,10 +134,10 @@ class ChartModal extends React.Component {
             />
         }
         return (
-            <div className="modal-chart-background">
+            <div className={modalStyle}>
                 <div className="modal">
                     <div className="modal-header">
-                        <label className="hours-label">Hours:
+                        <label className="hours-label">Time Frame:
                         </label>
                         <button ref={button1Hr => this.button1Hr = button1Hr}
                                 id="button1Hr"
@@ -148,7 +154,7 @@ class ChartModal extends React.Component {
                                 className="chart-button"
                                 onClick={this.onHourButtonClick.bind(this, 12)}>12Hr
                         </button>
-                        <label className="middle-label">Days:
+                        <label className="middle-label">Time Period:
                         </label>
                         <button ref={button1Day => this.button1Day = button1Day}
                                 id="button1Day"

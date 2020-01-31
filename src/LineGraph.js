@@ -180,28 +180,21 @@ class LineGraph extends React.Component {
     }
 
     getAreaData(json) {
+        function roundNear(value, decimalPlaces) {
+            return Math.floor(value * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
+        }
         let info = json.map((data) => {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = 0.0;
             if (this.props.isQuoteVolume) {
-                value = data.quoteAssetVolume.toPrecision(2);
+                value = roundNear(data.quoteAssetVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
             } else {
-                value = data.volume.toPrecision(2);
+                value = roundNear(data.volume, 2);
             }
             return [date.toLocaleString(), value];
-        });
-        return info;
-    }
-
-    getCandleStickData(json) {
-        let info = json.map((data) => {
-            let date = new Date(data.closeTime);
-            date.setMinutes(date.getMinutes() + 1);
-            let value = [data.open, data.high, data.low, data.close];
-            return {x: date.toLocaleString(), y: value};
         });
         return info;
     }
@@ -218,6 +211,7 @@ class LineGraph extends React.Component {
                     data: info,
                 }];
                 this.setState({series: seriesData});
+                console.log(this.state.series);
             }).catch(err => {
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
