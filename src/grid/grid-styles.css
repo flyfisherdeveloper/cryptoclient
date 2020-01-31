@@ -66,6 +66,14 @@ a {
     margin-right: 10px;
 }
 
+.toolbar-label-start {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    margin-left: -50px;
+    margin-right: 10px;
+}
+
 .info-button {
     background: #2c2c2c;
     border: #2c2c2c;
@@ -86,7 +94,7 @@ a {
 }
 
 .toolbar-section {
-    text-align: right;
+    text-align: center;
     width: 100%;
     margin-bottom: 10px;
 }
@@ -99,7 +107,6 @@ a {
     background: rgba(0, 0, 0, 0.57);
     border: 1px solid black;
     border-bottom: 2px solid black;
-    margin-right: 50px;
     outline: black;
 }
 

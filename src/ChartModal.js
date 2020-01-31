@@ -102,6 +102,11 @@ class ChartModal extends React.Component {
     }
 
     render() {
+        let modalStyle = "modal-chart-background";
+        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            modalStyle = "modal-chart-background-mobile";
+        }
         if (!this.props.isOpen) {
             return null;
         }
@@ -128,7 +133,7 @@ class ChartModal extends React.Component {
             />
         }
         return (
-            <div className="modal-chart-background">
+            <div className={modalStyle}>
                 <div className="modal">
                     <div className="modal-header">
                         <label className="hours-label">Time Frame:

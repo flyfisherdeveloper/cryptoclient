@@ -215,6 +215,7 @@ class CoinGrid extends Component {
     }
 
     columnComparator(value1, value2) {
+        //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
         let str2 = value2.replace(/,/g, '');
         let num1 = parseFloat(str1);
@@ -405,11 +406,12 @@ class CoinGrid extends Component {
             volumeStyle: {
                 width: "51%",
                 height: 3000,
-                padding: "0% 20%"
+                padding: "0% 25%"
             },
             priceStyle: {
-                width: "75%",
-                height: 3000
+                width: "60%",
+                height: 3000,
+                padding: "0% 20%"
             },
         };
         let whichStyle = gridStyles.normalStyle;
@@ -424,7 +426,7 @@ class CoinGrid extends Component {
             <div className="grid-background">
                 <div className="toolbar-section">
                     {tooltip}
-                    <label className="toolbar-label">Display:</label>
+                    <label className="toolbar-label-start">Display:</label>
                     {displayButtons}
                     <label className="toolbar-label">Exchange:</label>
                     <select className="exchange-select">
