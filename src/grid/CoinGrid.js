@@ -242,6 +242,13 @@ class CoinGrid extends Component {
         //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
         let str2 = value2.replace(/,/g, '');
+        //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
+        str1 = str1.replace("$ ", "");
+        str1 = str1.replace("₮ ", "");
+        str1 = str1.replace("₿ ", "");
+        str2 = str2.replace("$ ", "");
+        str2 = str2.replace("₮ ", "");
+        str2 = str2.replace("₿ ", "");
         let num1 = parseFloat(str1);
         let num2 = parseFloat(str2);
         return num1 - num2;
