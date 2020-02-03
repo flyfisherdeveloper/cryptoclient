@@ -130,10 +130,11 @@ class CoinGrid extends Component {
     }
 
     getCellFontColorNoSelection(params) {
-        if (params.value === 0.0) {
+        let price = this.modifiedPriceToNumber(params.value);
+        if (price === 0.0) {
             return {color: 'white', border: 'none !important'};
         }
-        if (params.value < 0.0) {
+        if (price < 0.0) {
             return {color: 'red', border: 'none !important'};
         }
         return {color: 'green', border: 'none !important'};
@@ -238,18 +239,30 @@ class CoinGrid extends Component {
         grid.columnApi.autoSizeColumns(columns);
     }
 
+    modifiedPriceToNumber(price) {
+        //take the commas out of the numbers
+        let str = price.replace(/,/g, '');
+        //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
+        str = str.replace("$ ", "");
+        str = str.replace("₮ ", "");
+        str = str.replace("₿ ", "");
+        return parseFloat(str);
+    }
+
     columnComparator(value1, value2) {
         //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
-        let str2 = value2.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
         str1 = str1.replace("$ ", "");
         str1 = str1.replace("₮ ", "");
         str1 = str1.replace("₿ ", "");
+        let num1 = parseFloat(str1);
+
+        let str2 = value2.replace(/,/g, '');
+        //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
         str2 = str2.replace("$ ", "");
         str2 = str2.replace("₮ ", "");
         str2 = str2.replace("₿ ", "");
-        let num1 = parseFloat(str1);
         let num2 = parseFloat(str2);
         return num1 - num2;
     }
