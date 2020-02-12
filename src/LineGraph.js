@@ -211,7 +211,6 @@ class LineGraph extends React.Component {
                     data: info,
                 }];
                 this.setState({series: seriesData});
-                console.log(this.state.series);
             }).catch(err => {
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
