@@ -65,14 +65,14 @@ class ChartModal extends React.Component {
     }
 
     render() {
+        if (!this.props.isOpen) {
+            return null;
+        }
         //slight style change for a mobile device
         let modalStyle = "modal-chart-background";
         let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
             modalStyle = "modal-chart-background-mobile";
-        }
-        if (!this.props.isOpen) {
-            return null;
         }
         let chart = null;
         if (this.state.isArea) {

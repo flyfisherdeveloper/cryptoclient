@@ -7,144 +7,6 @@ class LineGraph extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            options: {
-                chart: {
-                    group: "DataCharts",
-                    animations: {
-                        enabled: true
-                    },
-                    zoom: {
-                        type: "x",
-                        enabled: true,
-                        autoScaleYaxis: true
-                    },
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: false,
-                            selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
-                            pan: true,
-                            reset: true,
-                        },
-                        autoSelected: 'zoom'
-                    },
-                    background: "#fff",
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                markers: {
-                    size: 0,
-                    style: 'hollow'
-                },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shade: "dark",
-                        type: "vertical",
-                        shadeIntensity: 0.4,
-                    }
-                },
-                title: {
-                    text: this.getTitle(),
-                    style: {
-                        fontSize: "32px"
-                    },
-                    align: "middle",
-                    offsetY: 30
-                },
-                subtitle: {
-                    text: this.getSubtitleText(),
-                    style: {
-                        fontSize: "16px"
-                    },
-                    offsetY: 70,
-                    align: "middle"
-                },
-                xaxis: {
-                    axisTicks: {show: true},
-                    axisBorder: {
-                        show: true,
-                        color: '#000000',
-                        height: 1,
-                        width: '100%',
-                        offsetX: 0,
-                        offsetY: 0
-                    },
-                    type: "datetime",
-                    labels: {
-                        style: {
-                            colors: [],
-                            fontSize: '16px',
-                            fontFamily: 'Helvetica, Arial, sans-serif',
-                            cssClass: 'apexcharts-xaxis-label',
-                        },
-                        offsetX: 0,
-                        offsetY: 0
-                    },
-                },
-                yaxis: [
-                    {
-                        min: function (min) {
-                            return (min < 0 ? 0 : min);
-                        },
-                        axisTicks: {show: true},
-                        axisBorder: {
-                            show: true,
-                            color: '#000000',
-                            height: 1,
-                            width: '100%',
-                            offsetX: 0,
-                            offsetY: 0
-                        },
-                        labels: {
-                            show: true,
-                            minWidth: 60,
-                            style: {
-                                fontSize: '16px'
-                            }
-                        },
-                        title: {
-                            text: this.getYAxisText(),
-                            rotate: 90,
-                            offsetX: -7,
-                            offsetY: 0,
-                            style: {
-                                color: undefined,
-                                fontSize: '24px',
-                                fontFamily: 'Helvetica, Arial, sans-serif',
-                                cssClass: 'apexcharts-yaxis-title',
-                            },
-                        },
-                        tooltip: {enabled: true}
-                    },
-                ],
-                stroke: {
-                    width: 2.5,
-                    curve: 'straight'
-                },
-                legend: {
-                    show: true
-                },
-                tooltip: {
-                    enabled: true,
-                    shared: true,
-                    theme: "dark",
-                    x: {
-                        format: "MM/dd/yyyy HH:mm",
-                        show: false,
-                    },
-                    show: true,
-                    y: {
-                        title: {
-                            formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
-                        }
-                    },
-                }
-            },
             series: [
                 {
                     data: [],
@@ -183,6 +45,7 @@ class LineGraph extends React.Component {
         function roundNear(value, decimalPlaces) {
             return Math.floor(value * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
         }
+
         let info = json.map((data) => {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
@@ -224,11 +87,154 @@ class LineGraph extends React.Component {
         this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
     }
 
+    getChartOptions() {
+        return ({
+            chart: {
+                group: "DataCharts",
+                animations: {
+                    enabled: true
+                },
+                zoom: {
+                    type: "x",
+                    enabled: true,
+                    autoScaleYaxis: true
+                },
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: false,
+                        selection: true,
+                        zoom: true,
+                        zoomin: true,
+                        zoomout: true,
+                        pan: true,
+                        reset: true,
+                    },
+                    autoSelected: 'zoom'
+                },
+                background: "#fff",
+            },
+            dataLabels: {
+                enabled: false
+            },
+            markers: {
+                size: 0,
+                style: 'hollow'
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: "dark",
+                    type: "vertical",
+                    shadeIntensity: 0.4,
+                }
+            },
+            title: {
+                text: this.getTitle(),
+                style: {
+                    fontSize: "32px"
+                },
+                align: "middle",
+                offsetY: 30
+            },
+            subtitle: {
+                text: this.getSubtitleText(),
+                style: {
+                    fontSize: "16px"
+                },
+                offsetY: 70,
+                align: "middle"
+            },
+            xaxis: {
+                axisTicks: {show: true},
+                axisBorder: {
+                    show: true,
+                    color: '#000000',
+                    height: 1,
+                    width: '100%',
+                    offsetX: 0,
+                    offsetY: 0
+                },
+                type: "datetime",
+                labels: {
+                    style: {
+                        colors: [],
+                        fontSize: '16px',
+                        fontFamily: 'Helvetica, Arial, sans-serif',
+                        cssClass: 'apexcharts-xaxis-label',
+                    },
+                    offsetX: 0,
+                    offsetY: 0
+                },
+            },
+            yaxis: [
+                {
+                    min: function (min) {
+                        return (min < 0 ? 0 : min);
+                    },
+                    axisTicks: {show: true},
+                    axisBorder: {
+                        show: true,
+                        color: '#000000',
+                        height: 1,
+                        width: '100%',
+                        offsetX: 0,
+                        offsetY: 0
+                    },
+                    labels: {
+                        show: true,
+                        minWidth: 60,
+                        style: {
+                            fontSize: '16px'
+                        }
+                    },
+                    title: {
+                        text: this.getYAxisText(),
+                        rotate: 90,
+                        offsetX: -7,
+                        offsetY: 0,
+                        style: {
+                            color: undefined,
+                            fontSize: '24px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            cssClass: 'apexcharts-yaxis-title',
+                        },
+                    },
+                    tooltip: {enabled: true}
+                },
+            ],
+            stroke: {
+                width: 2.5,
+                curve: 'straight'
+            },
+            legend: {
+                show: true
+            },
+            tooltip: {
+                enabled: true,
+                shared: true,
+                theme: "dark",
+                x: {
+                    format: "MM/dd/yyyy HH:mm",
+                    show: false,
+                },
+                show: true,
+                y: {
+                    title: {
+                        formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
+                    }
+                },
+            }
+        })
+    }
+
     render() {
+        console.log("render LineGraph");
+        let options = this.getChartOptions();
         return (
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
-                    options={this.state.options}
+                    options={options}
                     series={this.state.series}
                     type={"area"}
                     height="100%"

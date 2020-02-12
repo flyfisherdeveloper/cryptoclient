@@ -187,15 +187,19 @@ class CoinGrid extends Component {
         data.map(item => item.currency === "BTC" ? item.quoteVolume = "₿ " + item.quoteVolume : item.quoteVolume);
     }
 
-    componentDidMount() {
-        this.mounted = true;
+    getUrl() {
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
         if (typeof urlObject.apiHost == "undefined") {
             urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binance";
         }
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
-        const url = urlObject.apiHost + "/24HourTicker";
+        return urlObject.apiHost + "/24HourTicker";
+    }
+
+    componentDidMount() {
+        this.mounted = true;
+        let url = this.getUrl();
         fetch(url)
             .then(result => {
                 return result.json();
@@ -217,6 +221,10 @@ class CoinGrid extends Component {
             }
             throw err;
         });
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     onCellClicked(event) {
@@ -344,10 +352,6 @@ class CoinGrid extends Component {
 
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
-    }
-
-    componentWillUnmount() {
-        this.mounted = false;
     }
 
     getToolTipInfo() {
