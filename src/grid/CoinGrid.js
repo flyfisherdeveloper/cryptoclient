@@ -16,18 +16,6 @@ class CoinGrid extends Component {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = {
-            defaultColDef: {
-                resizable: true
-            },
-            gridOptions: {
-                rowHeight: 60,
-                rowStyle: {
-                    fontWeight: "bold",
-                    fontSize: "14px",
-                    'border-bottom': 'black 10px solid',
-                    'border-top': 'black 10px solid',
-                },
-            },
             rowData: [],
             allRowData: [],
             markets: [],
@@ -325,7 +313,6 @@ class CoinGrid extends Component {
     onDisplayButtonClick(display) {
         this.resetDisplayButtons();
         this.refs[display].className = "toolbar-button-selected";
-        //todo: fix this
         if (display === "volume") {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
@@ -387,15 +374,27 @@ class CoinGrid extends Component {
 
     getGrid() {
         const columnDefs = this.getColumnDefs();
+        let colDef =  {
+            resizable: true
+        };
+        let gridOptions = {
+            rowHeight: 60,
+                rowStyle: {
+                fontWeight: "bold",
+                    fontSize: "14px",
+                    'border-bottom': 'black 10px solid',
+                    'border-top': 'black 10px solid',
+            },
+        };
         return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
                 enableSorting={true}
-                gridOptions={this.state.gridOptions}
+                gridOptions={gridOptions}
                 pagination={false}
                 columnDefs={columnDefs}
-                defaultColDef={this.state.defaultColDef}
+                defaultColDef={colDef}
                 rowData={this.state.rowData}
                 onCellClicked={this.onCellClicked.bind(this)}
                 onGridReady={this.onGridReady.bind(this)}
@@ -440,10 +439,37 @@ class CoinGrid extends Component {
         return displayButtons;
     }
 
+    getGridHeight(coinGrid) {
+        if (this.state.allRowData === null) {
+            return 3000;
+        }
+        let rowHeight = coinGrid.props.gridOptions.rowHeight;
+        return this.state.allRowData.length * rowHeight + rowHeight;
+    };
+
+    getGridStyles(coinGrid) {
+        return {
+            normalStyle: {
+                width: "100%",
+                height: this.getGridHeight(coinGrid)
+            },
+            volumeStyle: {
+                width: "51%",
+                height: this.getGridHeight(coinGrid),
+                padding: "0% 25%"
+            },
+            priceStyle: {
+                width: "60%",
+                height: this.getGridHeight(coinGrid),
+                padding: "0% 20%"
+            },
+        };
+    }
+
     render() {
         //slight style change for a mobile device
         let toolbarStyle = "toolbar-section";
-        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
             toolbarStyle = "toolbar-section-mobile";
         }
@@ -451,25 +477,10 @@ class CoinGrid extends Component {
         const displayButtons = this.getDisplayButtons();
         const toolTipInfo = this.getToolTipInfo();
         const tooltip = this.getToolTip(toolTipInfo);
-        this.grid = this.getGrid();
+        const coinGrid = this.getGrid();
         const spinner = this.getSpinner();
-        const gridOrSpinner = this.state.isLoading ? spinner : this.grid;
-        const gridStyles = {
-            normalStyle: {
-                width: "100%",
-                height: 3000
-            },
-            volumeStyle: {
-                width: "51%",
-                height: 3000,
-                padding: "0% 25%"
-            },
-            priceStyle: {
-                width: "60%",
-                height: 3000,
-                padding: "0% 20%"
-            },
-        };
+        const gridOrSpinner = this.state.isLoading ? spinner : coinGrid;
+        const gridStyles = this.getGridStyles(coinGrid);
         let whichStyle = gridStyles.normalStyle;
         if (this.state.volumeDisplay) {
             whichStyle = gridStyles.volumeStyle;
