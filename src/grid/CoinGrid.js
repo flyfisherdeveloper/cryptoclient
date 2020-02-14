@@ -15,7 +15,6 @@ class CoinGrid extends Component {
     constructor(props) {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
-
         this.state = {
             defaultColDef: {
                 resizable: true
@@ -130,7 +129,7 @@ class CoinGrid extends Component {
     }
 
     getCellFontColorNoSelection(params) {
-        let price = this.modifiedPriceToNumber(params.value);
+        let price = params.value === null ? 0.0 : this.modifiedPriceToNumber(params.value);
         if (price === 0.0) {
             return {color: 'white', border: 'none !important'};
         }
@@ -147,6 +146,9 @@ class CoinGrid extends Component {
     }
 
     formatNumber(num) {
+        if (num === null) {
+            return null;
+        }
         let num_parts = num.toString().split(".");
         num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return num_parts.join(".");

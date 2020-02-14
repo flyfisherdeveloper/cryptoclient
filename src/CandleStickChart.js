@@ -184,7 +184,6 @@ class CandleStickChart extends React.Component {
     }
 
     render() {
-        console.log("render Candle");
         let options = this.getChartOptions();
         return (
             <div style={{width: "100%", height: "100%"}}>

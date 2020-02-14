@@ -229,7 +229,6 @@ class LineGraph extends React.Component {
     }
 
     render() {
-        console.log("render LineGraph");
         let options = this.getChartOptions();
         return (
             <div style={{width: "100%", height: "100%"}}>
