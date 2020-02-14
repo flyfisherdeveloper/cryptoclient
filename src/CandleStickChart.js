@@ -7,133 +7,6 @@ class CandleStickChart extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            options: {
-                chart: {
-                    group: "DataCharts",
-                    animations: {
-                        enabled: true
-                    },
-                    zoom: {
-                        type: "x",
-                        enabled: true,
-                        autoScaleYaxis: true
-                    },
-                    toolbar: {
-                        show: true,
-                        tools: {
-                            download: false,
-                            selection: true,
-                            zoom: true,
-                            zoomin: true,
-                            zoomout: true,
-                            pan: true,
-                            reset: true,
-                        },
-                        autoSelected: 'zoom'
-                    },
-                    background: "#fff",
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                markers: {
-                    size: 0,
-                    style: 'hollow'
-                },
-                title: {
-                    text: "Price Chart for " + this.props.coin,
-                    style: {
-                        fontSize: "32px"
-                    },
-                    align: "middle",
-                    offsetY: 30
-                },
-                subtitle: {
-                    text: "(Price in " + this.props.quote + ")",
-                    style: {
-                        fontSize: "16px"
-                    },
-                    offsetY: 70,
-                    align: "middle"
-                },
-                xaxis: {
-                    axisTicks: {show: true},
-                    axisBorder: {
-                        show: true,
-                        color: '#000000',
-                        height: 1,
-                        width: '100%',
-                        offsetX: 0,
-                        offsetY: 0
-                    },
-                    type: "datetime",
-                    labels: {
-                        style: {
-                            colors: [],
-                            fontSize: '16px',
-                            fontFamily: 'Helvetica, Arial, sans-serif',
-                            cssClass: 'apexcharts-xaxis-label',
-                        },
-                        offsetX: 0,
-                        offsetY: 0
-                    },
-                },
-                yaxis: [
-                    {
-                        min: function (min) {
-                            return (min < 0 ? 0 : min);
-                        },
-                        axisTicks: {show: true},
-                        axisBorder: {
-                            show: true,
-                            color: '#000000',
-                            height: 1,
-                            width: '100%',
-                            offsetX: 0,
-                            offsetY: 0
-                        },
-                        labels: {
-                            show: true,
-                            minWidth: 60,
-                            style: {
-                                fontSize: '16px'
-                            }
-                        },
-                        title: {
-                            text: "Price in " + this.props.quote,
-                            rotate: 90,
-                            offsetX: -7,
-                            offsetY: 0,
-                            style: {
-                                color: undefined,
-                                fontSize: '24px',
-                                fontFamily: 'Helvetica, Arial, sans-serif',
-                                cssClass: 'apexcharts-yaxis-title',
-                            },
-                        },
-                        tooltip: {enabled: true}
-                    },
-                ],
-                stroke: {
-                    width: 2.5,
-                    curve: 'straight'
-                },
-                legend: {
-                    show: true
-                },
-                tooltip: {
-                    enabled: true,
-                    shared: true,
-                    theme: "dark",
-                    x: {
-                        format: "MM/dd/yyyy HH:mm",
-                    },
-                    show: true,
-                    y: {
-                        title: this.props.coin,
-                    },
-                }
-            },
             series: [
                 {
                     data: [],
@@ -162,8 +35,7 @@ class CandleStickChart extends React.Component {
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
-                let info = null;
-                info = this.getCandleStickData(json);
+                let info = this.getCandleStickData(json);
                 let seriesData = [{
                     data: info,
                 }];
@@ -181,11 +53,142 @@ class CandleStickChart extends React.Component {
         this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
     }
 
+    getChartOptions() {
+        return ({
+            chart: {
+                group: "DataCharts",
+                animations: {
+                    enabled: true
+                },
+                zoom: {
+                    type: "x",
+                    enabled: true,
+                    autoScaleYaxis: true
+                },
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: false,
+                        selection: true,
+                        zoom: true,
+                        zoomin: true,
+                        zoomout: true,
+                        pan: true,
+                        reset: true,
+                    },
+                    autoSelected: 'zoom'
+                },
+                background: "#fff",
+            },
+            dataLabels: {
+                enabled: false
+            },
+            markers: {
+                size: 0,
+                style: 'hollow'
+            },
+            title: {
+                text: "Price Chart for " + this.props.coin,
+                style: {
+                    fontSize: "32px"
+                },
+                align: "middle",
+                offsetY: 30
+            },
+            subtitle: {
+                text: "(Price in " + this.props.quote + ")",
+                style: {
+                    fontSize: "16px"
+                },
+                offsetY: 70,
+                align: "middle"
+            },
+            xaxis: {
+                axisTicks: {show: true},
+                axisBorder: {
+                    show: true,
+                    color: '#000000',
+                    height: 1,
+                    width: '100%',
+                    offsetX: 0,
+                    offsetY: 0
+                },
+                type: "datetime",
+                labels: {
+                    style: {
+                        colors: [],
+                        fontSize: '16px',
+                        fontFamily: 'Helvetica, Arial, sans-serif',
+                        cssClass: 'apexcharts-xaxis-label',
+                    },
+                    offsetX: 0,
+                    offsetY: 0
+                },
+            },
+            yaxis: [
+                {
+                    min: function (min) {
+                        return (min < 0 ? 0 : min);
+                    },
+                    axisTicks: {show: true},
+                    axisBorder: {
+                        show: true,
+                        color: '#000000',
+                        height: 1,
+                        width: '100%',
+                        offsetX: 0,
+                        offsetY: 0
+                    },
+                    labels: {
+                        show: true,
+                        minWidth: 60,
+                        style: {
+                            fontSize: '16px'
+                        }
+                    },
+                    title: {
+                        text: "Price in " + this.props.quote,
+                        rotate: 90,
+                        offsetX: -7,
+                        offsetY: 0,
+                        style: {
+                            color: undefined,
+                            fontSize: '24px',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            cssClass: 'apexcharts-yaxis-title',
+                        },
+                    },
+                    tooltip: {enabled: true}
+                },
+            ],
+            stroke: {
+                width: 2.5,
+                curve: 'straight'
+            },
+            legend: {
+                show: true
+            },
+            tooltip: {
+                enabled: true,
+                shared: true,
+                theme: "dark",
+                x: {
+                    format: "MM/dd/yyyy HH:mm",
+                },
+                show: true,
+                y: {
+                    title: this.props.coin,
+                },
+            }
+        });
+    }
+
     render() {
+        let options = this.getChartOptions();
         return (
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
-                    options={this.state.options}
+                    options={options}
                     series={this.state.series}
                     type={"candlestick"}
                     height="100%"

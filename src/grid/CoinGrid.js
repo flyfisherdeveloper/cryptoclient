@@ -15,20 +15,7 @@ class CoinGrid extends Component {
     constructor(props) {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
-
         this.state = {
-            defaultColDef: {
-                resizable: true
-            },
-            gridOptions: {
-                rowHeight: 60,
-                rowStyle: {
-                    fontWeight: "bold",
-                    fontSize: "14px",
-                    'border-bottom': 'black 10px solid',
-                    'border-top': 'black 10px solid',
-                },
-            },
             rowData: [],
             allRowData: [],
             markets: [],
@@ -130,10 +117,11 @@ class CoinGrid extends Component {
     }
 
     getCellFontColorNoSelection(params) {
-        if (params.value === 0.0) {
+        let price = params.value === null ? 0.0 : this.modifiedPriceToNumber(params.value);
+        if (price === 0.0) {
             return {color: 'white', border: 'none !important'};
         }
-        if (params.value < 0.0) {
+        if (price < 0.0) {
             return {color: 'red', border: 'none !important'};
         }
         return {color: 'green', border: 'none !important'};
@@ -146,6 +134,9 @@ class CoinGrid extends Component {
     }
 
     formatNumber(num) {
+        if (num === null) {
+            return null;
+        }
         let num_parts = num.toString().split(".");
         num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return num_parts.join(".");
@@ -186,15 +177,19 @@ class CoinGrid extends Component {
         data.map(item => item.currency === "BTC" ? item.quoteVolume = "₿ " + item.quoteVolume : item.quoteVolume);
     }
 
-    componentDidMount() {
-        this.mounted = true;
+    getUrl() {
         urlObject.apiHost = process.env.REACT_APP_API_HOST;
         if (typeof urlObject.apiHost == "undefined") {
             urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binance";
         }
         //freezing the object prevents other places from modifying it
         Object.freeze(urlObject);
-        const url = urlObject.apiHost + "/24HourTicker";
+        return urlObject.apiHost + "/24HourTicker";
+    }
+
+    componentDidMount() {
+        this.mounted = true;
+        let url = this.getUrl();
         fetch(url)
             .then(result => {
                 return result.json();
@@ -218,6 +213,10 @@ class CoinGrid extends Component {
         });
     }
 
+    componentWillUnmount() {
+        this.mounted = false;
+    }
+
     onCellClicked(event) {
         if (this.state.isOpen) {
             return;
@@ -238,18 +237,30 @@ class CoinGrid extends Component {
         grid.columnApi.autoSizeColumns(columns);
     }
 
+    modifiedPriceToNumber(price) {
+        //take the commas out of the numbers
+        let str = price.replace(/,/g, '');
+        //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
+        str = str.replace("$ ", "");
+        str = str.replace("₮ ", "");
+        str = str.replace("₿ ", "");
+        return parseFloat(str);
+    }
+
     columnComparator(value1, value2) {
         //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
-        let str2 = value2.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
         str1 = str1.replace("$ ", "");
         str1 = str1.replace("₮ ", "");
         str1 = str1.replace("₿ ", "");
+        let num1 = parseFloat(str1);
+
+        let str2 = value2.replace(/,/g, '');
+        //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
         str2 = str2.replace("$ ", "");
         str2 = str2.replace("₮ ", "");
         str2 = str2.replace("₿ ", "");
-        let num1 = parseFloat(str1);
         let num2 = parseFloat(str2);
         return num1 - num2;
     }
@@ -302,7 +313,6 @@ class CoinGrid extends Component {
     onDisplayButtonClick(display) {
         this.resetDisplayButtons();
         this.refs[display].className = "toolbar-button-selected";
-        //todo: fix this
         if (display === "volume") {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
@@ -331,10 +341,6 @@ class CoinGrid extends Component {
 
     toggleModal() {
         this.setState({isOpen: !this.state.isOpen});
-    }
-
-    componentWillUnmount() {
-        this.mounted = false;
     }
 
     getToolTipInfo() {
@@ -368,15 +374,27 @@ class CoinGrid extends Component {
 
     getGrid() {
         const columnDefs = this.getColumnDefs();
+        let colDef =  {
+            resizable: true
+        };
+        let gridOptions = {
+            rowHeight: 60,
+                rowStyle: {
+                fontWeight: "bold",
+                    fontSize: "14px",
+                    'border-bottom': 'black 10px solid',
+                    'border-top': 'black 10px solid',
+            },
+        };
         return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
                 enableSorting={true}
-                gridOptions={this.state.gridOptions}
+                gridOptions={gridOptions}
                 pagination={false}
                 columnDefs={columnDefs}
-                defaultColDef={this.state.defaultColDef}
+                defaultColDef={colDef}
                 rowData={this.state.rowData}
                 onCellClicked={this.onCellClicked.bind(this)}
                 onGridReady={this.onGridReady.bind(this)}
@@ -421,10 +439,37 @@ class CoinGrid extends Component {
         return displayButtons;
     }
 
+    getGridHeight(coinGrid) {
+        if (this.state.allRowData === null) {
+            return 3000;
+        }
+        let rowHeight = coinGrid.props.gridOptions.rowHeight;
+        return this.state.allRowData.length * rowHeight + rowHeight;
+    };
+
+    getGridStyles(coinGrid) {
+        return {
+            normalStyle: {
+                width: "100%",
+                height: this.getGridHeight(coinGrid)
+            },
+            volumeStyle: {
+                width: "51%",
+                height: this.getGridHeight(coinGrid),
+                padding: "0% 25%"
+            },
+            priceStyle: {
+                width: "60%",
+                height: this.getGridHeight(coinGrid),
+                padding: "0% 20%"
+            },
+        };
+    }
+
     render() {
         //slight style change for a mobile device
         let toolbarStyle = "toolbar-section";
-        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
             toolbarStyle = "toolbar-section-mobile";
         }
@@ -432,25 +477,10 @@ class CoinGrid extends Component {
         const displayButtons = this.getDisplayButtons();
         const toolTipInfo = this.getToolTipInfo();
         const tooltip = this.getToolTip(toolTipInfo);
-        this.grid = this.getGrid();
+        const coinGrid = this.getGrid();
         const spinner = this.getSpinner();
-        const gridOrSpinner = this.state.isLoading ? spinner : this.grid;
-        const gridStyles = {
-            normalStyle: {
-                width: "100%",
-                height: 3000
-            },
-            volumeStyle: {
-                width: "51%",
-                height: 3000,
-                padding: "0% 25%"
-            },
-            priceStyle: {
-                width: "60%",
-                height: 3000,
-                padding: "0% 20%"
-            },
-        };
+        const gridOrSpinner = this.state.isLoading ? spinner : coinGrid;
+        const gridStyles = this.getGridStyles(coinGrid);
         let whichStyle = gridStyles.normalStyle;
         if (this.state.volumeDisplay) {
             whichStyle = gridStyles.volumeStyle;
