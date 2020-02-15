@@ -238,6 +238,7 @@ class CoinGrid extends Component {
     }
 
     modifiedPriceToNumber(price) {
+        price = price === null ? "" : price;
         //take the commas out of the numbers
         let str = price.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
@@ -248,6 +249,8 @@ class CoinGrid extends Component {
     }
 
     columnComparator(value1, value2) {
+        value1 = value1 === null ? "" : value1;
+        value2 = value2 === null ? "" : value2;
         //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
