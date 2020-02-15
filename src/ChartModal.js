@@ -29,7 +29,7 @@ class ChartModal extends React.Component {
 
     onDayOrMonthButtonClick(buttonNumber) {
         if (buttonNumber === 60 && this.state.hours === 1) {
-           return;
+            return;
         }
         let months = 0;
         let days = buttonNumber;
@@ -70,7 +70,7 @@ class ChartModal extends React.Component {
         }
         //slight style change for a mobile device
         let modalStyle = "modal-chart-background";
-        let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         if (isMobile) {
             modalStyle = "modal-chart-background-mobile";
         }
@@ -96,65 +96,65 @@ class ChartModal extends React.Component {
                                       months={this.state.months}
             />
         }
-        let button1Hr =
+        const button1Hr =
             <ButtonComponent
                 text={"1Hr"}
                 number={1}
                 className={this.state.months > 1 ? "hidden" : (this.state.hours === 1 ? "high-light-button" : "chart-button")}
                 func={this.onHourButtonClick.bind(this, 1)}>
             </ButtonComponent>;
-        let button4Hr =
+        const button4Hr =
             <ButtonComponent
                 text={"4Hr"}
                 number={4}
                 className={this.state.hours === 4 ? "high-light-button" : "chart-button"}
                 func={this.onHourButtonClick.bind(this, 4)}>
             </ButtonComponent>;
-        let button12Hr =
+        const button12Hr =
             <ButtonComponent
                 text={"12Hr"}
                 number={12}
                 className={this.state.hours === 12 ? "high-light-button" : "chart-button"}
                 func={this.onHourButtonClick.bind(this, 12)}>
             </ButtonComponent>;
-        let button1Day =
+        const button1Day =
             <ButtonComponent
-                text={"1 Day"}
+                text={"1D"}
                 number={1}
                 className={this.state.days === 1 ? "high-light-button" : "chart-button"}
                 func={this.onDayOrMonthButtonClick.bind(this, 1)}>
             </ButtonComponent>;
-        let button3Day =
+        const button3Day =
             <ButtonComponent
-                text={"3 Days"}
+                text={"3D"}
                 number={3}
                 className={this.state.days === 3 ? "high-light-button" : "chart-button"}
                 func={this.onDayOrMonthButtonClick.bind(this, 3)}>
             </ButtonComponent>;
-        let button7Day =
+        const button7Day =
             <ButtonComponent
-                text={"7 Days"}
+                text={"7D"}
                 number={7}
                 className={this.state.days === 7 ? "high-light-button" : "chart-button"}
                 func={this.onDayOrMonthButtonClick.bind(this, 7)}>
             </ButtonComponent>;
-        let button1Month =
+        const button1Month =
             <ButtonComponent
-                text={"1 Month"}
+                text={"1M"}
                 //30 => 30 days (to avoid confusion with the 3-day option)
                 number={30}
                 className={this.state.months === 1 ? "high-light-button" : "chart-button"}
                 func={this.onDayOrMonthButtonClick.bind(this, 30)}>
             </ButtonComponent>;
-        let button3Months =
+        const button3Months =
             <ButtonComponent
-                text={"3 Months"}
+                text={"3M"}
                 //60 => 60 days
                 number={60}
                 className={this.state.months === 3 ? "high-light-button" : (this.state.hours === 1 ? "hidden" : "chart-button")}
                 func={this.onDayOrMonthButtonClick.bind(this, 60)}>
             </ButtonComponent>;
-        let areaClassName = () => {
+        const areaClassName = () => {
             if (this.props.isPrice) {
                 if (this.state.isArea) {
                     return "high-light-button";
@@ -163,7 +163,7 @@ class ChartModal extends React.Component {
             }
             return "hidden";
         };
-        let candleStickClassName = () => {
+        const candleStickClassName = () => {
             if (this.props.isPrice) {
                 if (this.state.isArea) {
                     return "chart-button";
@@ -172,18 +172,24 @@ class ChartModal extends React.Component {
             }
             return "hidden";
         };
-        let buttonArea =
+        const buttonArea =
             <ButtonComponent
                 text={"Area"}
                 className={areaClassName()}
                 func={this.onChartTypeClick.bind(this, "area")}>
             </ButtonComponent>;
-        let buttonCandleStick =
+        const buttonCandleStick =
             <ButtonComponent
                 text={"Candle Stick"}
                 className={candleStickClassName()}
                 func={this.onChartTypeClick.bind(this, "candle")}>
             </ButtonComponent>;
+        const close =
+            <a href="#"
+               className="close"
+               onClick={this.onCloseButtonClick.bind(this)}
+            />;
+
         return (
             <div className={modalStyle}>
                 <div className="modal">
@@ -204,10 +210,7 @@ class ChartModal extends React.Component {
                         </label>
                         {buttonArea}
                         {buttonCandleStick}
-                        <a href="#"
-                           className="close"
-                           onClick={this.onCloseButtonClick.bind(this)}
-                        />
+                        {close}
                     </div>
                     {this.props.children}
                 </div>
@@ -218,13 +221,6 @@ class ChartModal extends React.Component {
 }
 
 class ButtonComponent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            normal: true
-        }
-    }
-
     handleClick = (value) => {
         this.props.func(this, this.props.number);
     };

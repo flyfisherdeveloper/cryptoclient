@@ -9,7 +9,7 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
-    displayMap = new Map([["Volume Information", "volume"], ["Price Information", "price"]]);
+    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"]]);
     columnApi = null;
 
     constructor(props) {
@@ -393,7 +393,6 @@ class CoinGrid extends Component {
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
-                enableSorting={true}
                 gridOptions={gridOptions}
                 pagination={false}
                 columnDefs={columnDefs}
