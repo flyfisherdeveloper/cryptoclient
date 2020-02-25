@@ -9,8 +9,10 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
-    displayMap = new Map([["Volume Information", "volume"], ["Price Information", "price"]]);
+    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"]]);
     columnApi = null;
+    currentExchange = "A";
+    notAvailable = "Not Available";
 
     constructor(props) {
         super(props);
@@ -19,6 +21,7 @@ class CoinGrid extends Component {
             rowData: [],
             allRowData: [],
             markets: [],
+            market: "ALL",
             isOpen: false,
             symbol: "", //i.e. LTCUSDT
             quote: "",  //i.e. USDT
@@ -117,7 +120,7 @@ class CoinGrid extends Component {
     }
 
     getCellFontColorNoSelection(params) {
-        let price = params.value === null ? 0.0 : this.modifiedPriceToNumber(params.value);
+        let price = params.value === null ? 0.0 : (params.value === this.notAvailable ? 0.0 : this.modifiedPriceToNumber(params.value));
         if (price === 0.0) {
             return {color: 'white', border: 'none !important'};
         }
@@ -133,9 +136,10 @@ class CoinGrid extends Component {
         return icon + "<a target='_blank' rel='noopener noreferrer' href='" + data.tradeLink + "'> " + params.value + "</a>";
     }
 
+    //format a number to have commas: i.e. 12500 becomes 12,500
     formatNumber(num) {
         if (num === null) {
-            return null;
+            return this.notAvailable;
         }
         let num_parts = num.toString().split(".");
         num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -177,19 +181,28 @@ class CoinGrid extends Component {
         data.map(item => item.currency === "BTC" ? item.quoteVolume = "₿ " + item.quoteVolume : item.quoteVolume);
     }
 
-    getUrl() {
-        urlObject.apiHost = process.env.REACT_APP_API_HOST;
-        if (typeof urlObject.apiHost == "undefined") {
-            urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binance";
+    setApiHost() {
+        if (this.currentExchange === "" || this.currentExchange === "A") {
+            urlObject.apiHost = process.env.REACT_APP_API_HOST_BINANCE_USA;
+            if (typeof urlObject.apiHost == "undefined") {
+                urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
+            }
+        } else {
+            urlObject.apiHost = process.env.REACT_APP_API_HOST_BINANCE;
+            if (typeof urlObject.apiHost == "undefined") {
+                urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binance";
+            }
         }
-        //freezing the object prevents other places from modifying it
-        Object.freeze(urlObject);
+        if (typeof urlObject.apiHost == "undefined") {
+            urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
+        }
+    }
+
+    getUrl() {
         return urlObject.apiHost + "/24HourTicker";
     }
 
-    componentDidMount() {
-        this.mounted = true;
-        let url = this.getUrl();
+    getExchangeData(url) {
         fetch(url)
             .then(result => {
                 return result.json();
@@ -211,6 +224,13 @@ class CoinGrid extends Component {
             }
             throw err;
         });
+    }
+
+    componentDidMount() {
+        this.setApiHost();
+        this.mounted = true;
+        let url = this.getUrl();
+        this.getExchangeData(url);
     }
 
     componentWillUnmount() {
@@ -238,6 +258,7 @@ class CoinGrid extends Component {
     }
 
     modifiedPriceToNumber(price) {
+        price = price === null ? "" : price;
         //take the commas out of the numbers
         let str = price.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
@@ -248,6 +269,8 @@ class CoinGrid extends Component {
     }
 
     columnComparator(value1, value2) {
+        value1 = value1 === null ? "" : value1;
+        value2 = value2 === null ? "" : value2;
         //take the commas out of the numbers
         let str1 = value1.replace(/,/g, '');
         //Take out the '$' for USD, '₮' for USDT, and '₿' for BTC
@@ -289,25 +312,9 @@ class CoinGrid extends Component {
         this.toggleModal();
     }
 
-    resetMarketButtons() {
-        let markets = this.state.markets;
-        markets.forEach(market => this.refs[market].className = "toolbar-button");
-        this.allButton.className = "toolbar-button";
-    }
-
     resetDisplayButtons() {
         this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
         this.allDisplayButton.className = "toolbar-button";
-    }
-
-    onMarketButtonClick(currency) {
-        this.resetMarketButtons();
-        this.refs[currency].className = "toolbar-button-selected";
-        let rows = this.state.allRowData;
-        let filteredRows = rows.filter(value => {
-            return value.currency === currency
-        });
-        this.setState({rowData: filteredRows});
     }
 
     onDisplayButtonClick(display) {
@@ -323,12 +330,6 @@ class CoinGrid extends Component {
             this.setState({priceDisplay: true});
             this.setState({allDisplay: false});
         }
-    }
-
-    onAllMarketButtonClick() {
-        this.resetMarketButtons();
-        this.allButton.className = "toolbar-button-selected";
-        this.setState({rowData: this.state.allRowData});
     }
 
     onAllDisplayButtonClick() {
@@ -374,23 +375,22 @@ class CoinGrid extends Component {
 
     getGrid() {
         const columnDefs = this.getColumnDefs();
-        let colDef =  {
+        let colDef = {
             resizable: true
         };
         let gridOptions = {
             rowHeight: 60,
-                rowStyle: {
+            rowStyle: {
                 fontWeight: "bold",
-                    fontSize: "14px",
-                    'border-bottom': 'black 10px solid',
-                    'border-top': 'black 10px solid',
+                fontSize: "14px",
+                'border-bottom': 'black 10px solid',
+                'border-top': 'black 10px solid',
             },
         };
         return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
-                enableSorting={true}
                 gridOptions={gridOptions}
                 pagination={false}
                 columnDefs={columnDefs}
@@ -407,20 +407,8 @@ class CoinGrid extends Component {
             <Loader className="loader-style"
                     type="Puff"
                     color="#3c3bff"
-                    timeout={8000} //8 secs
+                    timeout={8000} //8 seconds
             />);
-    }
-
-    getMarketButtons() {
-        let marketButtons = this.state.markets.map(currency => <button className="toolbar-button"
-                                                                       ref={currency}
-                                                                       key={currency}
-                                                                       onClick={this.onMarketButtonClick.bind(this, currency)}>{currency}</button>);
-        marketButtons.push(<button className="toolbar-button-selected"
-                                   key="ALL"
-                                   ref={allButton => this.allButton = allButton}
-                                   onClick={this.onAllMarketButtonClick.bind(this)}>ALL</button>);
-        return marketButtons;
     }
 
     getDisplayButtons() {
@@ -437,6 +425,17 @@ class CoinGrid extends Component {
                                     ref={allDisplayButton => this.allDisplayButton = allDisplayButton}
                                     onClick={this.onAllDisplayButtonClick.bind(this)}>ALL</button>);
         return displayButtons;
+    }
+
+    getMarketSelections() {
+        let selections = [];
+        this.state.markets.forEach((value) => {
+            selections.push(<option key={value}>{value}</option>);
+        });
+        selections.push(<option key="ALL">ALL</option>);
+        return <select className="exchange-select" value={this.state.market} onChange={this.onMarketChange}>
+            {selections}
+        </select>;
     }
 
     getGridHeight(coinGrid) {
@@ -466,6 +465,26 @@ class CoinGrid extends Component {
         };
     }
 
+    onExchangeChange = (event) => {
+        this.currentExchange = event.target.value;
+        this.setApiHost();
+        let url = this.getUrl();
+        this.getExchangeData(url);
+        this.setState({market: "ALL"});
+    };
+
+    onMarketChange = (event) => {
+        let selection = event.target.value;
+        let rows = this.state.allRowData;
+        if (selection === "ALL") {
+            this.setState({rowData: rows});
+        } else {
+            let filteredRows = rows.filter(value => value.currency === selection);
+            this.setState({rowData: filteredRows});
+        }
+        this.setState({market: selection});
+    };
+
     render() {
         //slight style change for a mobile device
         let toolbarStyle = "toolbar-section";
@@ -473,7 +492,7 @@ class CoinGrid extends Component {
         if (isMobile) {
             toolbarStyle = "toolbar-section-mobile";
         }
-        const marketButtons = this.getMarketButtons();
+        const marketSelections = this.getMarketSelections();
         const displayButtons = this.getDisplayButtons();
         const toolTipInfo = this.getToolTipInfo();
         const tooltip = this.getToolTip(toolTipInfo);
@@ -496,11 +515,12 @@ class CoinGrid extends Component {
                     <label className="toolbar-label-start">Display:</label>
                     {displayButtons}
                     <label className="toolbar-label">Exchange:</label>
-                    <select className="exchange-select">
-                        <option>Binance USA</option>
+                    <select className="exchange-select" onChange={this.onExchangeChange}>
+                        <option value="A">Binance USA</option>
+                        <option value="B">Binance</option>
                     </select>
                     <label className="toolbar-label">Market:</label>
-                    {marketButtons}
+                    {marketSelections}
                 </div>
                 <div className="ag-theme-balham-dark"
                      style={whichStyle}>

@@ -19,14 +19,12 @@
 
 .modal {
     background-color: #fff;
-    margin: auto;
-    padding: 1px;
 }
 
 .modal-header {
-    height: 29px;
+    height: 15%;
     width: 100%;
-    text-align: left
+    text-align: center
 }
 
 .chart-button {
@@ -55,11 +53,10 @@
 }
 
 .close {
-    display: block;
+    width: 25px;
+    height: 25px;
     float: right;
-    width: 30px;
-    height: 29px;
-    background: url("close_icon.png") no-repeat center center;
+    background: url("close-icon.png") no-repeat center center;
 }
 
 .type-chart {
