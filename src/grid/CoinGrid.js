@@ -13,6 +13,9 @@ class CoinGrid extends Component {
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
+    priceColumns = ["lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
+    numberColumns = ["priceChange", "priceChangePercent", "lastPrice", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
+    volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
 
     constructor(props) {
         super(props);
@@ -91,27 +94,17 @@ class CoinGrid extends Component {
         ];
     }
 
+    //Get the column definitions for the grid. Set some visible based on user selection (price, volume, all).
     getColumnDefs() {
         let all = this.getAllColumnDefs();
-        let volume = all.filter(col => col.field === "volume");
-        let quoteVolume = all.filter(col => col.field === "quoteVolume");
-        let volumeChangePercent = all.filter(col => col.field === "volumeChangePercent");
-        let volumeColumns = [volume, quoteVolume, volumeChangePercent];
-
-        let price = all.filter(col => col.field === "lastPrice");
-        let priceChange = all.filter(col => col.field === "priceChange");
-        let pricePercent = all.filter(col => col.field === "priceChangePercent");
-        let highPrice = all.filter(col => col.field === "highPrice");
-        let lowPrice = all.filter(col => col.field === "lowPrice");
-        let priceColumns = [price, priceChange, pricePercent, highPrice, lowPrice];
 
         if (this.state.volumeDisplay) {
-            volumeColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), true));
-            priceColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), false));
+            this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
+            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
         }
         if (this.state.priceDisplay) {
-            volumeColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), false));
-            priceColumns.forEach(col => this.columnApi.setColumnVisible(col.map(c => c.field), true));
+            this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
         }
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
@@ -146,56 +139,38 @@ class CoinGrid extends Component {
         return num_parts.join(".");
     }
 
-    //Format the data to have commas: i.e. 12500 becomes 12,500
-    formatData(data) {
-        data.map(item => item.priceChange = this.formatNumber(item.priceChange));
-        data.map(item => item.priceChangePercent = this.formatNumber(item.priceChangePercent));
-        data.map(item => item.lastPrice = this.formatNumber(item.lastPrice));
-        data.map(item => item.highPrice = this.formatNumber(item.highPrice));
-        data.map(item => item.lowPrice = this.formatNumber(item.lowPrice));
-        data.map(item => item.volume = this.formatNumber(item.volume));
-        data.map(item => item.quoteVolume = this.formatNumber(item.quoteVolume));
-        data.map(item => item.volumeChangePercent = this.formatNumber(item.volumeChangePercent));
-    }
-
     //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
-    formatPriceData(data) {
-        data.map(item => item.currency === "USDT" ? item.lastPrice = "₮ " + item.lastPrice : item.lastPrice);
-        data.map(item => item.currency === "USD" ? item.lastPrice = "$ " + item.lastPrice : item.lastPrice);
-        data.map(item => item.currency === "BTC" ? item.lastPrice = "₿ " + item.lastPrice : item.lastPrice);
+    formatPrice(currency, item) {
+        if (currency === "USDT") {
+            return "₮ " + item;
+        }
+        if (currency === "USD") {
+            return "$ " + item;
+        }
+        if (currency === "BTC") {
+            return "₿ " + item;
+        }
+        return item;
+    };
 
-        data.map(item => item.currency === "USDT" ? item.priceChange = "₮ " + item.priceChange : item.priceChange);
-        data.map(item => item.currency === "USD" ? item.priceChange = "$ " + item.priceChange : item.priceChange);
-        data.map(item => item.currency === "BTC" ? item.priceChange = "₿ " + item.priceChange : item.priceChange);
+    getApiHost() {
+        let apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
 
-        data.map(item => item.currency === "USDT" ? item.highPrice = "₮ " + item.highPrice : item.highPrice);
-        data.map(item => item.currency === "USD" ? item.highPrice = "$ " + item.highPrice : item.highPrice);
-        data.map(item => item.currency === "BTC" ? item.highPrice = "₿ " + item.highPrice : item.highPrice);
-
-        data.map(item => item.currency === "USDT" ? item.lowPrice = "₮ " + item.lowPrice : item.lowPrice);
-        data.map(item => item.currency === "USD" ? item.lowPrice = "$ " + item.lowPrice : item.lowPrice);
-        data.map(item => item.currency === "BTC" ? item.lowPrice = "₿ " + item.lowPrice : item.lowPrice);
-
-        data.map(item => item.currency === "USDT" ? item.quoteVolume = "₮ " + item.quoteVolume : item.quoteVolume);
-        data.map(item => item.currency === "USD" ? item.quoteVolume = "$ " + item.quoteVolume : item.quoteVolume);
-        data.map(item => item.currency === "BTC" ? item.quoteVolume = "₿ " + item.quoteVolume : item.quoteVolume);
-    }
-
-    setApiHost() {
         if (this.currentExchange === "" || this.currentExchange === "A") {
-            urlObject.apiHost = process.env.REACT_APP_API_HOST_BINANCE_USA;
-            if (typeof urlObject.apiHost == "undefined") {
-                urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
+            apiHost = process.env.REACT_APP_API_HOST_BINANCE_USA;
+            if (typeof apiHost == "undefined") {
+                apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
             }
         } else {
-            urlObject.apiHost = process.env.REACT_APP_API_HOST_BINANCE;
-            if (typeof urlObject.apiHost == "undefined") {
-                urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binance";
+            apiHost = process.env.REACT_APP_API_HOST_BINANCE;
+            if (typeof apiHost == "undefined") {
+                apiHost = "https://www.coininfousa.cc/api/v1/binance";
             }
         }
-        if (typeof urlObject.apiHost == "undefined") {
-            urlObject.apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
+        if (typeof apiHost == "undefined") {
+            apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
         }
+        return apiHost;
     }
 
     getUrl() {
@@ -208,8 +183,14 @@ class CoinGrid extends Component {
                 return result.json();
             }).then(data => {
             if (this.mounted) {
-                this.formatData(data);
-                this.formatPriceData(data);
+                //Format the number data to have commas: i.e. 12500 becomes 12,500
+                this.numberColumns.forEach(field => {
+                    data.map(item => item[field] = this.formatNumber(item[field]));
+                });
+                //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
+                this.priceColumns.forEach(field => {
+                    data.map(item => item[field] = this.formatPrice(item.currency, item[field]));
+                });
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
                 let markets = [...new Set(data.map(item => item.currency))];
@@ -227,7 +208,7 @@ class CoinGrid extends Component {
     }
 
     componentDidMount() {
-        this.setApiHost();
+        urlObject.apiHost = this.getApiHost();
         this.mounted = true;
         let url = this.getUrl();
         this.getExchangeData(url);
@@ -257,6 +238,7 @@ class CoinGrid extends Component {
         grid.columnApi.autoSizeColumns(columns);
     }
 
+    //Change a modified price (such as $9,000) to a number (9000)
     modifiedPriceToNumber(price) {
         price = price === null ? "" : price;
         //take the commas out of the numbers
@@ -268,6 +250,7 @@ class CoinGrid extends Component {
         return parseFloat(str);
     }
 
+    //Compare the columns for sorting. Strip out the extra chars (such as '$') so that number values can be compared.
     columnComparator(value1, value2) {
         value1 = value1 === null ? "" : value1;
         value2 = value2 === null ? "" : value2;
@@ -467,7 +450,7 @@ class CoinGrid extends Component {
 
     onExchangeChange = (event) => {
         this.currentExchange = event.target.value;
-        this.setApiHost();
+        urlObject.apiHost = this.getApiHost();
         let url = this.getUrl();
         this.getExchangeData(url);
         this.setState({market: "ALL"});
