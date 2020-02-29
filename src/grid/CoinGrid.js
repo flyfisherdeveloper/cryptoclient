@@ -14,8 +14,10 @@ class CoinGrid extends Component {
     currentExchange = "A";
     notAvailable = "Not Available";
     priceColumns = ["lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
-    numberColumns = ["priceChange", "priceChangePercent", "lastPrice", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
+    priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
+    numberColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
     volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
+    pageSize = 10;
 
     constructor(props) {
         super(props);
@@ -100,11 +102,11 @@ class CoinGrid extends Component {
 
         if (this.state.volumeDisplay) {
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
-            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
         }
         if (this.state.priceDisplay) {
+            this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
-            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
         }
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
@@ -218,7 +220,7 @@ class CoinGrid extends Component {
         this.mounted = false;
     }
 
-    onCellClicked(event) {
+    onCellClicked = event => {
         if (this.state.isOpen) {
             return;
         }
@@ -230,13 +232,13 @@ class CoinGrid extends Component {
         } else if (isPrice) {
             this.doPrice(event);
         }
-    }
+    };
 
-    onGridReady(grid) {
-        let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
+    onGridReady = grid => {
         this.columnApi = grid.columnApi;
+        let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         grid.columnApi.autoSizeColumns(columns);
-    }
+    };
 
     //Change a modified price (such as $9,000) to a number (9000)
     modifiedPriceToNumber(price) {
@@ -369,18 +371,19 @@ class CoinGrid extends Component {
                 'border-bottom': 'black 10px solid',
                 'border-top': 'black 10px solid',
             },
+            pagination: true,
+            paginationPageSize: this.pageSize
         };
         return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
                 gridOptions={gridOptions}
-                pagination={false}
                 columnDefs={columnDefs}
                 defaultColDef={colDef}
                 rowData={this.state.rowData}
-                onCellClicked={this.onCellClicked.bind(this)}
-                onGridReady={this.onGridReady.bind(this)}
+                onCellClicked={this.onCellClicked}
+                onGridReady={this.onGridReady}
             >
             </AgGridReact>);
     }
@@ -426,7 +429,7 @@ class CoinGrid extends Component {
             return 3000;
         }
         let rowHeight = coinGrid.props.gridOptions.rowHeight;
-        return this.state.allRowData.length * rowHeight + rowHeight;
+        return (this.pageSize + 0.3) * rowHeight + rowHeight;
     };
 
     getGridStyles(coinGrid) {
@@ -436,12 +439,12 @@ class CoinGrid extends Component {
                 height: this.getGridHeight(coinGrid)
             },
             volumeStyle: {
-                width: "51%",
+                width: "55%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 25%"
+                padding: "0% 23%"
             },
             priceStyle: {
-                width: "60%",
+                width: "62%",
                 height: this.getGridHeight(coinGrid),
                 padding: "0% 20%"
             },
