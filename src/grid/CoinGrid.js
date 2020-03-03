@@ -17,7 +17,7 @@ class CoinGrid extends Component {
     priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
     numberColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
     volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
-    pageSize = 10;
+    pageSize = 11;
 
     constructor(props) {
         super(props);
@@ -372,7 +372,8 @@ class CoinGrid extends Component {
                 'border-top': 'black 10px solid',
             },
             pagination: true,
-            paginationPageSize: this.pageSize
+            paginationPageSize: this.pageSize,
+            domLayout: 'autoHeight'
         };
         return (
             <AgGridReact
@@ -428,8 +429,7 @@ class CoinGrid extends Component {
         if (this.state.allRowData === null) {
             return 3000;
         }
-        let rowHeight = coinGrid.props.gridOptions.rowHeight;
-        return (this.pageSize + 0.3) * rowHeight + rowHeight;
+        return "auto";
     };
 
     getGridStyles(coinGrid) {
@@ -439,14 +439,14 @@ class CoinGrid extends Component {
                 height: this.getGridHeight(coinGrid)
             },
             volumeStyle: {
-                width: "55%",
+                width: "52.2%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 23%"
+                padding: "0% 23.9%"
             },
             priceStyle: {
-                width: "62%",
+                width: "61.5%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 20%"
+                padding: "0% 19.3%",
             },
         };
     }
