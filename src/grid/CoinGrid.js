@@ -13,9 +13,9 @@ class CoinGrid extends Component {
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
-    priceColumns = ["lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
+    priceColumns = ["marketCap", "lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
     priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
-    numberColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
+    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
     volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
     pageSize = 11;
 
@@ -50,6 +50,9 @@ class CoinGrid extends Component {
                 headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
             },
             {
+                headerName: "Market Cap", field: "marketCap", sortable: true, cellStyle: {border: 'none !important'}
+            },
+            {
                 headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 comparator: this.columnComparator
             },
@@ -75,10 +78,6 @@ class CoinGrid extends Component {
                 field: "lowPrice",
                 sortable: true,
                 cellStyle: {border: 'none !important'},
-                comparator: this.columnComparator
-            },
-            {
-                headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
                 comparator: this.columnComparator
             },
             {
@@ -186,12 +185,12 @@ class CoinGrid extends Component {
             }).then(data => {
             if (this.mounted) {
                 //Format the number data to have commas: i.e. 12500 becomes 12,500
-                this.numberColumns.forEach(field => {
-                    data.map(item => item[field] = this.formatNumber(item[field]));
+                this.numberColumns.forEach(column => {
+                    data.map(item => item[column] = this.formatNumber(item[column]));
                 });
                 //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
-                this.priceColumns.forEach(field => {
-                    data.map(item => item[field] = this.formatPrice(item.currency, item[field]));
+                this.priceColumns.forEach(column => {
+                    data.map(item => item[column] = this.formatPrice((column === "marketCap" ? "USD" : item.currency), item[column]));
                 });
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
