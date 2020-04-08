@@ -142,6 +142,9 @@ class CoinGrid extends Component {
 
     //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
     formatPrice(currency, item) {
+        if (item === this.notAvailable) {
+            return item;
+        }
         if (currency === "USDT") {
             return "₮ " + item;
         }
@@ -186,7 +189,7 @@ class CoinGrid extends Component {
             if (this.mounted) {
                 //Format the number data to have commas: i.e. 12500 becomes 12,500
                 this.numberColumns.forEach(column => {
-                    data.map(item => item[column] = this.formatNumber(item[column]));
+                    data.map(item => item[column] = column === "marketCap" && item[column] === 0.0 ? this.notAvailable : this.formatNumber(item[column]));
                 });
                 //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
                 this.priceColumns.forEach(column => {
