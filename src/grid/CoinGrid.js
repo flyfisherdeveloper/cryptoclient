@@ -50,7 +50,9 @@ class CoinGrid extends Component {
                 headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
             },
             {
-                headerName: "Market Cap", field: "marketCap", sortable: true, cellStyle: {border: 'none !important'}
+                headerName: "Market Cap", field: "marketCap", sortable: true,
+                cellStyle: {border: 'none !important'},
+                comparator: this.columnComparator
             },
             {
                 headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
