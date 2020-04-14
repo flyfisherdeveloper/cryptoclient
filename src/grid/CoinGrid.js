@@ -13,9 +13,11 @@ class CoinGrid extends Component {
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
-    priceColumns = ["lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
-    numberColumns = ["priceChange", "priceChangePercent", "lastPrice", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
+    priceColumns = ["marketCap", "lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
+    priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
+    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
     volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
+    pageSize = 11;
 
     constructor(props) {
         super(props);
@@ -48,6 +50,11 @@ class CoinGrid extends Component {
                 headerName: "Market", field: "currency", sortable: true, cellStyle: {border: 'none !important'}
             },
             {
+                headerName: "Market Cap", field: "marketCap", sortable: true,
+                cellStyle: {border: 'none !important'},
+                comparator: this.columnComparator
+            },
+            {
                 headerName: "Current Price ⓘ", field: "lastPrice", sortable: true, cellStyle: {cursor: 'pointer'},
                 comparator: this.columnComparator
             },
@@ -76,10 +83,6 @@ class CoinGrid extends Component {
                 comparator: this.columnComparator
             },
             {
-                headerName: "24Hr Coin Volume ⓘ", field: "volume", sortable: true, cellStyle: {cursor: 'pointer'},
-                comparator: this.columnComparator
-            },
-            {
                 headerName: "24Hr Market Volume ⓘ",
                 field: "quoteVolume",
                 sortable: true,
@@ -100,11 +103,13 @@ class CoinGrid extends Component {
 
         if (this.state.volumeDisplay) {
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
-            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.columnApi.setColumnVisible("marketCap", false);
         }
         if (this.state.priceDisplay) {
+            this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
-            this.priceColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
+            this.columnApi.setColumnVisible("marketCap", false);
         }
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
@@ -141,6 +146,9 @@ class CoinGrid extends Component {
 
     //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
     formatPrice(currency, item) {
+        if (item === this.notAvailable) {
+            return item;
+        }
         if (currency === "USDT") {
             return "₮ " + item;
         }
@@ -184,12 +192,12 @@ class CoinGrid extends Component {
             }).then(data => {
             if (this.mounted) {
                 //Format the number data to have commas: i.e. 12500 becomes 12,500
-                this.numberColumns.forEach(field => {
-                    data.map(item => item[field] = this.formatNumber(item[field]));
+                this.numberColumns.forEach(column => {
+                    data.map(item => item[column] = column === "marketCap" && item[column] === 0.0 ? this.notAvailable : this.formatNumber(item[column]));
                 });
                 //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
-                this.priceColumns.forEach(field => {
-                    data.map(item => item[field] = this.formatPrice(item.currency, item[field]));
+                this.priceColumns.forEach(column => {
+                    data.map(item => item[column] = this.formatPrice((column === "marketCap" ? "USD" : item.currency), item[column]));
                 });
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
@@ -218,7 +226,7 @@ class CoinGrid extends Component {
         this.mounted = false;
     }
 
-    onCellClicked(event) {
+    onCellClicked = event => {
         if (this.state.isOpen) {
             return;
         }
@@ -230,13 +238,13 @@ class CoinGrid extends Component {
         } else if (isPrice) {
             this.doPrice(event);
         }
-    }
+    };
 
-    onGridReady(grid) {
-        let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
+    onGridReady = grid => {
         this.columnApi = grid.columnApi;
+        let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         grid.columnApi.autoSizeColumns(columns);
-    }
+    };
 
     //Change a modified price (such as $9,000) to a number (9000)
     modifiedPriceToNumber(price) {
@@ -369,18 +377,20 @@ class CoinGrid extends Component {
                 'border-bottom': 'black 10px solid',
                 'border-top': 'black 10px solid',
             },
+            pagination: true,
+            paginationPageSize: this.pageSize,
+            domLayout: 'autoHeight'
         };
         return (
             <AgGridReact
                 reactNext={true}
                 rowSelection={"single"}
                 gridOptions={gridOptions}
-                pagination={false}
                 columnDefs={columnDefs}
                 defaultColDef={colDef}
                 rowData={this.state.rowData}
-                onCellClicked={this.onCellClicked.bind(this)}
-                onGridReady={this.onGridReady.bind(this)}
+                onCellClicked={this.onCellClicked}
+                onGridReady={this.onGridReady}
             >
             </AgGridReact>);
     }
@@ -425,8 +435,7 @@ class CoinGrid extends Component {
         if (this.state.allRowData === null) {
             return 3000;
         }
-        let rowHeight = coinGrid.props.gridOptions.rowHeight;
-        return this.state.allRowData.length * rowHeight + rowHeight;
+        return "auto";
     };
 
     getGridStyles(coinGrid) {
@@ -436,14 +445,14 @@ class CoinGrid extends Component {
                 height: this.getGridHeight(coinGrid)
             },
             volumeStyle: {
-                width: "51%",
+                width: "42.5%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 25%"
+                padding: "0% 28.5%"
             },
             priceStyle: {
-                width: "60%",
+                width: "63.5%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 20%"
+                padding: "0% 18%",
             },
         };
     }
