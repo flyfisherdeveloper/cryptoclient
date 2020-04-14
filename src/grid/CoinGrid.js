@@ -104,10 +104,12 @@ class CoinGrid extends Component {
         if (this.state.volumeDisplay) {
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
             this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.columnApi.setColumnVisible("marketCap", false);
         }
         if (this.state.priceDisplay) {
             this.priceInfoColumns.forEach(col => this.columnApi.setColumnVisible(col, true));
             this.volumeColumns.forEach(col => this.columnApi.setColumnVisible(col, false));
+            this.columnApi.setColumnVisible("marketCap", false);
         }
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
@@ -443,14 +445,14 @@ class CoinGrid extends Component {
                 height: this.getGridHeight(coinGrid)
             },
             volumeStyle: {
-                width: "52.2%",
+                width: "42.5%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 23.9%"
+                padding: "0% 28.5%"
             },
             priceStyle: {
-                width: "61.5%",
+                width: "63.5%",
                 height: this.getGridHeight(coinGrid),
-                padding: "0% 19.3%",
+                padding: "0% 18%",
             },
         };
     }
