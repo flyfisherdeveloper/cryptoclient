@@ -509,7 +509,6 @@ class CoinGrid extends Component {
                     <label className="toolbar-label">Exchange:</label>
                     <select className="exchange-select" onChange={this.onExchangeChange}>
                         <option value="A">Binance USA</option>
-                        <option value="B">Binance</option>
                     </select>
                     <label className="toolbar-label">Market:</label>
                     {marketSelections}
