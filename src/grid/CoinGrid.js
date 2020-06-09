@@ -397,11 +397,18 @@ class CoinGrid extends Component {
 
     getSpinner() {
         return (
-            <Loader className="loader-style"
+            <div className="loader-style">
+                <Loader
                     type="Puff"
                     color="#3c3bff"
-                    timeout={8000} //8 seconds
-            />);
+                    //8 seconds
+                    timeout={8000}>
+                </Loader>
+                <div className="spinner-label">Please wait... the exchange information can take up to 30 seconds to
+                    load.
+                </div>
+            </div>
+        );
     }
 
     getDisplayButtons() {
@@ -509,6 +516,7 @@ class CoinGrid extends Component {
                     <label className="toolbar-label">Exchange:</label>
                     <select className="exchange-select" onChange={this.onExchangeChange}>
                         <option value="A">Binance USA</option>
+                        <option value="B">Binance</option>
                     </select>
                     <label className="toolbar-label">Market:</label>
                     {marketSelections}
