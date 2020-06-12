@@ -401,8 +401,8 @@ class CoinGrid extends Component {
                 <Loader
                     type="Puff"
                     color="#3c3bff"
-                    //8 seconds
-                    timeout={8000}>
+                    //40 seconds
+                    timeout={40000}>
                 </Loader>
                 <div className="spinner-label">Please wait... the exchange information can take up to 30 seconds to
                     load.
@@ -465,11 +465,13 @@ class CoinGrid extends Component {
     }
 
     onExchangeChange = (event) => {
+        this.setState({isLoading: true});
         this.currentExchange = event.target.value;
         urlObject.apiHost = this.getApiHost();
         let url = this.getUrl();
         this.getExchangeData(url);
         this.setState({market: "ALL"});
+        this.onAllDisplayButtonClick();
     };
 
     onMarketChange = (event) => {
