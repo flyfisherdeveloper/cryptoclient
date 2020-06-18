@@ -27,14 +27,32 @@
     text-align: center
 }
 
-.chart-button {
-    background-color: lightgray;
-    border: 1px solid black
+.high-light-button {
+    background-color: #0099cc;
+    border: 2px solid blue;
+    color: #ffffff;
 }
 
-.high-light-button {
-    background-color: lightgray;
-    border: 2px solid blue
+.chart-button{
+    border: 1px solid #0066cc;
+    background-color: #0099cc;
+    color: #ffffff;
+}
+
+.chart-button:hover {
+    border: 1px solid #0099cc;
+    background-color: #00aacc;
+    color: #ffffff;
+}
+
+.disabled {
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+}
+
+.hidden {
+    display: none;
 }
 
 .hours-label {
@@ -61,8 +79,4 @@
 
 .type-chart {
     float: right;
-}
-
-.hidden {
-    display: none;
 }

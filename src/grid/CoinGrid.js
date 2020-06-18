@@ -23,7 +23,9 @@ class CoinGrid extends Component {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = {
+            //rowData is the current visible data (some columns might be hidden)
             rowData: [],
+            //allRowData is all the row data, including data in hidden columns
             allRowData: [],
             markets: [],
             market: "ALL",
@@ -209,7 +211,6 @@ class CoinGrid extends Component {
             this.setState({isLoading: false});
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
-                return;
             }
             throw err;
         });
@@ -397,11 +398,18 @@ class CoinGrid extends Component {
 
     getSpinner() {
         return (
-            <Loader className="loader-style"
+            <div className="loader-style">
+                <Loader
                     type="Puff"
                     color="#3c3bff"
-                    timeout={8000} //8 seconds
-            />);
+                    //40 seconds
+                    timeout={40000}>
+                </Loader>
+                <div className="spinner-label">Please wait... the exchange information can take up to 30 seconds to
+                    load.
+                </div>
+            </div>
+        );
     }
 
     getDisplayButtons() {
@@ -458,11 +466,13 @@ class CoinGrid extends Component {
     }
 
     onExchangeChange = (event) => {
+        this.setState({isLoading: true});
         this.currentExchange = event.target.value;
         urlObject.apiHost = this.getApiHost();
         let url = this.getUrl();
         this.getExchangeData(url);
         this.setState({market: "ALL"});
+        this.onAllDisplayButtonClick();
     };
 
     onMarketChange = (event) => {

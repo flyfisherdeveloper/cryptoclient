@@ -129,7 +129,12 @@ a {
 }
 
 .loader-style {
-    float: right;
-    height: 50%;
-    width: 53%;
+    background: #2c2c2c;
+    text-align: center;
+}
+
+.spinner-label {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
 }

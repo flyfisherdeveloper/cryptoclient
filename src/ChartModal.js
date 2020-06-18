@@ -19,6 +19,12 @@ class ChartModal extends React.Component {
         if (buttonNumber === 1 && this.state.months > 1) {
             return;
         }
+        if (buttonNumber === 4 && this.state.months > 3) {
+            return;
+        }
+        if (buttonNumber === 12 && this.state.months > 6) {
+            return;
+        }
         this.setState({hours: buttonNumber});
         if (this.state.isArea) {
             this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
@@ -28,7 +34,13 @@ class ChartModal extends React.Component {
     }
 
     onDayOrMonthButtonClick(buttonNumber) {
-        if (buttonNumber === 60 && this.state.hours === 1) {
+        if (buttonNumber === 90 && this.state.hours === 1) {
+            return;
+        }
+        if (buttonNumber === 180 && (this.state.hours === 1 || this.state.hours === 4)) {
+            return;
+        }
+        if (buttonNumber === 365 && (this.state.hours === 1 || this.state.hours === 4 || this.state.hours === 12)) {
             return;
         }
         let months = 0;
@@ -38,8 +50,16 @@ class ChartModal extends React.Component {
             months = 1;
             days = 0;
         }
-        if (buttonNumber === 60) {
+        if (buttonNumber === 90) {
             months = 3;
+            days = 0;
+        }
+        if (buttonNumber === 180) {
+            months = 6;
+            days = 0;
+        }
+        if (buttonNumber === 365) {
+            months = 12;
             days = 0;
         }
         this.setState({days: days, months: months});
@@ -100,22 +120,29 @@ class ChartModal extends React.Component {
             <ButtonComponent
                 text={"1Hr"}
                 number={1}
-                className={this.state.months > 1 ? "hidden" : (this.state.hours === 1 ? "high-light-button" : "chart-button")}
+                className={this.state.months > 1 ? "disabled" : (this.state.hours === 1 ? "high-light-button" : "chart-button")}
                 func={this.onHourButtonClick.bind(this, 1)}>
             </ButtonComponent>;
         const button4Hr =
             <ButtonComponent
                 text={"4Hr"}
                 number={4}
-                className={this.state.hours === 4 ? "high-light-button" : "chart-button"}
+                className={this.state.months > 3 ? "disabled" : (this.state.hours === 4 ? "high-light-button" : "chart-button")}
                 func={this.onHourButtonClick.bind(this, 4)}>
             </ButtonComponent>;
         const button12Hr =
             <ButtonComponent
                 text={"12Hr"}
                 number={12}
-                className={this.state.hours === 12 ? "high-light-button" : "chart-button"}
+                className={this.state.months > 6 ? "disabled" : (this.state.hours === 12 ? "high-light-button" : "chart-button")}
                 func={this.onHourButtonClick.bind(this, 12)}>
+            </ButtonComponent>;
+        const button24Hr =
+            <ButtonComponent
+                text={"1D"}
+                number={24}
+                className={this.state.hours === 24 ? "high-light-button" : "chart-button"}
+                func={this.onHourButtonClick.bind(this, 24)}>
             </ButtonComponent>;
         const button1Day =
             <ButtonComponent
@@ -149,10 +176,26 @@ class ChartModal extends React.Component {
         const button3Months =
             <ButtonComponent
                 text={"3M"}
-                //60 => 60 days
-                number={60}
-                className={this.state.months === 3 ? "high-light-button" : (this.state.hours === 1 ? "hidden" : "chart-button")}
-                func={this.onDayOrMonthButtonClick.bind(this, 60)}>
+                //90 => 90 days
+                number={90}
+                className={this.state.months === 3 ? "high-light-button" : (this.state.hours === 1 ? "disabled" : "chart-button")}
+                func={this.onDayOrMonthButtonClick.bind(this, 90)}>
+            </ButtonComponent>;
+        const button6Months =
+            <ButtonComponent
+                text={"6M"}
+                //180 => 180 days
+                number={180}
+                className={this.state.months === 6 ? "high-light-button" : ((this.state.hours === 1 || this.state.hours === 4) ? "disabled" : "chart-button")}
+                func={this.onDayOrMonthButtonClick.bind(this, 180)}>
+            </ButtonComponent>;
+        const button12Months =
+            <ButtonComponent
+                text={"1Y"}
+                //365 => 365 days
+                number={365}
+                className={this.state.months === 12 ? "high-light-button" : ((this.state.hours === 1 || this.state.hours === 4 || this.state.hours === 12) ? "disabled" : "chart-button")}
+                func={this.onDayOrMonthButtonClick.bind(this, 365)}>
             </ButtonComponent>;
         const areaClassName = () => {
             if (this.props.isPrice) {
@@ -199,6 +242,7 @@ class ChartModal extends React.Component {
                         {button1Hr}
                         {button4Hr}
                         {button12Hr}
+                        {button24Hr}
                         <label className="middle-label">Time Period:
                         </label>
                         {button1Day}
@@ -206,6 +250,8 @@ class ChartModal extends React.Component {
                         {button7Day}
                         {button1Month}
                         {button3Months}
+                        {button6Months}
+                        {button12Months}
                         <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
                         </label>
                         {buttonArea}
