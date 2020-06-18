@@ -23,7 +23,9 @@ class CoinGrid extends Component {
         super(props);
         this.toggleModal = this.toggleModal.bind(this);
         this.state = {
+            //rowData is the current visible data (some columns might be hidden)
             rowData: [],
+            //allRowData is all the row data, including data in hidden columns
             allRowData: [],
             markets: [],
             market: "ALL",
@@ -209,7 +211,6 @@ class CoinGrid extends Component {
             this.setState({isLoading: false});
             if (err.name === 'AbortError') {
                 console.log("error catch: " + err);
-                return;
             }
             throw err;
         });
