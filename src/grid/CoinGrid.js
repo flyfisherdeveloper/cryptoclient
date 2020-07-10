@@ -171,10 +171,15 @@ class CoinGrid extends Component {
             if (typeof apiHost == "undefined") {
                 apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
             }
-        } else {
+        } else if (this.currentExchange === "B") {
             apiHost = process.env.REACT_APP_API_HOST_BINANCE;
             if (typeof apiHost == "undefined") {
                 apiHost = "https://www.coininfousa.cc/api/v1/binance";
+            }
+        } else if (this.currentExchange === "C") {
+            apiHost = process.env.REACT_APP_API_HOST_BITTREX;
+            if (typeof apiHost == "undefined") {
+                apiHost = "https://www.coininfousa.cc/api/v1/bittrex";
             }
         }
         if (typeof apiHost == "undefined") {
@@ -520,6 +525,7 @@ class CoinGrid extends Component {
                     <select className="exchange-select" onChange={this.onExchangeChange}>
                         <option value="A">Binance USA</option>
                         <option value="B">Binance</option>
+                        <option value="C">Bittrex</option>
                     </select>
                     <label className="toolbar-label">Market:</label>
                     {marketSelections}
