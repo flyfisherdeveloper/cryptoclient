@@ -116,6 +116,17 @@ class CoinGrid extends Component {
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
         }
+        //for Bittrex exchange, take away the ability to see price charts - not added yet
+        //todo: take away ability to click on the cell
+        if (this.currentExchange === "C") {
+            all.forEach(col => {
+                let name = col.headerName;
+                if (name.includes("ⓘ")) {
+                    name = name.replace(" ⓘ", "");
+                    col.headerName = name;
+                }
+            })
+        }
         return all;
     }
 
