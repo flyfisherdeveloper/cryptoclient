@@ -116,6 +116,19 @@ class CoinGrid extends Component {
         if (this.state.allDisplay && this.columnApi != null) {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
         }
+        //for Bittrex exchange, take away the ability to see price charts - not added yet
+        if (this.currentExchange === "C") {
+            all.forEach(col => {
+                let name = col.headerName;
+                if (name.includes("ⓘ")) {
+                    //remove the 'ⓘ' notation on the column because it can't be clicked
+                    name = name.replace(" ⓘ", "");
+                    col.headerName = name;
+                    //don't allow clicking on the cell
+                    col.cellStyle = {border: 'none !important'};
+                }
+            })
+        }
         return all;
     }
 
@@ -171,10 +184,15 @@ class CoinGrid extends Component {
             if (typeof apiHost == "undefined") {
                 apiHost = "https://www.coininfousa.cc/api/v1/binanceusa";
             }
-        } else {
+        } else if (this.currentExchange === "B") {
             apiHost = process.env.REACT_APP_API_HOST_BINANCE;
             if (typeof apiHost == "undefined") {
                 apiHost = "https://www.coininfousa.cc/api/v1/binance";
+            }
+        } else if (this.currentExchange === "C") {
+            apiHost = process.env.REACT_APP_API_HOST_BITTREX;
+            if (typeof apiHost == "undefined") {
+                apiHost = "https://www.coininfousa.cc/api/v1/bittrex";
             }
         }
         if (typeof apiHost == "undefined") {
@@ -229,6 +247,9 @@ class CoinGrid extends Component {
 
     onCellClicked = event => {
         if (this.state.isOpen) {
+            return;
+        }
+        if (this.currentExchange === "C") {
             return;
         }
         let isVolume = event.column.getColId() === "volume";
@@ -520,6 +541,7 @@ class CoinGrid extends Component {
                     <select className="exchange-select" onChange={this.onExchangeChange}>
                         <option value="A">Binance USA</option>
                         <option value="B">Binance</option>
+                        <option value="C">Bittrex</option>
                     </select>
                     <label className="toolbar-label">Market:</label>
                     {marketSelections}
