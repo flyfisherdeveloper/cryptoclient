@@ -117,13 +117,15 @@ class CoinGrid extends Component {
             all.forEach(col => this.columnApi.setColumnVisible(col.field, true));
         }
         //for Bittrex exchange, take away the ability to see price charts - not added yet
-        //todo: take away ability to click on the cell
         if (this.currentExchange === "C") {
             all.forEach(col => {
                 let name = col.headerName;
                 if (name.includes("ⓘ")) {
+                    //remove the 'ⓘ' notation on the column because it can't be clicked
                     name = name.replace(" ⓘ", "");
                     col.headerName = name;
+                    //don't allow clicking on the cell
+                    col.cellStyle = {border: 'none !important'};
                 }
             })
         }
@@ -245,6 +247,9 @@ class CoinGrid extends Component {
 
     onCellClicked = event => {
         if (this.state.isOpen) {
+            return;
+        }
+        if (this.currentExchange === "C") {
             return;
         }
         let isVolume = event.column.getColId() === "volume";
