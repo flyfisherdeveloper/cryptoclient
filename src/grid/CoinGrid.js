@@ -13,10 +13,10 @@ class CoinGrid extends Component {
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
-    priceColumns = ["marketCap", "lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume"];
+    priceColumns = ["marketCap", "lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume", "volume24HrUsd"];
     priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
-    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volumeChangePercent"];
-    volumeColumns = ["volume", "quoteVolume", "volumeChangePercent"];
+    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volume24HrUsd"];
+    volumeColumns = ["volume", "quoteVolume", "volume24HrUsd"];
     pageSize = 11;
 
     constructor(props) {
@@ -92,8 +92,8 @@ class CoinGrid extends Component {
                 comparator: this.columnComparator
             },
             {
-                headerName: "24Hr Market Volume Change %", field: "volumeChangePercent", sortable: true,
-                cellStyle: (params) => this.getCellFontColorNoSelection(params),
+                headerName: "24Hr All Exchanges USD Volume", field: "volume24HrUsd", sortable: true,
+                cellStyle: {border: 'none !important'},
                 comparator: this.columnComparator
             },
         ];
@@ -217,7 +217,7 @@ class CoinGrid extends Component {
                 });
                 //Format pricing data to use the currency symbols, such as '$' for USD, '₮' for USDT, and '₿' for BTC
                 this.priceColumns.forEach(column => {
-                    data.map(item => item[column] = this.formatPrice((column === "marketCap" ? "USD" : item.currency), item[column]));
+                    data.map(item => item[column] = this.formatPrice(((column === "marketCap" || column === "volume24HrUsd") ? "USD" : item.currency), item[column]));
                 });
                 this.setState({rowData: data});
                 this.setState({allRowData: data});
