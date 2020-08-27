@@ -9,7 +9,7 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
-    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"]]);
+    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"], ["Advanced Info", "trading"]]);
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
@@ -38,6 +38,7 @@ class CoinGrid extends Component {
             isLoading: true,
             volumeDisplay: false,
             priceDisplay: false,
+            tradingDisplay: false,
             allDisplay: true
         }
     }
@@ -264,6 +265,11 @@ class CoinGrid extends Component {
 
     onGridReady = grid => {
         this.columnApi = grid.columnApi;
+        //jeff
+        console.log("********************** cols " + grid.columnApi);
+        grid.columnApi.getAllDisplayedColumns().forEach((value, index, array) => {
+            array.forEach(col => console.log(col));
+        });
         let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         grid.columnApi.autoSizeColumns(columns);
     };
@@ -337,12 +343,47 @@ class CoinGrid extends Component {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
             this.setState({allDisplay: false});
+            this.setState({tradingDisplay: false});
         }
         if (display === "price") {
             this.setState({volumeDisplay: false});
             this.setState({priceDisplay: true});
             this.setState({allDisplay: false});
+            this.setState({tradingDisplay: false});
         }
+        if (display === "trading") {
+            this.setState({volumeDisplay: false});
+            this.setState({priceDisplay: false});
+            this.setState({allDisplay: false});
+            this.setState({tradingDisplay: true});
+            let rows = this.state.rowData;
+            let symbols = rows.map(row => row.symbol);
+            this.retrieveTradingData(symbols);
+        }
+    }
+
+    //todo: put this in another module
+    //jeff
+    retrieveTradingData(symbols) {
+        console.log(this.columnApi);
+        const url = urlObject.apiHost + "/RsiTicker/" + symbols.join(",");
+        console.log(url);
+        // iterate only nodes that pass the filter and ordered by the sort order
+        //this.columnApi.(function(rowNode, index) {
+            //console.log('node ' + rowNode.data.symbol + ' passes the filter and is in this order');
+        //});
+
+        fetch(url)
+            .then(result => result.json())
+            .then((json) => {
+                console.log(json);
+            }).catch(err => {
+            if (err.name === 'AbortError') {
+                console.log("error catch: " + err);
+                return;
+            }
+            throw err;
+        });
     }
 
     onAllDisplayButtonClick() {
