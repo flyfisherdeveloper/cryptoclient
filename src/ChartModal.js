@@ -11,7 +11,8 @@ class ChartModal extends React.Component {
             hours: 4,
             days: 7,
             months: 0,
-            isArea: true
+            isArea: true,
+            isLine: false
         }
     }
 
@@ -26,7 +27,7 @@ class ChartModal extends React.Component {
             return;
         }
         this.setState({hours: buttonNumber});
-        if (this.state.isArea) {
+        if (this.state.isArea || this.state.isLine) {
             this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
         } else {
             this.candleStickChart.updateChart(buttonNumber, this.state.days, this.state.months);
@@ -63,7 +64,7 @@ class ChartModal extends React.Component {
             days = 0;
         }
         this.setState({days: days, months: months});
-        if (this.state.isArea) {
+        if (this.state.isArea || this.state.isLine) {
             this.lineGraph.updateChart(this.state.hours, days, months);
         } else {
             this.candleStickChart.updateChart(this.state.hours, days, months);
@@ -73,14 +74,25 @@ class ChartModal extends React.Component {
     onChartTypeClick(buttonType) {
         if (buttonType === "area") {
             this.setState({isArea: true});
+            this.setState({isLine: false});
+        } else if (buttonType === "line" ) {
+            this.setState({isArea: false});
+            this.setState({isLine: true});
         } else {
             this.setState({isArea: false});
+            this.setState({isLine: false});
+        }
+        if (this.state.isArea || this.state.isLine) {
+            this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
+        } else {
+            this.candleStickChart.updateChart(this.state.hours, this.state.days, this.state.months);
         }
     }
 
     onCloseButtonClick(params) {
         this.setState({hours: 4, days: 7, months: 0});
         this.setState({isArea: true});
+        this.setState({isLine: false});
         this.props.onClose(params);
     }
 
@@ -94,8 +106,8 @@ class ChartModal extends React.Component {
         if (isMobile) {
             modalStyle = "modal-chart-background-mobile";
         }
-        let chart = null;
-        if (this.state.isArea) {
+        let chart;
+        if (this.state.isArea || this.state.isLine) {
             chart = <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
                                symbol={this.props.symbol}
                                quote={this.props.quote}
@@ -105,6 +117,8 @@ class ChartModal extends React.Component {
                                months={this.state.months}
                                isQuoteVolume={this.props.isQuoteVolume}
                                isPrice={this.props.isPrice}
+                               isArea={this.state.isArea}
+                               isLine={this.state.isLine}
             />
         } else {
             chart = <CandleStickChart ref={candleStickChart => this.candleStickChart = candleStickChart}
@@ -206,9 +220,18 @@ class ChartModal extends React.Component {
             }
             return "hidden";
         };
+        const lineClassName = () => {
+            if (this.props.isPrice) {
+                if (this.state.isLine) {
+                    return "high-light-button";
+                }
+                return "chart-button";
+            }
+            return "hidden";
+        };
         const candleStickClassName = () => {
             if (this.props.isPrice) {
-                if (this.state.isArea) {
+                if (this.state.isArea || this.state.isLine) {
                     return "chart-button";
                 }
                 return "high-light-button";
@@ -220,6 +243,12 @@ class ChartModal extends React.Component {
                 text={"Area"}
                 className={areaClassName()}
                 func={this.onChartTypeClick.bind(this, "area")}>
+            </ButtonComponent>;
+        const buttonLine =
+            <ButtonComponent
+                text={"Line"}
+                className={lineClassName()}
+                func={this.onChartTypeClick.bind(this, "line")}>
             </ButtonComponent>;
         const buttonCandleStick =
             <ButtonComponent
@@ -255,6 +284,7 @@ class ChartModal extends React.Component {
                         <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
                         </label>
                         {buttonArea}
+                        {buttonLine}
                         {buttonCandleStick}
                         {close}
                     </div>
