@@ -4,6 +4,10 @@ import PropTypes from "prop-types";
 import urlObject from "./UrlObject";
 
 class LineGraph extends React.Component {
+    chart = null;
+    startValue = 0.0;
+    endValue = 0.0;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -73,6 +77,8 @@ class LineGraph extends React.Component {
                 let seriesData = [{
                     data: info,
                 }];
+                this.startValue = info[0][1];
+                this.endValue = info[info.length - 1][1];
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {
@@ -88,6 +94,21 @@ class LineGraph extends React.Component {
     }
 
     getChartOptions() {
+        let startVal = this.startValue;
+        let endVal = this.endValue;
+        let isPrice = this.props.isPrice;
+        //this function sets the area color based on price: if price is lower, then red, else green
+        function getColors() {
+            if (isPrice) {
+                if (startVal > endVal) {
+                    return ['#E91E63'];
+                }
+                return ['#66DA26'];
+            }
+            //if not a price chart (volume chart), then just set color to light blue
+            return ['#2E93fA'];
+        }
+
         return ({
             chart: {
                 group: "DataCharts",
@@ -129,6 +150,7 @@ class LineGraph extends React.Component {
                     shadeIntensity: 0.4,
                 }
             },
+            colors: getColors(),
             title: {
                 text: this.getTitle(),
                 style: {
@@ -230,7 +252,7 @@ class LineGraph extends React.Component {
 
     render() {
         let options = this.getChartOptions();
-        return (
+        this.chart =
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
                     options={options}
@@ -239,8 +261,8 @@ class LineGraph extends React.Component {
                     height="100%"
                     width="100%"
                 />
-            </div>
-        );
+            </div>;
+        return this.chart;
     }
 }
 
