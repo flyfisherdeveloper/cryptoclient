@@ -97,6 +97,7 @@ class LineGraph extends React.Component {
         let startVal = this.startValue;
         let endVal = this.endValue;
         let isPrice = this.props.isPrice;
+        //this function sets the area color based on price: if price is lower, then red, else green
         function getColors() {
             if (isPrice) {
                 if (startVal > endVal) {
@@ -104,6 +105,7 @@ class LineGraph extends React.Component {
                 }
                 return ['#66DA26'];
             }
+            //if not a price chart (volume chart), then just set color to light blue
             return ['#2E93fA'];
         }
 
