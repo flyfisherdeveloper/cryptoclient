@@ -76,6 +76,7 @@ class LineGraph extends React.Component {
                 info = this.getAreaData(json);
                 let seriesData = [{
                     data: info,
+                    type: this.props.isArea ? "area" : "line"
                 }];
                 this.startValue = info[0][1];
                 this.endValue = info[info.length - 1][1];
@@ -97,13 +98,15 @@ class LineGraph extends React.Component {
         let startVal = this.startValue;
         let endVal = this.endValue;
         let isPrice = this.props.isPrice;
-        //this function sets the area color based on price: if price is lower, then red, else green
+
+        //this function sets the area/line color based on price: if price is lower, then red, else green
         function getColors() {
             if (isPrice) {
                 if (startVal > endVal) {
                     return ['#E91E63'];
                 }
-                return ['#66DA26'];
+                return ['#0be325'];
+
             }
             //if not a price chart (volume chart), then just set color to light blue
             return ['#2E93fA'];
@@ -257,7 +260,6 @@ class LineGraph extends React.Component {
                 <ReactApexChart
                     options={options}
                     series={this.state.series}
-                    type={"area"}
                     height="100%"
                     width="100%"
                 />
@@ -272,6 +274,8 @@ LineGraph.propTypes = {
     coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool,
+    isArea: PropTypes.bool,
+    isLine: PropTypes.bool,
     hours: PropTypes.number,
     days: PropTypes.number,
     months: PropTypes.number,
