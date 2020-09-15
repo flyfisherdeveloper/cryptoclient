@@ -39,6 +39,7 @@ class CoinGrid extends Component {
             volumeDisplay: false,
             priceDisplay: false,
             tradingDisplay: false,
+            resetDisplayButton: false,
             allDisplay: true
         }
     }
@@ -266,10 +267,10 @@ class CoinGrid extends Component {
     onGridReady = grid => {
         this.columnApi = grid.columnApi;
         //jeff
-        console.log("********************** cols " + grid.columnApi);
-        grid.columnApi.getAllDisplayedColumns().forEach((value, index, array) => {
-            array.forEach(col => console.log(col));
-        });
+        //console.log("********************** cols " + grid.columnApi);
+        //grid.columnApi.getAllDisplayedColumns().forEach((value, index, array) => {
+            //array.forEach(col => console.log(col));
+        //});
         let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         grid.columnApi.autoSizeColumns(columns);
     };
@@ -331,14 +332,8 @@ class CoinGrid extends Component {
         this.toggleModal();
     }
 
-    resetDisplayButtons() {
-        this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
-        this.allDisplayButton.className = "toolbar-button";
-    }
-
     onDisplayButtonClick(display) {
-        this.resetDisplayButtons();
-        this.refs[display].className = "toolbar-button-selected";
+        //this.refs[display].className = "toolbar-button-selected";
         if (display === "volume") {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
@@ -360,12 +355,12 @@ class CoinGrid extends Component {
             let symbols = rows.map(row => row.symbol);
             this.retrieveTradingData(symbols);
         }
+        this.setState({resetDisplayButton: true});
     }
 
     //todo: put this in another module
     //jeff
     retrieveTradingData(symbols) {
-        console.log(this.columnApi);
         const url = urlObject.apiHost + "/RsiTicker/" + symbols.join(",");
         console.log(url);
         // iterate only nodes that pass the filter and ordered by the sort order
@@ -387,8 +382,6 @@ class CoinGrid extends Component {
     }
 
     onAllDisplayButtonClick() {
-        this.resetDisplayButtons();
-        this.allDisplayButton.className = "toolbar-button-selected";
         this.setState({volumeDisplay: false});
         this.setState({priceDisplay: false});
         this.setState({allDisplay: true});
@@ -477,13 +470,19 @@ class CoinGrid extends Component {
     getDisplayButtons() {
         let displayButtons = [];
         let which = 0;
+        //jeff
+        //this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
+        //this.allDisplayButton.className = "toolbar-button";
+        //this.refs[display].className = "toolbar-button-selected";
         this.displayMap.forEach((key, value) => {
             displayButtons[which++] = <button className="toolbar-button"
-                                              ref={key}
-                                              key={key}
                                               onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
         });
-        displayButtons.push(<button className="toolbar-button-selected"
+        let allClassName = "toolbar-button-selected";
+        if (this.state.resetDisplayButton === true) {
+            allClassName = "toolbar-button";
+        }
+        displayButtons.push(<button className={allClassName}
                                     key="AllDisplay"
                                     ref={allDisplayButton => this.allDisplayButton = allDisplayButton}
                                     onClick={this.onAllDisplayButtonClick.bind(this)}>ALL</button>);
@@ -534,6 +533,7 @@ class CoinGrid extends Component {
         let url = this.getUrl();
         this.getExchangeData(url);
         this.setState({market: "ALL"});
+        this.setState({resetDisplayButton: false});
         this.onAllDisplayButtonClick();
     };
 
