@@ -485,10 +485,6 @@ class CoinGrid extends Component {
     getDisplayButtons() {
         let displayButtons = [];
         let which = 0;
-        //jeff
-        //this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
-        //this.allDisplayButton.className = "toolbar-button";
-        //this.refs[display].className = "toolbar-button-selected";
         let displayedText = this.getDisplayedButtonText();
         this.displayMap.forEach((key, value) => {
             if (key === displayedText) {
@@ -505,7 +501,6 @@ class CoinGrid extends Component {
         }
         displayButtons.push(<button className={allClassName}
                                     key="AllDisplay"
-                                    ref={allDisplayButton => this.allDisplayButton = allDisplayButton}
                                     onClick={this.onAllDisplayButtonClick.bind(this)}>ALL</button>);
         return displayButtons;
     }
