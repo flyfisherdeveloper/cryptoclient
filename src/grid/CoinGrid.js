@@ -9,7 +9,8 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
-    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"], ["Advanced Info", "trading"]]);
+    //todo: displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"], ["Advanced Info", "trading"]]);
+    displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"]]);
     columnApi = null;
     currentExchange = "A";
     notAvailable = "Not Available";
