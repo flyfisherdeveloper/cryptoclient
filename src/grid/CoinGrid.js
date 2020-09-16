@@ -333,7 +333,6 @@ class CoinGrid extends Component {
     }
 
     onDisplayButtonClick(display) {
-        //this.refs[display].className = "toolbar-button-selected";
         if (display === "volume") {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
@@ -385,6 +384,7 @@ class CoinGrid extends Component {
         this.setState({volumeDisplay: false});
         this.setState({priceDisplay: false});
         this.setState({allDisplay: true});
+        console.log("onAllDisplayButtonClick()");
     }
 
     toggleModal() {
@@ -467,6 +467,21 @@ class CoinGrid extends Component {
         );
     }
 
+    getDisplayedButtonText() {
+        if (this.state.volumeDisplay) {
+            return "volume";
+        }
+        if (this.state.priceDisplay) {
+            return "price";
+        }
+        if (this.state.allDisplay) {
+            return "all";
+        }
+        if (this.state.tradingDisplay) {
+            return "trading";
+        }
+    }
+
     getDisplayButtons() {
         let displayButtons = [];
         let which = 0;
@@ -474,9 +489,15 @@ class CoinGrid extends Component {
         //this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
         //this.allDisplayButton.className = "toolbar-button";
         //this.refs[display].className = "toolbar-button-selected";
+        let displayedText = this.getDisplayedButtonText();
         this.displayMap.forEach((key, value) => {
-            displayButtons[which++] = <button className="toolbar-button"
-                                              onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            if (key === displayedText) {
+                displayButtons[which++] = <button className="toolbar-button-selected"
+                                                  onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            } else {
+                displayButtons[which++] = <button className="toolbar-button"
+                                                  onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            }
         });
         let allClassName = "toolbar-button-selected";
         if (this.state.resetDisplayButton === true) {
@@ -534,6 +555,7 @@ class CoinGrid extends Component {
         this.getExchangeData(url);
         this.setState({market: "ALL"});
         this.setState({resetDisplayButton: false});
+        console.log("onExchangeChange()");
         this.onAllDisplayButtonClick();
     };
 
