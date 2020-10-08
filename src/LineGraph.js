@@ -78,8 +78,10 @@ class LineGraph extends React.Component {
                     data: info,
                     type: this.props.isArea ? "area" : "line"
                 }];
-                this.startValue = info[0][1];
-                this.endValue = info[info.length - 1][1];
+                if (info != null && info.length > 0) {
+                    this.startValue = info[0][1];
+                    this.endValue = info[info.length - 1][1];
+                }
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {

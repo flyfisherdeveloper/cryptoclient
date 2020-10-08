@@ -9,6 +9,7 @@ import Loader from 'react-loader-spinner';
 
 class CoinGrid extends Component {
     mounted = false;
+    //todo: displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"], ["Advanced Info", "trading"]]);
     displayMap = new Map([["Volume Info", "volume"], ["Price Info", "price"]]);
     columnApi = null;
     currentExchange = "A";
@@ -38,6 +39,8 @@ class CoinGrid extends Component {
             isLoading: true,
             volumeDisplay: false,
             priceDisplay: false,
+            tradingDisplay: false,
+            resetDisplayButton: false,
             allDisplay: true
         }
     }
@@ -325,32 +328,58 @@ class CoinGrid extends Component {
         this.toggleModal();
     }
 
-    resetDisplayButtons() {
-        this.displayMap.forEach((key, value) => this.refs[key].className = "toolbar-button");
-        this.allDisplayButton.className = "toolbar-button";
-    }
-
     onDisplayButtonClick(display) {
-        this.resetDisplayButtons();
-        this.refs[display].className = "toolbar-button-selected";
         if (display === "volume") {
             this.setState({volumeDisplay: true});
             this.setState({priceDisplay: false});
             this.setState({allDisplay: false});
+            this.setState({tradingDisplay: false});
         }
         if (display === "price") {
             this.setState({volumeDisplay: false});
             this.setState({priceDisplay: true});
             this.setState({allDisplay: false});
+            this.setState({tradingDisplay: false});
         }
+        if (display === "trading") {
+            this.setState({volumeDisplay: false});
+            this.setState({priceDisplay: false});
+            this.setState({allDisplay: false});
+            this.setState({tradingDisplay: true});
+            let rows = this.state.rowData;
+            let symbols = rows.map(row => row.symbol);
+            this.retrieveTradingData(symbols);
+        }
+        this.setState({resetDisplayButton: true});
+    }
+
+    //todo: put this in another module
+    retrieveTradingData(symbols) {
+        const url = urlObject.apiHost + "/RsiTicker/" + symbols.join(",");
+        console.log(url);
+        // iterate only nodes that pass the filter and ordered by the sort order
+        //this.columnApi.(function(rowNode, index) {
+            //console.log('node ' + rowNode.data.symbol + ' passes the filter and is in this order');
+        //});
+
+        fetch(url)
+            .then(result => result.json())
+            .then((json) => {
+                console.log(json);
+            }).catch(err => {
+            if (err.name === 'AbortError') {
+                console.log("error catch: " + err);
+                return;
+            }
+            throw err;
+        });
     }
 
     onAllDisplayButtonClick() {
-        this.resetDisplayButtons();
-        this.allDisplayButton.className = "toolbar-button-selected";
         this.setState({volumeDisplay: false});
         this.setState({priceDisplay: false});
         this.setState({allDisplay: true});
+        console.log("onAllDisplayButtonClick()");
     }
 
     toggleModal() {
@@ -433,18 +462,40 @@ class CoinGrid extends Component {
         );
     }
 
+    getDisplayedButtonText() {
+        if (this.state.volumeDisplay) {
+            return "volume";
+        }
+        if (this.state.priceDisplay) {
+            return "price";
+        }
+        if (this.state.allDisplay) {
+            return "all";
+        }
+        if (this.state.tradingDisplay) {
+            return "trading";
+        }
+    }
+
     getDisplayButtons() {
         let displayButtons = [];
         let which = 0;
+        let displayedText = this.getDisplayedButtonText();
         this.displayMap.forEach((key, value) => {
-            displayButtons[which++] = <button className="toolbar-button"
-                                              ref={key}
-                                              key={key}
-                                              onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            if (key === displayedText) {
+                displayButtons[which++] = <button className="toolbar-button-selected"
+                                                  onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            } else {
+                displayButtons[which++] = <button className="toolbar-button"
+                                                  onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
+            }
         });
-        displayButtons.push(<button className="toolbar-button-selected"
+        let allClassName = "toolbar-button-selected";
+        if (this.state.resetDisplayButton === true) {
+            allClassName = "toolbar-button";
+        }
+        displayButtons.push(<button className={allClassName}
                                     key="AllDisplay"
-                                    ref={allDisplayButton => this.allDisplayButton = allDisplayButton}
                                     onClick={this.onAllDisplayButtonClick.bind(this)}>ALL</button>);
         return displayButtons;
     }
@@ -493,6 +544,8 @@ class CoinGrid extends Component {
         let url = this.getUrl();
         this.getExchangeData(url);
         this.setState({market: "ALL"});
+        this.setState({resetDisplayButton: false});
+        console.log("onExchangeChange()");
         this.onAllDisplayButtonClick();
     };
 
