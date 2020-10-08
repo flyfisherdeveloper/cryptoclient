@@ -267,11 +267,6 @@ class CoinGrid extends Component {
 
     onGridReady = grid => {
         this.columnApi = grid.columnApi;
-        //jeff
-        //console.log("********************** cols " + grid.columnApi);
-        //grid.columnApi.getAllDisplayedColumns().forEach((value, index, array) => {
-            //array.forEach(col => console.log(col));
-        //});
         let columns = grid.columnApi.getAllColumns().filter(col => col.colId !== "coin");
         grid.columnApi.autoSizeColumns(columns);
     };
@@ -359,7 +354,6 @@ class CoinGrid extends Component {
     }
 
     //todo: put this in another module
-    //jeff
     retrieveTradingData(symbols) {
         const url = urlObject.apiHost + "/RsiTicker/" + symbols.join(",");
         console.log(url);
