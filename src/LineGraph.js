@@ -27,20 +27,6 @@ class LineGraph extends React.Component {
         return (this.props.isPrice ? "Price" : "Volume");
     }
 
-    getYAxisText() {
-        if (this.props.isPrice) {
-            return "Price in " + this.props.quote;
-        }
-        return "Volume in " + (this.props.isQuoteVolume ? this.props.quote : this.props.coin);
-    }
-
-    getSubtitleText() {
-        if (this.props.isPrice) {
-            return "(Price in " + this.props.quote + ")";
-        }
-        return "(" + this.getYAxisText() + ")";
-    }
-
     updateChart(hours, days, months) {
         this.retrieveChartData(hours, days, months);
     }
@@ -100,6 +86,9 @@ class LineGraph extends React.Component {
         let startVal = this.startValue;
         let endVal = this.endValue;
         let isPrice = this.props.isPrice;
+        let isQuoteVolume = this.props.isQuoteVolume;
+        let quote = this.props.quote;
+        let coin = this.props.coin;
 
         //this function sets the area/line color based on price: if price is lower, then red, else green
         function getColors() {
@@ -107,11 +96,40 @@ class LineGraph extends React.Component {
                 if (startVal > endVal) {
                     return ['#E91E63'];
                 }
-                return ['#0be325'];
+                return ['#18c12c'];
 
             }
             //if not a price chart (volume chart), then just set color to light blue
             return ['#2E93fA'];
+        }
+
+        function getSubtitleColor() {
+            if (isPrice) {
+                let colors = getColors();
+                return colors[0];
+            }
+            return '#000000';
+        }
+
+        function getYAxisText() {
+            if (isPrice) {
+                return "Price in " + quote;
+            }
+            return "Volume in " + (isQuoteVolume ? quote : coin);
+        }
+
+        function getSubtitleText() {
+            if (isPrice) {
+                let value = 0.0;
+                if (startVal > endVal) {
+                    value = -((startVal - endVal) / startVal) * 100;
+                } else {
+                    value = ((endVal - startVal) / startVal) * 100;
+                }
+                return value.toFixed(2) + '%';
+
+            }
+            return "(Volume in " + (isQuoteVolume ? quote : coin) + ")";
         }
 
         return ({
@@ -165,12 +183,14 @@ class LineGraph extends React.Component {
                 offsetY: 30
             },
             subtitle: {
-                text: this.getSubtitleText(),
+                text: getSubtitleText(),
                 style: {
-                    fontSize: "16px"
+                    fontSize: "16px",
+                    fontWeight: "bolder",
+                    color: getSubtitleColor()
                 },
                 offsetY: 70,
-                align: "middle"
+                align: "middle",
             },
             xaxis: {
                 axisTicks: {show: true},
@@ -216,7 +236,7 @@ class LineGraph extends React.Component {
                         }
                     },
                     title: {
-                        text: this.getYAxisText(),
+                        text: getYAxisText(),
                         rotate: 90,
                         offsetX: -7,
                         offsetY: 0,
