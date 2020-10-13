@@ -379,7 +379,6 @@ class CoinGrid extends Component {
         this.setState({volumeDisplay: false});
         this.setState({priceDisplay: false});
         this.setState({allDisplay: true});
-        console.log("onAllDisplayButtonClick()");
     }
 
     toggleModal() {
@@ -484,9 +483,11 @@ class CoinGrid extends Component {
         this.displayMap.forEach((key, value) => {
             if (key === displayedText) {
                 displayButtons[which++] = <button className="toolbar-button-selected"
+                                                  key={value}
                                                   onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
             } else {
                 displayButtons[which++] = <button className="toolbar-button"
+                                                  key={value}
                                                   onClick={this.onDisplayButtonClick.bind(this, key)}>{value}</button>;
             }
         });
@@ -545,7 +546,6 @@ class CoinGrid extends Component {
         this.getExchangeData(url);
         this.setState({market: "ALL"});
         this.setState({resetDisplayButton: false});
-        console.log("onExchangeChange()");
         this.onAllDisplayButtonClick();
     };
 
