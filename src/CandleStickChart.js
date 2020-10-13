@@ -4,6 +4,9 @@ import PropTypes from "prop-types";
 import urlObject from "./UrlObject";
 
 class CandleStickChart extends React.Component {
+    startValue = 0.0;
+    endValue = 0.0;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -39,6 +42,13 @@ class CandleStickChart extends React.Component {
                 let seriesData = [{
                     data: info,
                 }];
+                if (info != null && info.length > 0) {
+                    //the data is formatted on the 'y' value as: open, high, low, close
+                    //we are looking for the open of the first array element as the start value,
+                    // and the close of the end of the array element as the end value
+                    this.startValue = info[0].y[0];
+                    this.endValue = info[info.length - 1].y[3];
+                }
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {
@@ -54,6 +64,29 @@ class CandleStickChart extends React.Component {
     }
 
     getChartOptions() {
+        let startVal = this.startValue;
+        let endVal = this.endValue;
+
+        function getSubtitleText() {
+            if (startVal === 0.0) {
+                return "";
+            }
+            let value;
+            if (startVal > endVal) {
+                value = -((startVal - endVal) / startVal) * 100;
+            } else {
+                value = ((endVal - startVal) / startVal) * 100;
+            }
+            return value.toFixed(2) + '%';
+        }
+
+        function getSubtitleColor() {
+            if (startVal > endVal) {
+                return '#E91E63';
+            }
+            return '#18c12c';
+        }
+
         return ({
             chart: {
                 group: "DataCharts",
@@ -96,12 +129,14 @@ class CandleStickChart extends React.Component {
                 offsetY: 30
             },
             subtitle: {
-                text: "(Price in " + this.props.quote + ")",
+                text: getSubtitleText(),
                 style: {
-                    fontSize: "16px"
+                    fontSize: "16px",
+                    fontWeight: "bolder",
+                    color: getSubtitleColor()
                 },
                 offsetY: 70,
-                align: "middle"
+                align: "middle",
             },
             xaxis: {
                 axisTicks: {show: true},

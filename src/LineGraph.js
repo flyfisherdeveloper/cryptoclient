@@ -120,7 +120,10 @@ class LineGraph extends React.Component {
 
         function getSubtitleText() {
             if (isPrice) {
-                let value = 0.0;
+                if (startVal === 0.0) {
+                    return "";
+                }
+                let value;
                 if (startVal > endVal) {
                     value = -((startVal - endVal) / startVal) * 100;
                 } else {
