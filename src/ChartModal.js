@@ -91,10 +91,13 @@ class ChartModal extends React.Component {
 
     onToggleClick(buttonText) {
         //jeff
+        console.log(buttonText);
         if (buttonText === this.props.quote) {
-            this.setState({toggleVolume: false})
+            //here, we change from i.e. BTC to USD
+            this.setState({usdVolume: true})
         } else {
-            this.setState({toggleVolume: true})
+            //here, we change from i.e. USD to BTC
+            this.setState({usdVolume: false})
         }
     }
 
@@ -120,6 +123,7 @@ class ChartModal extends React.Component {
             chart = <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
                                symbol={this.props.symbol}
                                quote={this.props.quote}
+                               usdQuote={this.state.usdVolume}
                                coin={this.props.coin}
                                hours={this.state.hours}
                                days={this.state.days}
@@ -280,10 +284,10 @@ class ChartModal extends React.Component {
             return <label className="middle-label">Toggle Currency:</label>
         }
         const toggleButtonText = () => {
-            if (this.state.toggleVolume === true) {
-                return this.props.quote;
+            if (this.state.usdVolume === true) {
+                return "USD";
             }
-            return this.props.coin;
+            return this.props.quote;
         }
         const buttonToggle = () => {
             if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT")) {

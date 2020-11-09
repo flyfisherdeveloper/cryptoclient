@@ -44,6 +44,8 @@ class LineGraph extends React.Component {
                 value = roundNear(data.quoteAssetVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
+            } else if (this.props.usdQuote) {
+                value = roundNear(data.usdVolume, 2);
             } else {
                 value = roundNear(data.volume, 2);
             }
@@ -296,6 +298,7 @@ class LineGraph extends React.Component {
 LineGraph.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
+    usdQuote: PropTypes.bool,
     coin: PropTypes.string,
     isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool,
