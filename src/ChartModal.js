@@ -75,7 +75,7 @@ class ChartModal extends React.Component {
         if (buttonType === "area") {
             this.setState({isArea: true});
             this.setState({isLine: false});
-        } else if (buttonType === "line" ) {
+        } else if (buttonType === "line") {
             this.setState({isArea: false});
             this.setState({isLine: true});
         } else {
@@ -86,6 +86,15 @@ class ChartModal extends React.Component {
             this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
         } else {
             this.candleStickChart.updateChart(this.state.hours, this.state.days, this.state.months);
+        }
+    }
+
+    onToggleClick(buttonText) {
+        //jeff
+        if (buttonText === this.props.quote) {
+            this.setState({toggleVolume: false})
+        } else {
+            this.setState({toggleVolume: true})
         }
     }
 
@@ -261,6 +270,31 @@ class ChartModal extends React.Component {
                className="close"
                onClick={this.onCloseButtonClick.bind(this)}
             />;
+        const labelChartType = () => {
+            if (this.props.isPrice) {
+                return <label className="middle-label">Chart Type:</label>
+            }
+            if (this.props.quote === "USD" || this.props.quote === "USDT") {
+                return <label className="middle-label"/>
+            }
+            return <label className="middle-label">Toggle Currency:</label>
+        }
+        const toggleButtonText = () => {
+            if (this.state.toggleVolume === true) {
+                return this.props.quote;
+            }
+            return this.props.coin;
+        }
+        const buttonToggle = () => {
+            if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT")) {
+                return <ButtonComponent
+                    //jeff
+                    text={toggleButtonText()}
+                    className="chart-button"
+                    func={this.onToggleClick.bind(this, toggleButtonText())}>
+                </ButtonComponent>;
+            }
+        }
 
         return (
             <div className={modalStyle}>
@@ -281,8 +315,8 @@ class ChartModal extends React.Component {
                         {button3Months}
                         {button6Months}
                         {button12Months}
-                        <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
-                        </label>
+                        {labelChartType()}
+                        {buttonToggle()}
                         {buttonArea}
                         {buttonLine}
                         {buttonCandleStick}
