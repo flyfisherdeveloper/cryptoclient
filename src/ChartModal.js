@@ -27,11 +27,6 @@ class ChartModal extends React.Component {
             return;
         }
         this.setState({hours: buttonNumber});
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
-        } else {
-            this.candleStickChart.updateChart(buttonNumber, this.state.days, this.state.months);
-        }
     }
 
     onDayOrMonthButtonClick(buttonNumber) {
@@ -64,11 +59,6 @@ class ChartModal extends React.Component {
             days = 0;
         }
         this.setState({days: days, months: months});
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(this.state.hours, days, months);
-        } else {
-            this.candleStickChart.updateChart(this.state.hours, days, months);
-        }
     }
 
     onChartTypeClick(buttonType) {
@@ -82,16 +72,10 @@ class ChartModal extends React.Component {
             this.setState({isArea: false});
             this.setState({isLine: false});
         }
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
-        } else {
-            this.candleStickChart.updateChart(this.state.hours, this.state.days, this.state.months);
-        }
     }
 
     onToggleClick(buttonText) {
         //jeff
-        console.log(buttonText);
         if (buttonText === this.props.quote) {
             //here, we change from i.e. BTC to USD
             this.setState({usdVolume: true})

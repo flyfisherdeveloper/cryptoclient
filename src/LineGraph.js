@@ -7,6 +7,8 @@ class LineGraph extends React.Component {
     chart = null;
     startValue = 0.0;
     endValue = 0.0;
+    init = false;
+    dataLoaded = false;
 
     constructor(props) {
         super(props);
@@ -15,7 +17,7 @@ class LineGraph extends React.Component {
                 {
                     data: [],
                 }
-            ]
+            ],
         };
     }
 
@@ -25,10 +27,6 @@ class LineGraph extends React.Component {
 
     getPriceOrVolumeString() {
         return (this.props.isPrice ? "Price" : "Volume");
-    }
-
-    updateChart(hours, days, months) {
-        this.retrieveChartData(hours, days, months);
     }
 
     getAreaData(json) {
@@ -57,11 +55,11 @@ class LineGraph extends React.Component {
     retrieveChartData(hours, days, months) {
         const url = urlObject.apiHost + "/DayTicker/";
         let daysOrMonths = (months === 0 ? days + "d" : months + "M");
+
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
-                let info = null;
-                info = this.getAreaData(json);
+                let info = this.getAreaData(json);
                 let seriesData = [{
                     data: info,
                     type: this.props.isArea ? "area" : "line"
@@ -70,6 +68,8 @@ class LineGraph extends React.Component {
                     this.startValue = info[0][1];
                     this.endValue = info[info.length - 1][1];
                 }
+                this.init = true;
+                this.dataLoaded = true;
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {
@@ -78,10 +78,6 @@ class LineGraph extends React.Component {
             }
             throw err;
         });
-    }
-
-    componentDidMount() {
-        this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
     }
 
     getChartOptions() {
@@ -281,6 +277,9 @@ class LineGraph extends React.Component {
     }
 
     render() {
+        if (this.dataLoaded === false) {
+            this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
+        }
         let options = this.getChartOptions();
         this.chart =
             <div style={{width: "100%", height: "100%"}}>
@@ -291,6 +290,7 @@ class LineGraph extends React.Component {
                     width="100%"
                 />
             </div>;
+        this.dataLoaded = false;
         return this.chart;
     }
 }
