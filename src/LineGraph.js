@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import urlObject from "./UrlObject";
 
 class LineGraph extends React.Component {
-    chart = null;
     startValue = 0.0;
     endValue = 0.0;
     init = false;
@@ -17,7 +16,7 @@ class LineGraph extends React.Component {
                 {
                     data: [],
                 }
-            ],
+            ]
         };
     }
 
@@ -279,7 +278,7 @@ class LineGraph extends React.Component {
             this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
         }
         let options = this.getChartOptions();
-        this.chart =
+        let chart =
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
                     options={options}
@@ -289,7 +288,7 @@ class LineGraph extends React.Component {
                 />
             </div>;
         this.dataLoaded = false;
-        return this.chart;
+        return chart;
     }
 }
 
