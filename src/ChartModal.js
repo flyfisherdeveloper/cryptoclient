@@ -107,12 +107,11 @@ class ChartModal extends React.Component {
             chart = <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
                                symbol={this.props.symbol}
                                quote={this.props.quote}
-                               usdQuote={this.state.usdVolume}
+                               usdVolume={this.state.usdVolume}
                                coin={this.props.coin}
                                hours={this.state.hours}
                                days={this.state.days}
                                months={this.state.months}
-                               isQuoteVolume={this.props.isQuoteVolume}
                                isPrice={this.props.isPrice}
                                isArea={this.state.isArea}
                                isLine={this.state.isLine}
@@ -340,7 +339,6 @@ ChartModal.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool
 };
 export default ChartModal;

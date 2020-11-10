@@ -38,12 +38,10 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = 0.0;
-            if (this.props.isQuoteVolume) {
-                value = roundNear(data.quoteAssetVolume, 2);
+            if (this.props.usdQuote) {
+                value = roundNear(data.usdVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
-            } else if (this.props.usdQuote) {
-                value = roundNear(data.usdVolume, 2);
             } else {
                 value = roundNear(data.volume, 2);
             }
@@ -84,9 +82,8 @@ class LineGraph extends React.Component {
         let startVal = this.startValue;
         let endVal = this.endValue;
         let isPrice = this.props.isPrice;
-        let isQuoteVolume = this.props.isQuoteVolume;
+        let usdVolume = this.props.usdVolume;
         let quote = this.props.quote;
-        let coin = this.props.coin;
 
         //this function sets the area/line color based on price: if price is lower, then red, else green
         function getColors() {
@@ -113,7 +110,8 @@ class LineGraph extends React.Component {
             if (isPrice) {
                 return "Price in " + quote;
             }
-            return "Volume in " + (isQuoteVolume ? quote : coin);
+            let text = "Volume in " + (usdVolume ? "USD": quote);
+            return text;
         }
 
         function getSubtitleText() {
@@ -130,7 +128,7 @@ class LineGraph extends React.Component {
                 return value.toFixed(2) + '%';
 
             }
-            return "(Volume in " + (isQuoteVolume ? quote : coin) + ")";
+            return "(Volume in " + (usdVolume ? "USD" : quote) + ")";
         }
 
         return ({
@@ -269,7 +267,7 @@ class LineGraph extends React.Component {
                 show: true,
                 y: {
                     title: {
-                        formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
+                        formatter: () => this.props.usdVolume ? "USD": this.props.quote,
                     }
                 },
             }
@@ -298,9 +296,8 @@ class LineGraph extends React.Component {
 LineGraph.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
-    usdQuote: PropTypes.bool,
+    usdVolume: PropTypes.bool,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool,
     isArea: PropTypes.bool,
     isLine: PropTypes.bool,
