@@ -12,7 +12,8 @@ class ChartModal extends React.Component {
             days: 7,
             months: 0,
             isArea: true,
-            isLine: false
+            isLine: false,
+            usdVolume: false
         }
     }
 
@@ -75,13 +76,12 @@ class ChartModal extends React.Component {
     }
 
     onToggleClick(buttonText) {
-        //jeff
         if (buttonText === this.props.quote) {
             //here, we change from i.e. BTC to USD
-            this.setState({usdVolume: true})
+            this.setState({usdVolume: false})
         } else {
             //here, we change from i.e. USD to BTC
-            this.setState({usdVolume: false})
+            this.setState({usdVolume: true})
         }
     }
 
@@ -89,6 +89,7 @@ class ChartModal extends React.Component {
         this.setState({hours: 4, days: 7, months: 0});
         this.setState({isArea: true});
         this.setState({isLine: false});
+        this.setState({usdVolume: false});
         this.props.onClose(params);
     }
 
@@ -264,18 +265,17 @@ class ChartModal extends React.Component {
             if (this.props.quote === "USD" || this.props.quote === "USDT") {
                 return <label className="middle-label"/>
             }
-            return <label className="middle-label">Toggle Currency:</label>
+            return <label className="middle-label">Change Currency To:</label>
         }
         const toggleButtonText = () => {
             if (this.state.usdVolume === true) {
-                return "USD";
+                return this.props.quote;
             }
-            return this.props.quote;
+            return "USD";
         }
         const buttonToggle = () => {
             if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT")) {
                 return <ButtonComponent
-                    //jeff
                     text={toggleButtonText()}
                     className="chart-button"
                     func={this.onToggleClick.bind(this, toggleButtonText())}>
