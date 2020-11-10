@@ -6,7 +6,6 @@ import urlObject from "./UrlObject";
 class LineGraph extends React.Component {
     startValue = 0.0;
     endValue = 0.0;
-    init = false;
     dataLoaded = false;
 
     constructor(props) {
@@ -37,7 +36,7 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = 0.0;
-            if (this.props.usdQuote) {
+            if (this.props.usdVolume) {
                 value = roundNear(data.usdVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
@@ -65,7 +64,6 @@ class LineGraph extends React.Component {
                     this.startValue = info[0][1];
                     this.endValue = info[info.length - 1][1];
                 }
-                this.init = true;
                 this.dataLoaded = true;
                 this.setState({series: seriesData});
             }).catch(err => {
