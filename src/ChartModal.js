@@ -262,7 +262,7 @@ class ChartModal extends React.Component {
             if (this.props.isPrice) {
                 return <label className="middle-label">Chart Type:</label>
             }
-            if (this.props.quote === "USD" || this.props.quote === "USDT") {
+            if (this.props.quote === "USD" || this.props.quote === "USDT" || this.props.quote === "DAI" || this.props.quote === "BRL") {
                 return <label className="middle-label"/>
             }
             return <label className="middle-label">Change Currency To:</label>
@@ -274,7 +274,7 @@ class ChartModal extends React.Component {
             return "USD";
         }
         const buttonToggle = () => {
-            if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT")) {
+            if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT" && this.props.quote !== "DAI" && this.props.quote !== "BRL")) {
                 return <ButtonComponent
                     text={toggleButtonText()}
                     className="chart-button"

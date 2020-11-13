@@ -36,7 +36,7 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = 0.0;
-            if (this.props.usdVolume) {
+            if (this.props.usdVolume && data.usdVolume !== null) {
                 value = roundNear(data.usdVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
