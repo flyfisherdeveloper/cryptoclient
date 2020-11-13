@@ -41,7 +41,7 @@ class LineGraph extends React.Component {
             } else if (this.props.isPrice) {
                 value = data.close;
             } else {
-                value = roundNear(data.volume, 2);
+                value = roundNear(data.quoteAssetVolume, 2);
             }
             return [date.toLocaleString(), value];
         });
