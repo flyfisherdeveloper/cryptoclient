@@ -16,8 +16,8 @@ class CoinGrid extends Component {
     notAvailable = "Not Available";
     priceColumns = ["marketCap", "lastPrice", "priceChange", "highPrice", "lowPrice", "quoteVolume", "volume24HrUsd"];
     priceInfoColumns = ["lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice"];
-    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "volume", "quoteVolume", "volume24HrUsd"];
-    volumeColumns = ["volume", "quoteVolume", "volume24HrUsd"];
+    numberColumns = ["marketCap", "lastPrice", "priceChange", "priceChangePercent", "highPrice", "lowPrice", "quoteVolume", "volume24HrUsd"];
+    volumeColumns = ["quoteVolume", "volume24HrUsd"];
     pageSize = 11;
 
     constructor(props) {
@@ -34,7 +34,6 @@ class CoinGrid extends Component {
             symbol: "", //i.e. LTCUSDT
             quote: "",  //i.e. USDT
             coin: "",   //i.e. LTC
-            isQuoteVolume: false,
             isPrice: false,
             isLoading: true,
             volumeDisplay: false,
@@ -255,11 +254,10 @@ class CoinGrid extends Component {
         if (this.currentExchange === "C") {
             return;
         }
-        let isVolume = event.column.getColId() === "volume";
         let isQuoteVolume = event.column.getColId() === "quoteVolume";
         let isPrice = event.column.getColId() === "lastPrice";
-        if (isVolume || isQuoteVolume) {
-            this.doVolume(event, isVolume);
+        if (isQuoteVolume) {
+            this.doVolume(event);
         } else if (isPrice) {
             this.doPrice(event);
         }
@@ -304,13 +302,8 @@ class CoinGrid extends Component {
         return num1 - num2;
     }
 
-    doVolume(event, isVolume) {
+    doVolume(event) {
         this.setState({isPrice: false});
-        if (isVolume) {
-            this.setState({isQuoteVolume: false});
-        } else {
-            this.setState({isQuoteVolume: true});
-        }
         let selectedRow = event.api.getSelectedRows()[0];
         this.setState({symbol: selectedRow.symbol});
         this.setState({quote: selectedRow.currency});
@@ -320,7 +313,6 @@ class CoinGrid extends Component {
 
     doPrice(event) {
         this.setState({isPrice: true});
-        this.setState({isQuoteVolume: false});
         let selectedRow = event.api.getSelectedRows()[0];
         this.setState({symbol: selectedRow.symbol});
         this.setState({quote: selectedRow.currency});
@@ -359,7 +351,7 @@ class CoinGrid extends Component {
         console.log(url);
         // iterate only nodes that pass the filter and ordered by the sort order
         //this.columnApi.(function(rowNode, index) {
-            //console.log('node ' + rowNode.data.symbol + ' passes the filter and is in this order');
+        //console.log('node ' + rowNode.data.symbol + ' passes the filter and is in this order');
         //});
 
         fetch(url)
@@ -606,7 +598,6 @@ class CoinGrid extends Component {
                                 symbol={this.state.symbol}
                                 quote={this.state.quote}
                                 coin={this.state.coin}
-                                isQuoteVolume={this.state.isQuoteVolume}
                                 isPrice={this.state.isPrice}
                                 onClose={this.toggleModal}>
                     </ChartModal>

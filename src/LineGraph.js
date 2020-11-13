@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 import urlObject from "./UrlObject";
 
 class LineGraph extends React.Component {
-    chart = null;
     startValue = 0.0;
     endValue = 0.0;
+    dataLoaded = false;
 
     constructor(props) {
         super(props);
@@ -27,10 +27,6 @@ class LineGraph extends React.Component {
         return (this.props.isPrice ? "Price" : "Volume");
     }
 
-    updateChart(hours, days, months) {
-        this.retrieveChartData(hours, days, months);
-    }
-
     getAreaData(json) {
         function roundNear(value, decimalPlaces) {
             return Math.floor(value * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
@@ -40,12 +36,12 @@ class LineGraph extends React.Component {
             let date = new Date(data.closeTime);
             date.setMinutes(date.getMinutes() + 1);
             let value = 0.0;
-            if (this.props.isQuoteVolume) {
-                value = roundNear(data.quoteAssetVolume, 2);
+            if (this.props.usdVolume) {
+                value = roundNear(data.usdVolume, 2);
             } else if (this.props.isPrice) {
                 value = data.close;
             } else {
-                value = roundNear(data.volume, 2);
+                value = roundNear(data.quoteAssetVolume, 2);
             }
             return [date.toLocaleString(), value];
         });
@@ -55,11 +51,11 @@ class LineGraph extends React.Component {
     retrieveChartData(hours, days, months) {
         const url = urlObject.apiHost + "/DayTicker/";
         let daysOrMonths = (months === 0 ? days + "d" : months + "M");
+
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
-                let info = null;
-                info = this.getAreaData(json);
+                let info = this.getAreaData(json);
                 let seriesData = [{
                     data: info,
                     type: this.props.isArea ? "area" : "line"
@@ -68,6 +64,7 @@ class LineGraph extends React.Component {
                     this.startValue = info[0][1];
                     this.endValue = info[info.length - 1][1];
                 }
+                this.dataLoaded = true;
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {
@@ -78,17 +75,12 @@ class LineGraph extends React.Component {
         });
     }
 
-    componentDidMount() {
-        this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
-    }
-
     getChartOptions() {
         let startVal = this.startValue;
         let endVal = this.endValue;
         let isPrice = this.props.isPrice;
-        let isQuoteVolume = this.props.isQuoteVolume;
+        let usdVolume = this.props.usdVolume;
         let quote = this.props.quote;
-        let coin = this.props.coin;
 
         //this function sets the area/line color based on price: if price is lower, then red, else green
         function getColors() {
@@ -115,7 +107,8 @@ class LineGraph extends React.Component {
             if (isPrice) {
                 return "Price in " + quote;
             }
-            return "Volume in " + (isQuoteVolume ? quote : coin);
+            let text = "Volume in " + (usdVolume ? "USD": quote);
+            return text;
         }
 
         function getSubtitleText() {
@@ -132,7 +125,7 @@ class LineGraph extends React.Component {
                 return value.toFixed(2) + '%';
 
             }
-            return "(Volume in " + (isQuoteVolume ? quote : coin) + ")";
+            return "(Volume in " + (usdVolume ? "USD" : quote) + ")";
         }
 
         return ({
@@ -271,7 +264,7 @@ class LineGraph extends React.Component {
                 show: true,
                 y: {
                     title: {
-                        formatter: () => this.props.isQuoteVolume ? this.props.quote : this.props.coin,
+                        formatter: () => this.props.usdVolume ? "USD": this.props.quote,
                     }
                 },
             }
@@ -279,8 +272,11 @@ class LineGraph extends React.Component {
     }
 
     render() {
+        if (this.dataLoaded === false) {
+            this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
+        }
         let options = this.getChartOptions();
-        this.chart =
+        let chart =
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
                     options={options}
@@ -289,15 +285,16 @@ class LineGraph extends React.Component {
                     width="100%"
                 />
             </div>;
-        return this.chart;
+        this.dataLoaded = false;
+        return chart;
     }
 }
 
 LineGraph.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
+    usdVolume: PropTypes.bool,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool,
     isArea: PropTypes.bool,
     isLine: PropTypes.bool,

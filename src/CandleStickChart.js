@@ -6,6 +6,7 @@ import urlObject from "./UrlObject";
 class CandleStickChart extends React.Component {
     startValue = 0.0;
     endValue = 0.0;
+    dataLoaded = false;
 
     constructor(props) {
         super(props);
@@ -16,10 +17,6 @@ class CandleStickChart extends React.Component {
                 }
             ]
         };
-    }
-
-    updateChart(hours, days, months) {
-        this.retrieveChartData(hours, days, months);
     }
 
     getCandleStickData(json) {
@@ -35,6 +32,7 @@ class CandleStickChart extends React.Component {
     retrieveChartData(hours, days, months) {
         const url = urlObject.apiHost + "/DayTicker/";
         let daysOrMonths = (months === 0 ? days + "d" : months + "M");
+
         fetch(url + this.props.symbol + "/" + hours + "h/" + daysOrMonths)
             .then(result => result.json())
             .then((json) => {
@@ -49,6 +47,7 @@ class CandleStickChart extends React.Component {
                     this.startValue = info[0].y[0];
                     this.endValue = info[info.length - 1].y[3];
                 }
+                this.dataLoaded = true;
                 this.setState({series: seriesData});
             }).catch(err => {
             if (err.name === 'AbortError') {
@@ -219,8 +218,11 @@ class CandleStickChart extends React.Component {
     }
 
     render() {
+        if (this.dataLoaded === false) {
+            this.retrieveChartData(this.props.hours, this.props.days, this.props.months);
+        }
         let options = this.getChartOptions();
-        return (
+        let chart =
             <div style={{width: "100%", height: "100%"}}>
                 <ReactApexChart
                     options={options}
@@ -229,8 +231,9 @@ class CandleStickChart extends React.Component {
                     height="100%"
                     width="100%"
                 />
-            </div>
-        );
+            </div>;
+        this.dataLoaded = false;
+        return chart;
     }
 }
 

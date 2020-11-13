@@ -12,7 +12,8 @@ class ChartModal extends React.Component {
             days: 7,
             months: 0,
             isArea: true,
-            isLine: false
+            isLine: false,
+            usdVolume: false
         }
     }
 
@@ -27,11 +28,6 @@ class ChartModal extends React.Component {
             return;
         }
         this.setState({hours: buttonNumber});
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(buttonNumber, this.state.days, this.state.months);
-        } else {
-            this.candleStickChart.updateChart(buttonNumber, this.state.days, this.state.months);
-        }
     }
 
     onDayOrMonthButtonClick(buttonNumber) {
@@ -64,28 +60,28 @@ class ChartModal extends React.Component {
             days = 0;
         }
         this.setState({days: days, months: months});
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(this.state.hours, days, months);
-        } else {
-            this.candleStickChart.updateChart(this.state.hours, days, months);
-        }
     }
 
     onChartTypeClick(buttonType) {
         if (buttonType === "area") {
             this.setState({isArea: true});
             this.setState({isLine: false});
-        } else if (buttonType === "line" ) {
+        } else if (buttonType === "line") {
             this.setState({isArea: false});
             this.setState({isLine: true});
         } else {
             this.setState({isArea: false});
             this.setState({isLine: false});
         }
-        if (this.state.isArea || this.state.isLine) {
-            this.lineGraph.updateChart(this.state.hours, this.state.days, this.state.months);
+    }
+
+    onToggleClick(buttonText) {
+        if (buttonText === this.props.quote) {
+            //here, we change from i.e. BTC to USD
+            this.setState({usdVolume: false})
         } else {
-            this.candleStickChart.updateChart(this.state.hours, this.state.days, this.state.months);
+            //here, we change from i.e. USD to BTC
+            this.setState({usdVolume: true})
         }
     }
 
@@ -93,6 +89,7 @@ class ChartModal extends React.Component {
         this.setState({hours: 4, days: 7, months: 0});
         this.setState({isArea: true});
         this.setState({isLine: false});
+        this.setState({usdVolume: false});
         this.props.onClose(params);
     }
 
@@ -111,11 +108,11 @@ class ChartModal extends React.Component {
             chart = <LineGraph ref={lineGraph => this.lineGraph = lineGraph}
                                symbol={this.props.symbol}
                                quote={this.props.quote}
+                               usdVolume={this.state.usdVolume}
                                coin={this.props.coin}
                                hours={this.state.hours}
                                days={this.state.days}
                                months={this.state.months}
-                               isQuoteVolume={this.props.isQuoteVolume}
                                isPrice={this.props.isPrice}
                                isArea={this.state.isArea}
                                isLine={this.state.isLine}
@@ -261,6 +258,30 @@ class ChartModal extends React.Component {
                className="close"
                onClick={this.onCloseButtonClick.bind(this)}
             />;
+        const labelChartType = () => {
+            if (this.props.isPrice) {
+                return <label className="middle-label">Chart Type:</label>
+            }
+            if (this.props.quote === "USD" || this.props.quote === "USDT") {
+                return <label className="middle-label"/>
+            }
+            return <label className="middle-label">Change Currency To:</label>
+        }
+        const toggleButtonText = () => {
+            if (this.state.usdVolume === true) {
+                return this.props.quote;
+            }
+            return "USD";
+        }
+        const buttonToggle = () => {
+            if (!this.props.isPrice && (this.props.quote !== "USD" && this.props.quote !== "USDT")) {
+                return <ButtonComponent
+                    text={toggleButtonText()}
+                    className="chart-button"
+                    func={this.onToggleClick.bind(this, toggleButtonText())}>
+                </ButtonComponent>;
+            }
+        }
 
         return (
             <div className={modalStyle}>
@@ -281,8 +302,8 @@ class ChartModal extends React.Component {
                         {button3Months}
                         {button6Months}
                         {button12Months}
-                        <label className={this.props.isPrice ? "middle-label" : "hidden"}>Chart Type:
-                        </label>
+                        {labelChartType()}
+                        {buttonToggle()}
                         {buttonArea}
                         {buttonLine}
                         {buttonCandleStick}
@@ -318,7 +339,6 @@ ChartModal.propTypes = {
     symbol: PropTypes.string,
     quote: PropTypes.string,
     coin: PropTypes.string,
-    isQuoteVolume: PropTypes.bool,
     isPrice: PropTypes.bool
 };
 export default ChartModal;
